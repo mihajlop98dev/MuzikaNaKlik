@@ -1,0 +1,80 @@
+<section class="section" *ngIf="!loading && performer; else loadingState">
+  <div class="wrap">
+    <div class="profile-header">
+      <div class="profile-info">
+        <h1>{{ performer.stage_name }}</h1>
+        <p class="performer-city">{{ performer.city }}</p>
+        <div class="performer-meta">
+          <span class="rating">★ {{ performer.rating_avg.toFixed(1) }} <em>({{ performer.rating_count }} recenzija)</em></span>
+          <span class="price">od {{ performer.price_from }} €</span>
+        </div>
+        <div class="profile-actions">
+          <a routerLink="/upit/{{ performer.id }}" class="btn btn-gold">Pošalji upit</a>
+          <button class="btn fav-btn">♡ Sačuvaj</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-tabs">
+      <button
+        *ngFor="let tab of ['about', 'gallery', 'video', 'reviews']"
+        class="tab-btn"
+        [class.active]="activeTab === tab"
+        (click)="setTab(tab)"
+      >
+        {{ tab === 'about' ? 'O nama' : tab === 'gallery' ? 'Galerija' : tab === 'video' ? 'Video' : 'Recenzije' }}
+      </button>
+    </div>
+
+    <div class="tab-content" [ngSwitch]="activeTab">
+      <div *ngSwitchCase="'about'">
+        <div class="about-section">
+          <h3>O nama</h3>
+          <p>{{ performer.description || 'Opis nije dostupan.' }}</p>
+        </div>
+        <div class="about-section">
+          <h3>Žanrovi</h3>
+          <p>{{ performer.genres?.join(', ') || 'Nije navedeno.' }}</p>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'gallery'">
+        <div class="gallery-grid" *ngIf="images.length > 0; else noContent">
+          <img *ngFor="let img of images" [src]="img.url" alt="Gallery image" class="gallery-img">
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'video'">
+        <div class="video-grid" *ngIf="videos.length > 0; else noContent">
+          <div *ngFor="let v of videos" class="video-embed">
+            <iframe
+              *ngIf="getYoutubeId(v.url)"
+              [src]="'https://www.youtube.com/embed/' + getYoutubeId(v.url)"
+              frameborder="0"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'reviews'">
+        <div class="reviews-list" *ngIf="reviews.length > 0; else noContent">
+          <div *ngFor="let r of reviews" class="review-item">
+            <div class="review-header">
+              <strong>{{ r.rating }}/5</strong>
+            </div>
+            <p>{{ r.comment }}</p>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noContent>
+        <p class="muted">Nema sadržaja.</p>
+      </ng-template>
+    </div>
+  </div>
+</section>
+
+<ng-template #loadingState>
+  <section class="section"><div class="wrap"><p class="muted">Učitavanje...</p></div></section>
+</ng-template>
