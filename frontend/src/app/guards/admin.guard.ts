@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { SupabaseService } from '../services/supabase.service';
-import { map, Observable } from 'rxjs';
+import { from, map, Observable, switchMap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AdminGuard implements CanActivate {
@@ -12,17 +12,26 @@ export class AdminGuard implements CanActivate {
 
   canActivate(): Observable<boolean> {
     return this.supabase.user$.pipe(
-      map((user) => {
+      switchMap((user) => {
         if (!user) {
           this.router.navigate(['/prijava']);
-          return false;
+          return from(Promise.resolve(false));
         }
-        const role = user.user_metadata?.['role'];
-        if (role !== 'admin') {
-          this.router.navigate(['/']);
-          return false;
-        }
-        return true;
+        return from(
+          this.supabase.client
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single()
+        ).pipe(
+          map(({ data }) => {
+            if (data?.role !== 'admin') {
+              this.router.navigate(['/']);
+              return false;
+            }
+            return true;
+          })
+        );
       })
     );
   }
