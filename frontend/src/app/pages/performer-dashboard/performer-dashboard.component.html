@@ -1,0 +1,34 @@
+<section class="section">
+  <div class="wrap">
+    <h1 style="font-size:24px;margin-bottom:24px">Dashboard izvođača</h1>
+
+    <div class="dashboard-grid" *ngIf="!loading && performer; else loadingState">
+      <div class="dashboard-card">
+        <h3>Status profila</h3>
+        <p>{{ performer.status === 'approved' ? 'Odobren' : performer.status === 'pending' ? 'Na čekanju' : 'Odbijen' }}</p>
+      </div>
+      <div class="dashboard-card">
+        <h3>Pretplata</h3>
+        <p>{{ performer.subscription_status === 'active' ? 'Aktivna' : 'Nije aktivna' }}</p>
+      </div>
+      <div class="dashboard-card">
+        <h3>Ocena</h3>
+        <p>★ {{ performer.rating_avg.toFixed(1) }} ({{ performer.rating_count }})</p>
+      </div>
+    </div>
+
+    <div class="dashboard-nav">
+      <a routerLink="/moj-nalog/izvodjac/profil" class="dashboard-nav-item">Uredi profil</a>
+      <a routerLink="/moj-nalog/izvodjac/galerija" class="dashboard-nav-item">Galerija</a>
+      <a routerLink="/moj-nalog/izvodjac/video" class="dashboard-nav-item">Video</a>
+      <a routerLink="/moj-nalog/izvodjac/repertoar" class="dashboard-nav-item">Repertoar</a>
+      <a routerLink="/moj-nalog/izvodjac/termini" class="dashboard-nav-item">Slobodni termini</a>
+      <a routerLink="/moj-nalog/izvodjac/upiti" class="dashboard-nav-item">Primljeni upiti</a>
+      <a routerLink="/moj-nalog/izvodjac/pretplata" class="dashboard-nav-item">Pretplata</a>
+    </div>
+
+    <ng-template #loadingState>
+      <p class="muted">Učitavanje...</p>
+    </ng-template>
+  </div>
+</section>

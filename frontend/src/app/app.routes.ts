@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { PerformerGuard } from './guards/performer.guard';
 
 export const routes: Routes = [
   {
@@ -34,5 +35,19 @@ export const routes: Routes = [
     path: 'registracija',
     loadComponent: () =>
       import('./pages/register/register.component').then((m) => m.RegisterComponent),
+  },
+  {
+    path: 'moj-nalog/izvodjac',
+    canActivate: [PerformerGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/performer-dashboard/performer-dashboard.component').then(
+            (m) => m.PerformerDashboardComponent
+          ),
+      },
+    ],
   },
 ];
