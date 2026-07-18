@@ -21,6 +21,11 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'upit/:id',
+    loadComponent: () =>
+      import('./pages/inquiry/inquiry.component').then((m) => m.InquiryComponent),
+  },
+  {
     path: 'prijava',
     loadComponent: () =>
       import('./pages/login/login.component').then((m) => m.LoginComponent),

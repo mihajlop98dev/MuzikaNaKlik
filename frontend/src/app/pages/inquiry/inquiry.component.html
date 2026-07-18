@@ -1,0 +1,80 @@
+<section class="section">
+  <div class="wrap">
+    <div class="inquiry-layout" *ngIf="!submitted; else successState">
+      <div class="inquiry-form">
+        <h2>Pošalji upit</h2>
+        <p class="muted" style="margin-bottom:24px">Popunite formu i izvođač će vas kontaktirati.</p>
+
+        <div class="form-group">
+          <label>Ime i prezime *</label>
+          <input type="text" [(ngModel)]="form.full_name" class="form-input" placeholder="Vaše ime i prezime">
+        </div>
+
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" [(ngModel)]="form.email" class="form-input" placeholder="vas@email.com">
+        </div>
+
+        <div class="form-group">
+          <label>Telefon</label>
+          <input type="tel" [(ngModel)]="form.phone" class="form-input" placeholder="+381 6X XXX XXXX">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Vrsta događaja</label>
+            <select [(ngModel)]="form.event_type" class="form-input">
+              <option value="">Izaberite</option>
+              <option value="svadba">Svadba</option>
+              <option value="rodjendan">Rođendan</option>
+              <option value="krstenje">Krštenje</option>
+              <option value="korporativni">Korporativni događaj</option>
+              <option value="maturska">Maturska večer</option>
+              <option value="drugo">Drugo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Datum događaja</label>
+            <input type="date" [(ngModel)]="form.event_date" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Lokacija</label>
+          <input type="text" [(ngModel)]="form.location" class="form-input" placeholder="Grad, mesto">
+        </div>
+
+        <div class="form-group">
+          <label>Poruka</label>
+          <textarea [(ngModel)]="form.message" class="form-input form-textarea" placeholder="Vaša poruka..." rows="4"></textarea>
+        </div>
+
+        <p class="error-text" *ngIf="error">{{ error }}</p>
+
+        <button class="btn btn-gold" (click)="submit()" [disabled]="!form.full_name || !form.email">
+          Pošalji upit
+        </button>
+      </div>
+
+      <aside class="inquiry-sidebar" *ngIf="performer">
+        <div class="inquiry-performer-card">
+          <img [src]="'https://picsum.photos/seed/' + performer.id + '/200/200'" [alt]="performer.stage_name" class="inquiry-performer-img">
+          <h3>{{ performer.stage_name }}</h3>
+          <p class="performer-city">{{ performer.city }}</p>
+          <div class="performer-meta">
+            <span class="rating">★ {{ performer.rating_avg.toFixed(1) }}</span>
+            <span class="price">od {{ performer.price_from }} €</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <ng-template #successState>
+      <div class="success-message">
+        <h2>Upit je poslat!</h2>
+        <p class="muted">Izvođač će vas kontaktirati u najkraćem mogućem roku.</p>
+        <a routerLink="/" class="btn btn-gold">Nazad na početnu</a>
+      </div>
+    </ng-template>
+  </div>
+</section>
