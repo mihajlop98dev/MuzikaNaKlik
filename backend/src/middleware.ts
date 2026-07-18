@@ -15,6 +15,11 @@ const publicPaths = [
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Allow OPTIONS (CORS preflight)
+  if (request.method === 'OPTIONS') {
+    return new NextResponse(null, { status: 204 });
+  }
+
   if (publicPaths.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
