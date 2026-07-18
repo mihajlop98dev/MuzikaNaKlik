@@ -1,1 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0a0a0d;
+  --color-bg-alt: #101013;
+  --color-card: #17161b;
+  --color-card-border: #2a2620;
+  --color-gold: #d9ae5c;
+  --color-gold-soft: #e8c98a;
+  --font-sora: 'Sora', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --radius-default: 14px;
+}
+
+:root {
+  --bg: #0a0a0d;
+  --bg-alt: #101013;
+  --card: #17161b;
+  --card-border: #2a2620;
+  --gold: #d9ae5c;
+  --gold-soft: #e8c98a;
+  --text: #f3f2ef;
+  --text-muted: #9a989f;
+  --radius: 14px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+a { text-decoration: none; color: inherit; }
