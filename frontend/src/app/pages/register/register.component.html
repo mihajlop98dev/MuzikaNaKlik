@@ -1,0 +1,61 @@
+<section class="section">
+  <div class="wrap">
+    <div class="auth-form">
+      <h2>Registracija</h2>
+      <p class="muted">Napravi nalog i pronađi savršenu muziku.</p>
+
+      <div class="role-switch">
+        <button
+          class="role-btn"
+          [class.active]="role === 'client'"
+          (click)="role = 'client'"
+        >
+          Klijent
+        </button>
+        <button
+          class="role-btn"
+          [class.active]="role === 'performer'"
+          (click)="role = 'performer'"
+        >
+          Izvođač
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="email" class="form-input" placeholder="vas@email.com">
+      </div>
+
+      <div class="form-group">
+        <label>Lozinka</label>
+        <input type="password" [(ngModel)]="password" class="form-input" placeholder="Minimalno 6 karaktera">
+      </div>
+
+      <ng-container *ngIf="role === 'performer'">
+        <div class="form-group">
+          <label>Umetničko ime / Naziv benda</label>
+          <input type="text" [(ngModel)]="stageName" class="form-input" placeholder="Npr. Tropico Bend">
+        </div>
+
+        <div class="form-group">
+          <label>Tip izvođača</label>
+          <select [(ngModel)]="performerType" class="form-input">
+            <option value="singer">Pevač</option>
+            <option value="band">Bend</option>
+            <option value="dj">DJ</option>
+          </select>
+        </div>
+      </ng-container>
+
+      <p class="error-text" *ngIf="error">{{ error }}</p>
+
+      <button class="btn btn-gold auth-btn" (click)="register()" [disabled]="loading">
+        {{ loading ? 'Registracija...' : 'Registruj se' }}
+      </button>
+
+      <p class="auth-link">
+        Već imaš nalog? <a routerLink="/prijava">Prijavi se</a>
+      </p>
+    </div>
+  </div>
+</section>

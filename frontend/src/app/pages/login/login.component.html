@@ -1,0 +1,34 @@
+<section class="section">
+  <div class="wrap">
+    <div class="auth-form">
+      <h2>Prijava</h2>
+      <p class="muted">Dobrodošli nazad!</p>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="email" class="form-input" placeholder="vas@email.com">
+      </div>
+
+      <div class="form-group">
+        <label>Lozinka</label>
+        <input type="password" [(ngModel)]="password" class="form-input" placeholder="********">
+      </div>
+
+      <p class="error-text" *ngIf="error">{{ error }}</p>
+
+      <button class="btn btn-gold auth-btn" (click)="login()" [disabled]="loading">
+        {{ loading ? 'Prijavljivanje...' : 'Prijavi se' }}
+      </button>
+
+      <div class="auth-divider">ili</div>
+
+      <button class="btn auth-btn google-btn" (click)="loginWithGoogle()">
+        Nastavi sa Google-om
+      </button>
+
+      <p class="auth-link">
+        Nemaš nalog? <a routerLink="/registracija">Registruj se</a>
+      </p>
+    </div>
+  </div>
+</section>
