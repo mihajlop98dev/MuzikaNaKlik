@@ -66,6 +66,25 @@
   </div>
 </section>
 
+<section class="section alt" *ngIf="reviews.length > 0">
+  <div class="wrap">
+    <div class="section-head center">
+      <h2>Recenzije klijenata</h2>
+      <p class="muted">Šta naši klijenti kažu</p>
+    </div>
+
+    <div class="review-slider">
+      <div *ngFor="let r of reviews" class="review-card">
+        <div>
+          <h4>{{ r.profiles?.full_name || 'Klijent' }}</h4>
+          <p class="review-stars">{{ '★'.repeat(r.rating) }}{{ '☆'.repeat(5 - r.rating) }}</p>
+          <p class="review-text">{{ r.comment }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="cta">
   <div class="wrap cta-inner">
     <div>

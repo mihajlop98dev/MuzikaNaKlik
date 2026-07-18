@@ -1,0 +1,21 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Repertoar</h2>
+
+    <p class="muted" style="margin-bottom:16px">Dodajte pesme koje izvodite.</p>
+
+    <div class="media-add-form">
+      <input type="text" [(ngModel)]="newSong" class="form-input" placeholder="Naziv pesme" style="flex:1">
+      <button class="btn btn-gold" (click)="addSong()" [disabled]="!newSong.trim()">Dodaj</button>
+    </div>
+
+    <div class="repertoire-list" *ngIf="songs.length > 0">
+      <div *ngFor="let song of songs; let i = index" class="repertoire-item">
+        <span>{{ i + 1 }}. {{ song }}</span>
+        <button class="repertoire-remove" (click)="removeSong(i)">✕</button>
+      </div>
+    </div>
+
+    <p class="muted" *ngIf="songs.length === 0">Repertoar je prazan.</p>
+  </div>
+</section>

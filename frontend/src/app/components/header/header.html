@@ -20,7 +20,7 @@
 
     <div class="header-actions">
       <ng-container *ngIf="user$ | async as user; else guestLinks">
-        <a routerLink="/moj-nalog" class="link-plain">Moj nalog</a>
+        <a routerLink="/moji-upiti" class="link-plain">Moji upiti</a>
         <button class="btn btn-gold" (click)="signOut()">Odjava</button>
       </ng-container>
       <ng-template #guestLinks>

@@ -1,0 +1,22 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Izvođači na čekanju</h2>
+
+    <div *ngIf="loading" class="muted">Učitavanje...</div>
+
+    <div class="admin-table" *ngIf="!loading && performers.length > 0; else emptyState">
+      <div *ngFor="let p of performers" class="admin-row">
+        <div class="admin-row-info">
+          <strong>{{ p.stage_name }}</strong>
+          <span class="muted">{{ p.city }} • {{ p.type }}</span>
+        </div>
+        <div class="admin-row-actions">
+          <button class="btn" style="background:#2ecc71;color:#fff" (click)="approve(p.id)">Odobri</button>
+          <button class="btn" style="background:#e74c3c;color:#fff" (click)="reject(p.id)">Odbij</button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyState><p class="muted" *ngIf="!loading">Nema izvođača na čekanju.</p></ng-template>
+  </div>
+</section>

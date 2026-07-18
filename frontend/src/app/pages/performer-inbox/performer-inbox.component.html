@@ -1,0 +1,23 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Primljeni upiti</h2>
+
+    <div class="inquiry-list" *ngIf="!loading && inquiries.length > 0; else emptyState">
+      <div *ngFor="let i of inquiries" class="inquiry-card" (click)="markAsRead(i)">
+        <div class="inquiry-card-header">
+          <strong>{{ i.full_name }}</strong>
+          <span class="inquiry-status" [class.new]="i.status === 'new'">
+            {{ i.status === 'new' ? 'Novo' : i.status === 'read' ? 'Pročitano' : 'Odgovoreno' }}
+          </span>
+        </div>
+        <p class="inquiry-card-meta">{{ i.email }} • {{ i.event_type || 'Nije navedeno' }} • {{ i.event_date || 'Nije navedeno' }}</p>
+        <p class="inquiry-card-message">{{ i.message }}</p>
+        <p class="inquiry-card-date">{{ i.created_at | date }}</p>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <p class="muted" *ngIf="!loading">Nema primljenih upita.</p>
+    </ng-template>
+  </div>
+</section>

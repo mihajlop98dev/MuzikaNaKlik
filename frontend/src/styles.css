@@ -825,6 +825,20 @@ a { text-decoration: none; color: inherit; }
   }
 }
 
+.performer-edit-form {
+  max-width: 600px;
+}
+
+.success-banner {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -871,6 +885,214 @@ a { text-decoration: none; color: inherit; }
   .dashboard-nav { grid-template-columns: repeat(2, 1fr); }
 }
 
+.media-add-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.gallery-item {
+  position: relative;
+}
+
+.gallery-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(231, 76, 60, 0.9);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.video-item {
+  position: relative;
+}
+
 @media (max-width: 640px) {
   .dashboard-nav { grid-template-columns: 1fr; }
+}
+
+.repertoire-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.repertoire-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.repertoire-remove {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(231, 76, 60, 0.8);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.availability-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.availability-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.availability-item.booked {
+  opacity: .6;
+}
+
+.availability-status {
+  margin-left: auto;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.availability-item.booked .availability-status {
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+}
+
+.inquiry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inquiry-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+}
+
+.inquiry-card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.inquiry-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+}
+
+.inquiry-status.new {
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+}
+
+.inquiry-card-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.inquiry-card-message {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.inquiry-card-date {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.review-slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+.review-card {
+  flex: 0 0 340px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.review-card h4 { font-size: 15px; margin-bottom: 4px; }
+.review-stars { color: var(--gold); font-size: 14px; margin-bottom: 10px; }
+.review-text { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+.star-rating {
+  display: flex;
+  gap: 4px;
+}
+
+.star {
+  font-size: 28px;
+  color: var(--card-border);
+  cursor: pointer;
+}
+
+.star.active {
+  color: var(--gold);
+}
+
+.admin-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+
+.admin-row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-row-actions {
+  display: flex;
+  gap: 8px;
 }

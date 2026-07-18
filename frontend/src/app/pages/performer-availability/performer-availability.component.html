@@ -1,0 +1,28 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Slobodni termini</h2>
+
+    <div class="media-add-form">
+      <input type="date" [(ngModel)]="newDate" class="form-input" style="flex:1">
+      <select [(ngModel)]="newStatus" class="form-input" style="flex:0 0 140px">
+        <option value="free">Slobodan</option>
+        <option value="booked">Zauzet</option>
+      </select>
+      <button class="btn btn-gold" (click)="addDate()" [disabled]="!newDate">Dodaj</button>
+    </div>
+
+    <div class="availability-list" *ngIf="!loading && dates.length > 0; else emptyState">
+      <div *ngFor="let d of dates" class="availability-item" [class.booked]="d.status === 'booked'">
+        <span>{{ d.date }}</span>
+        <span class="availability-status" (click)="toggleStatus(d)">
+          {{ d.status === 'free' ? 'Slobodan' : 'Zauzet' }}
+        </span>
+        <button class="repertoire-remove" (click)="removeDate(d.id)">✕</button>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <p class="muted" *ngIf="!loading">Nema unetih termina.</p>
+    </ng-template>
+  </div>
+</section>

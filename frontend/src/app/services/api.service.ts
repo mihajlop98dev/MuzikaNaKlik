@@ -46,4 +46,12 @@ export class ApiService {
       )
     );
   }
+
+  delete<T>(path: string) {
+    return this.getHeaders().pipe(
+      switchMap((headers) =>
+        this.http.delete<T>(`${environment.apiUrl}${path}`, { headers })
+      )
+    );
+  }
 }

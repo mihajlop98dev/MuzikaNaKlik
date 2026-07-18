@@ -1,0 +1,29 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Video</h2>
+
+    <div class="media-add-form">
+      <input type="text" [(ngModel)]="newUrl" class="form-input" placeholder="YouTube URL" style="flex:1">
+      <button class="btn btn-gold" (click)="addVideo()" [disabled]="adding || !newUrl">
+        {{ adding ? 'Dodavanje...' : 'Dodaj' }}
+      </button>
+    </div>
+
+    <div class="video-grid" *ngIf="!loading && videos.length > 0; else emptyState">
+      <div *ngFor="let v of videos" class="video-item">
+        <div class="video-embed">
+          <iframe
+            [src]="getSafeUrl(v.url)"
+            frameborder="0"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <button class="gallery-remove" (click)="remove(v.id)">✕</button>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <p class="muted" *ngIf="!loading">Još uvek nema video zapisa.</p>
+    </ng-template>
+  </div>
+</section>

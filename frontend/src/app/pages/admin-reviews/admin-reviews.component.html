@@ -1,0 +1,19 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Recenzije</h2>
+    <div *ngIf="loading" class="muted">Učitavanje...</div>
+
+    <div class="admin-table" *ngIf="!loading">
+      <div *ngFor="let r of reviews" class="admin-row">
+        <div class="admin-row-info">
+          <strong>{{ r.profiles?.full_name || 'Nepoznat' }}</strong>
+          <span class="muted">★ {{ r.rating }} — {{ r.performers?.stage_name || 'Nepoznat' }}</span>
+          <p style="font-size:13px;color:var(--text-muted);margin-top:4px">{{ r.comment }}</p>
+        </div>
+        <button class="btn" (click)="toggleVisibility(r)">
+          {{ r.status === 'visible' ? 'Sakrij' : 'Prikaži' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

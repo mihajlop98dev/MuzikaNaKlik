@@ -1,0 +1,30 @@
+<section class="section">
+  <div class="wrap">
+    <div class="auth-form" *ngIf="!submitted; else successState">
+      <h2>Ostavi recenziju</h2>
+      <p class="muted" style="margin-bottom:24px">Podelite svoje iskustvo sa izvođačem.</p>
+
+      <div class="form-group">
+        <label>Ocena</label>
+        <div class="star-rating">
+          <span *ngFor="let s of [1,2,3,4,5]" class="star" [class.active]="s <= rating" (click)="rating = s">★</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Komentar</label>
+        <textarea [(ngModel)]="comment" class="form-input form-textarea" rows="4" placeholder="Vaše iskustvo..."></textarea>
+      </div>
+
+      <p class="error-text" *ngIf="error">{{ error }}</p>
+      <button class="btn btn-gold" (click)="submit()">Pošalji recenziju</button>
+    </div>
+
+    <ng-template #successState>
+      <div class="success-message">
+        <h2>Hvala na recenziji!</h2>
+        <p class="muted">Vaša recenzija će biti vidljiva nakon moderacije.</p>
+      </div>
+    </ng-template>
+  </div>
+</section>

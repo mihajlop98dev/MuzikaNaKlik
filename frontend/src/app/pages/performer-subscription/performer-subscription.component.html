@@ -1,0 +1,23 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Pretplata</h2>
+
+    <div class="inquiry-list" *ngIf="!loading && subscriptions.length > 0; else emptyState">
+      <div *ngFor="let s of subscriptions" class="inquiry-card">
+        <div class="inquiry-card-header">
+          <strong>{{ s.subscription_plans?.name || 'Paket' }}</strong>
+          <span>{{ s.amount / 100 }} €</span>
+        </div>
+        <p class="inquiry-card-meta">
+          {{ s.period_start }} — {{ s.period_end }}
+          • {{ s.status === 'active' ? 'Aktivna' : s.status === 'expired' ? 'Istekla' : 'Otkazana' }}
+          • {{ s.payment_method === 'manual' ? 'Ručno' : 'Stripe' }}
+        </p>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <p class="muted" *ngIf="!loading">Nemate aktivnu pretplatu. Kontaktirajte administratora.</p>
+    </ng-template>
+  </div>
+</section>

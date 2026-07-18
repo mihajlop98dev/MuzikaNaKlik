@@ -1,0 +1,21 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Moji upiti</h2>
+
+    <div class="inquiry-list" *ngIf="!loading && inquiries.length > 0; else emptyState">
+      <div *ngFor="let i of inquiries" class="inquiry-card">
+        <div class="inquiry-card-header">
+          <strong>{{ i.performer_id }}</strong>
+          <span class="inquiry-status">{{ i.status === 'new' ? 'Novo' : i.status === 'read' ? 'Pročitano' : 'Odgovoreno' }}</span>
+        </div>
+        <p class="inquiry-card-meta">{{ i.event_type || 'Nije navedeno' }} • {{ i.event_date || 'Nije navedeno' }}</p>
+        <p class="inquiry-card-message">{{ i.message }}</p>
+        <a [routerLink]="['/recenzija', i.performer_id, i.id]" class="link-arrow">Ostavi recenziju</a>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <p class="muted" *ngIf="!loading">Nemate poslatih upita.</p>
+    </ng-template>
+  </div>
+</section>

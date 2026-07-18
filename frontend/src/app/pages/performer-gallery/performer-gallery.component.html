@@ -1,0 +1,23 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Galerija</h2>
+
+    <div class="media-add-form">
+      <input type="text" [(ngModel)]="newUrl" class="form-input" placeholder="URL slike" style="flex:1">
+      <button class="btn btn-gold" (click)="addImage()" [disabled]="adding || !newUrl">
+        {{ adding ? 'Dodavanje...' : 'Dodaj' }}
+      </button>
+    </div>
+
+    <div class="gallery-grid" *ngIf="!loading && media.length > 0; else emptyState">
+      <div *ngFor="let m of media" class="gallery-item">
+        <img [src]="m.url" class="gallery-img">
+        <button class="gallery-remove" (click)="remove(m.id)">✕</button>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <p class="muted" *ngIf="!loading">Još uvek nema slika.</p>
+    </ng-template>
+  </div>
+</section>

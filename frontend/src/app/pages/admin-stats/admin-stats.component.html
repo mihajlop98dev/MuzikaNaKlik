@@ -1,0 +1,13 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Statistika</h2>
+
+    <div class="dashboard-grid" *ngIf="!loading">
+      <div class="dashboard-card"><h3>Ukupno izvođača</h3><p style="font-size:28px;font-weight:700">{{ stats.total_performers }}</p></div>
+      <div class="dashboard-card"><h3>Ukupno klijenata</h3><p style="font-size:28px;font-weight:700">{{ stats.total_clients }}</p></div>
+      <div class="dashboard-card"><h3>Na čekanju</h3><p style="font-size:28px;font-weight:700">{{ stats.pending_performers }}</p></div>
+      <div class="dashboard-card"><h3>Upiti</h3><p style="font-size:28px;font-weight:700">{{ stats.total_inquiries }}</p></div>
+      <div class="dashboard-card"><h3>Aktivne pretplate</h3><p style="font-size:28px;font-weight:700">{{ stats.active_subscriptions }}</p></div>
+    </div>
+  </div>
+</section>

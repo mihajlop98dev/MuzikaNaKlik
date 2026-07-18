@@ -1,0 +1,16 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Pretplate</h2>
+    <div *ngIf="loading" class="muted">Učitavanje...</div>
+
+    <div class="admin-table" *ngIf="!loading">
+      <div *ngFor="let s of subscriptions" class="admin-row">
+        <div class="admin-row-info">
+          <strong>{{ s.performers?.stage_name || 'Nepoznat' }}</strong>
+          <span class="muted">{{ s.subscription_plans?.name || 'Nepoznat paket' }} • {{ s.amount / 100 }} €</span>
+        </div>
+        <span>{{ s.status }} • {{ s.period_start }} — {{ s.period_end }}</span>
+      </div>
+    </div>
+  </div>
+</section>

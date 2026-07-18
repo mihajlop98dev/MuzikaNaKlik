@@ -1,0 +1,16 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Svi korisnici</h2>
+    <div *ngIf="loading" class="muted">Učitavanje...</div>
+
+    <div class="admin-table" *ngIf="!loading">
+      <div *ngFor="let u of users" class="admin-row">
+        <div class="admin-row-info">
+          <strong>{{ u.full_name || 'Nepoznat' }}</strong>
+          <span class="muted">{{ u.role }} • {{ u.id.slice(0, 8) }}...</span>
+        </div>
+        <span *ngIf="u.performers" class="muted">{{ u.performers.stage_name }}</span>
+      </div>
+    </div>
+  </div>
+</section>
