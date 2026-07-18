@@ -21,13 +21,12 @@ export class AdminPerformersComponent implements OnInit {
 
   async ngOnInit() {
     const { data: { session } } = await this.supabase.getSession();
-    const headers: Record<string, string> = {};
-    if (session?.access_token) {
-      headers['Authorization'] = `Bearer ${session.access_token}`;
-    }
-    this.http.get<any[]>(`${environment.apiUrl}/admin/performers/pending`, { headers }).subscribe({
+    const token = session?.access_token;
+    this.http.get<any[]>(`${environment.apiUrl}/admin/performers/pending`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
       next: (data) => { this.performers = data; this.loading = false; },
-      error: () => { this.loading = false; },
+      error: (err) => { console.error(err); this.loading = false; },
     });
   }
 

@@ -35,6 +35,20 @@ export class LoginComponent {
       return;
     }
 
+    const { data: { session } } = await this.supabase.getSession();
+    if (session?.user.id) {
+      const { data: profile } = await this.supabase.client
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile?.role === 'admin') {
+        this.router.navigate(['/admin']);
+        return;
+      }
+    }
+
     this.router.navigate(['/']);
   }
 
