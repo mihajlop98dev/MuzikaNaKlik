@@ -1,0 +1,32 @@
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a routerLink="/" class="logo">
+      <span class="logo-icon">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+          <circle cx="15" cy="15" r="14" stroke="#D9AE5C" stroke-width="1.4"/>
+          <path d="M10 20V11.5C10 10.5 10.7 9.8 11.6 9.6L17 8.4C17.7 8.2 18.4 8.7 18.4 9.5V17" stroke="#D9AE5C" stroke-width="1.4" stroke-linecap="round"/>
+          <circle cx="9.5" cy="20.5" r="2.1" stroke="#D9AE5C" stroke-width="1.4"/>
+          <circle cx="17.5" cy="18.5" r="2.1" stroke="#D9AE5C" stroke-width="1.4"/>
+        </svg>
+      </span>
+      <span class="logo-text">MUZIKA<br><em>NA KLIK</em></span>
+    </a>
+
+    <nav class="main-nav">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Početna</a>
+      <a routerLink="/izvodjaci" routerLinkActive="active">Izvođači</a>
+      <a routerLink="/kontakt" routerLinkActive="active">Kontakt</a>
+    </nav>
+
+    <div class="header-actions">
+      <ng-container *ngIf="user$ | async as user; else guestLinks">
+        <a routerLink="/moj-nalog" class="link-plain">Moj nalog</a>
+        <button class="btn btn-gold" (click)="signOut()">Odjava</button>
+      </ng-container>
+      <ng-template #guestLinks>
+        <a routerLink="/prijava" class="link-plain">Prijava</a>
+        <a routerLink="/registracija" class="btn btn-gold">Registracija</a>
+      </ng-template>
+    </div>
+  </div>
+</header>

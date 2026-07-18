@@ -41,3 +41,123 @@ h1, h2, h3, h4 {
 }
 
 a { text-decoration: none; color: inherit; }
+
+.wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 18px; }
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(10,10,13,.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 76px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(217,174,92,.08);
+}
+
+.logo-text {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1.15;
+  letter-spacing: .02em;
+}
+
+.logo-text em { font-style: normal; color: var(--gold); display: block; }
+.logo-text.small { font-size: 13px; }
+
+.main-nav {
+  display: flex;
+  gap: 32px;
+}
+
+.main-nav a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+}
+
+.main-nav a:hover { color: var(--text); }
+.main-nav a.active { color: var(--gold); border-color: var(--gold); }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-actions .btn { padding: 10px 20px; font-size: 13px; }
+
+.site-footer {
+  padding: 32px 0;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+.btn-gold {
+  background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+  color: #1b1409;
+}
+
+.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(217,174,92,.25); }
+
+.link-plain { font-size: 14px; color: var(--text); opacity: .85; }
+.link-plain:hover { opacity: 1; }
+
+@media (max-width: 960px) {
+  .main-nav { display: none; }
+}
+
+@media (max-width: 640px) {
+  .header-actions .link-plain { display: none; }
+}
