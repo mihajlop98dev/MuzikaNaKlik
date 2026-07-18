@@ -16,8 +16,15 @@ export class AdminPerformersComponent implements OnInit {
 
   ngOnInit() {
     this.api.get<any[]>('/admin/performers/pending').subscribe({
-      next: (data) => { this.performers = data; this.loading = false; },
-      error: () => (this.loading = false),
+      next: (data) => {
+        console.log('Admin performers data:', data);
+        this.performers = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Admin performers error:', err);
+        this.loading = false;
+      },
     });
   }
 
