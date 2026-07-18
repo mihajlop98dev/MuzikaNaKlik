@@ -1,0 +1,15 @@
+{
+  "name": "muzika-na-klik",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "cd frontend && ng serve --proxy-config proxy.conf.json",
+    "dev:backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:frontend": "cd frontend && ng build --configuration production",
+    "build": "npm run build:frontend && cp -r frontend/dist/muzika-na-klik/browser/* backend/public/",
+    "start": "cd backend && npm run start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
