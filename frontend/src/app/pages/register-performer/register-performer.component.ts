@@ -26,18 +26,21 @@ export class RegisterPerformerComponent implements OnInit {
   // Step 2 - About
   availableGenres: any[] = [];
   selectedGenres: string[] = [];
+  customGenres = '';
   description = '';
   priceFrom = 0;
   memberCount = 3;
-  travelRadius = 'whole_serbia';
+  travelRadius = '';
 
   // Step 2 - Language
   availableLanguages: any[] = [];
   selectedLanguages: string[] = [];
+  customLanguages = '';
 
   // Step 2 - Equipment
   availableEquipment: any[] = [];
   selectedEquipment: string[] = [];
+  customEquipment = '';
 
   // Step 3 - Profile image
   profileImageUrl = '';
@@ -159,6 +162,10 @@ export class RegisterPerformerComponent implements OnInit {
       .map(u => this.extractYoutubeId(u))
       .filter((id): id is string => id !== null);
 
+    const allGenres = [...this.selectedGenres, ...this.customGenres.split(',').map(g => g.trim()).filter(Boolean)];
+    const allLanguages = [...this.selectedLanguages, ...this.customLanguages.split(',').map(l => l.trim()).filter(Boolean)];
+    const allEquipment = [...this.selectedEquipment, ...this.customEquipment.split(',').map(e => e.trim()).filter(Boolean)];
+
     const payload = {
       email: this.email,
       password: this.password,
@@ -166,13 +173,13 @@ export class RegisterPerformerComponent implements OnInit {
       type: this.performerType,
       city: this.city,
       phone: this.phone,
-      genres: this.selectedGenres,
+      genres: allGenres,
       description: this.description,
       price_from: this.priceFrom || null,
       member_count: this.memberCount,
-      travel_radius: this.travelRadius,
-      equipment: this.selectedEquipment,
-      languages: this.selectedLanguages,
+      travel_radius: this.travelRadius || null,
+      equipment: allEquipment,
+      languages: allLanguages,
       audio_url: this.audioUrl || null,
       profile_image_url: this.profileImageUrl || null,
       videos: validVideos,

@@ -67,6 +67,7 @@
               class="chip" [class.active]="selectedGenres.includes(g.name)"
               (click)="toggleGenre(g.name)">{{ g.name }}</button>
           </div>
+          <input type="text" [(ngModel)]="customGenres" class="form-input" style="margin-top:8px" placeholder="Ostali žanrovi (odvojeni zarezom)">
         </div>
 
         <div class="form-group">
@@ -76,6 +77,7 @@
               class="chip" [class.active]="selectedLanguages.includes(l.name)"
               (click)="toggleLanguage(l.name)">{{ l.name }}</button>
           </div>
+          <input type="text" [(ngModel)]="customLanguages" class="form-input" style="margin-top:8px" placeholder="Ostali jezici (odvojeni zarezom)">
         </div>
 
         <div class="form-group">
@@ -85,24 +87,17 @@
               class="chip" [class.active]="selectedEquipment.includes(e.name)"
               (click)="toggleEquipment(e.name)">{{ e.name }}</button>
           </div>
+          <input type="text" [(ngModel)]="customEquipment" class="form-input" style="margin-top:8px" placeholder="Ostala oprema (odvojena zarezom)">
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>Broj članova</label>
-            <input type="number" [(ngModel)]="memberCount" class="form-input" min="1" max="20">
-          </div>
-          <div class="form-group">
-            <label>Radijus putovanja</label>
-            <select [(ngModel)]="travelRadius" class="form-input">
-              <option value="city_only">Samo grad</option>
-              <option value="up_to_50km">Do 50km</option>
-              <option value="up_to_100km">Do 100km</option>
-              <option value="up_to_200km">Do 200km</option>
-              <option value="whole_serbia">Cela Srbija</option>
-              <option value="whole_region">Region (ex-YU)</option>
-            </select>
-          </div>
+        <div class="form-group">
+          <label>Radijus putovanja</label>
+          <input type="text" [(ngModel)]="travelRadius" class="form-input" placeholder="Npr. Cela Srbija, ceo svet, do 100km...">
+        </div>
+
+        <div class="form-group">
+          <label>Broj članova</label>
+          <input type="number" [(ngModel)]="memberCount" class="form-input" min="1" max="99">
         </div>
 
         <div class="form-group">
