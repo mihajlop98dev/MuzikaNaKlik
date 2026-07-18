@@ -1,0 +1,53 @@
+<section class="section">
+  <div class="wrap">
+    <div class="performers-layout">
+      <aside class="filters-sidebar">
+        <h3>Filteri</h3>
+
+        <div class="filter-group">
+          <label>Grad</label>
+          <input type="text" [(ngModel)]="filters.city" placeholder="Npr. Beograd" class="filter-input">
+        </div>
+
+        <div class="filter-group">
+          <label>Tip izvođača</label>
+          <select [(ngModel)]="filters.type" class="filter-input">
+            <option value="">Svi</option>
+            <option value="singer">Pevač</option>
+            <option value="band">Bend</option>
+            <option value="dj">DJ</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Sortiranje</label>
+          <select [(ngModel)]="filters.sort" class="filter-input">
+            <option value="popularity">Popularnost</option>
+            <option value="price_asc">Cena: rastuće</option>
+            <option value="price_desc">Cena: opadajuće</option>
+            <option value="rating">Ocena</option>
+          </select>
+        </div>
+
+        <button class="btn btn-gold" (click)="applyFilters()">Primeni filtere</button>
+      </aside>
+
+      <div class="performers-content">
+        <p class="muted" *ngIf="!loading">Prikazano {{ performers.length }} od {{ totalCount }} izvođača</p>
+
+        <div class="performer-grid" *ngIf="!loading && performers.length > 0; else emptyState">
+          <app-performer-card *ngFor="let p of performers" [performer]="p" />
+        </div>
+        <ng-template #emptyState>
+          <p class="muted" *ngIf="!loading">Nema izvođača koji odgovaraju kriterijumima.</p>
+        </ng-template>
+
+        <div class="pagination" *ngIf="totalPages() > 1">
+          <button class="btn" [disabled]="page <= 1" (click)="changePage(-1)">Prethodna</button>
+          <span class="page-info">Stranica {{ page }} od {{ totalPages() }}</span>
+          <button class="btn" [disabled]="page >= totalPages()" (click)="changePage(1)">Sledeća</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
