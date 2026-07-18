@@ -1,0 +1,29 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Omiljeni izvođači</h2>
+
+    <div class="performer-grid" *ngIf="!loading && favorites.length > 0; else emptyState">
+      <div *ngFor="let fav of favorites" class="performer-card">
+        <div class="performer-media">
+          <img [src]="fav.performers?.profile_image_url || 'https://picsum.photos/seed/' + fav.performer_id + '/380/460'" [alt]="fav.performers?.stage_name">
+        </div>
+        <div class="performer-body">
+          <h3>{{ fav.performers?.stage_name || 'Nepoznat' }}</h3>
+          <p class="performer-city">{{ fav.performers?.city }}</p>
+          <div class="performer-meta">
+            <span class="rating">★ {{ fav.performers?.rating_avg?.toFixed(1) || '0.0' }}</span>
+            <span class="price">od {{ fav.performers?.price_from || 0 }} €</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <a [routerLink]="['/izvodjac', fav.performer_id]" class="btn btn-gold" style="flex:1;padding:8px">Pogledaj</a>
+            <button class="btn" (click)="remove(fav.performer_id)" style="border:1px solid var(--card-border)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <p class="muted" *ngIf="!loading">Nemate omiljenih izvođača.</p>
+    </ng-template>
+  </div>
+</section>

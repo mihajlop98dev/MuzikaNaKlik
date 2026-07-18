@@ -38,6 +38,11 @@ export const routes: Routes = [
       import('./pages/register/register.component').then((m) => m.RegisterComponent),
   },
   {
+    path: 'registracija-izvodjac',
+    loadComponent: () =>
+      import('./pages/register-performer/register-performer.component').then((m) => m.RegisterPerformerComponent),
+  },
+  {
     path: 'admin',
     canActivate: [AdminGuard],
     children: [
@@ -93,6 +98,10 @@ export const routes: Routes = [
   {
     path: 'moji-upiti',
     loadComponent: () => import('./pages/client-inquiries/client-inquiries.component').then(m => m.ClientInquiriesComponent),
+  },
+  {
+    path: 'omiljeni',
+    loadComponent: () => import('./pages/favorites/favorites.component').then(m => m.FavoritesComponent),
   },
   {
     path: 'recenzija/:performerId/:inquiryId',

@@ -9,6 +9,12 @@ export interface Performer {
   rating_avg: number;
   rating_count: number;
   avatar_url?: string;
+  profile_image_url?: string;
+  audio_url?: string;
+  member_count?: number;
+  travel_radius?: number;
+  equipment?: string;
+  languages?: string[];
   status: string;
   subscription_status: string;
 }
@@ -47,6 +53,7 @@ export interface Review {
   client_id: string;
   rating: number;
   comment: string;
+  reply?: string;
   status: 'visible' | 'hidden';
   created_at: string;
 }

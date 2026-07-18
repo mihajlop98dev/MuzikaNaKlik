@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PerformerService } from '../../services/performer.service';
+import { ApiService } from '../../services/api.service';
+import { SupabaseService } from '../../services/supabase.service';
 import { Performer, PerformerMedia, Review } from '../../models/performer.model';
 
 @Component({
@@ -16,13 +18,20 @@ export class PerformerProfileComponent implements OnInit {
   reviews: Review[] = [];
   activeTab = 'about';
   loading = true;
+  isLoggedIn = false;
+  favorited = false;
 
   constructor(
     private route: ActivatedRoute,
-    private performerService: PerformerService
+    private performerService: PerformerService,
+    private api: ApiService,
+    private supabase: SupabaseService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    const { data: { session } } = await this.supabase.getSession();
+    this.isLoggedIn = !!session;
+
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
 
@@ -53,5 +62,23 @@ export class PerformerProfileComponent implements OnInit {
   getYoutubeId(url: string): string | null {
     const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
     return match ? match[1] : null;
+  }
+
+  toggleFavorite() {
+    if (!this.isLoggedIn || !this.performer) return;
+    this.api.post('/favorites', { performer_id: this.performer.id }).subscribe({
+      next: (res: any) => { this.favorited = res.favorited; },
+    });
+  }
+
+  shareProfile() {
+    if (navigator.share) {
+      navigator.share({
+        title: this.performer?.stage_name,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+    }
   }
 }

@@ -1,7 +1,7 @@
 <article class="performer-card">
   <div class="performer-media">
     <span class="badge" *ngIf="featured">Top izbor</span>
-    <button class="fav" (click)="$event.stopPropagation()" aria-label="Sačuvaj">♡</button>
+    <button class="fav" [class.favorited]="favorited" (click)="toggleFavorite($event)" aria-label="Sačuvaj">{{ favorited ? '♥' : '♡' }}</button>
     <img [src]="performer.avatar_url || 'https://picsum.photos/seed/' + performer.id + '/380/460'" [alt]="performer.stage_name">
   </div>
   <div class="performer-body">

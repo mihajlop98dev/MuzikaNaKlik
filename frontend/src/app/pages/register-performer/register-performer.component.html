@@ -1,0 +1,172 @@
+<section class="section">
+  <div class="wrap">
+    <div class="auth-form" *ngIf="step < 5">
+      <!-- Progress bar -->
+      <div class="step-progress">
+        <div class="step-dot" [class.active]="step >= 1">1</div>
+        <div class="step-line" [class.active]="step >= 2"></div>
+        <div class="step-dot" [class.active]="step >= 2">2</div>
+        <div class="step-line" [class.active]="step >= 3"></div>
+        <div class="step-dot" [class.active]="step >= 3">3</div>
+        <div class="step-line" [class.active]="step >= 4"></div>
+        <div class="step-dot" [class.active]="step >= 4">4</div>
+      </div>
+
+      <p class="step-label" style="text-align:center;margin-bottom:24px">
+        <ng-container [ngSwitch]="step">
+          <span *ngSwitchCase="1">Korak 1 — Osnovni podaci</span>
+          <span *ngSwitchCase="2">Korak 2 — O bendu</span>
+          <span *ngSwitchCase="3">Korak 3 — Slika profila</span>
+          <span *ngSwitchCase="4">Korak 4 — Video</span>
+        </ng-container>
+      </p>
+
+      <!-- STEP 1: Basic info -->
+      <ng-container *ngIf="step === 1">
+        <div class="form-group">
+          <label>Naziv benda / Umetničko ime *</label>
+          <input type="text" [(ngModel)]="stageName" class="form-input" placeholder="Npr. Tropico Bend">
+        </div>
+
+        <div class="form-group">
+          <label>Tip izvođača</label>
+          <select [(ngModel)]="performerType" class="form-input">
+            <option value="band">Bend</option>
+            <option value="singer">Pevač</option>
+            <option value="dj">DJ</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Grad</label>
+          <input type="text" [(ngModel)]="city" class="form-input" placeholder="Npr. Beograd">
+        </div>
+
+        <div class="form-group">
+          <label>Broj telefona</label>
+          <input type="tel" [(ngModel)]="phone" class="form-input" placeholder="+381 6X XXX XXXX">
+        </div>
+
+        <div class="form-group">
+          <label>Email (za login) *</label>
+          <input type="email" [(ngModel)]="email" class="form-input" placeholder="vas@email.com">
+        </div>
+
+        <div class="form-group">
+          <label>Lozinka *</label>
+          <input type="password" [(ngModel)]="password" class="form-input" placeholder="Minimalno 6 karaktera">
+        </div>
+      </ng-container>
+
+      <!-- STEP 2: About -->
+      <ng-container *ngIf="step === 2">
+        <div class="form-group">
+          <label>Žanrovi * (izaberite bar jedan)</label>
+          <div class="chip-group">
+            <button *ngFor="let g of availableGenres"
+              class="chip" [class.active]="selectedGenres.includes(g.name)"
+              (click)="toggleGenre(g.name)">{{ g.name }}</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Jezici izvođenja</label>
+          <div class="chip-group">
+            <button *ngFor="let l of availableLanguages"
+              class="chip" [class.active]="selectedLanguages.includes(l.name)"
+              (click)="toggleLanguage(l.name)">{{ l.name }}</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Oprema koju posedujete</label>
+          <div class="chip-group">
+            <button *ngFor="let e of availableEquipment"
+              class="chip" [class.active]="selectedEquipment.includes(e.name)"
+              (click)="toggleEquipment(e.name)">{{ e.name }}</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Broj članova</label>
+            <input type="number" [(ngModel)]="memberCount" class="form-input" min="1" max="20">
+          </div>
+          <div class="form-group">
+            <label>Radijus putovanja</label>
+            <select [(ngModel)]="travelRadius" class="form-input">
+              <option value="city_only">Samo grad</option>
+              <option value="up_to_50km">Do 50km</option>
+              <option value="up_to_100km">Do 100km</option>
+              <option value="up_to_200km">Do 200km</option>
+              <option value="whole_serbia">Cela Srbija</option>
+              <option value="whole_region">Region (ex-YU)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Opis (O nama)</label>
+          <textarea [(ngModel)]="description" class="form-input form-textarea" rows="4" placeholder="Kratak opis benda..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Cena od (€)</label>
+          <input type="number" [(ngModel)]="priceFrom" class="form-input" min="0" placeholder="Npr. 500">
+        </div>
+      </ng-container>
+
+      <!-- STEP 3: Profile image -->
+      <ng-container *ngIf="step === 3">
+        <div class="form-group">
+          <label>URL slike profila</label>
+          <input type="text" [(ngModel)]="profileImageUrl" class="form-input" placeholder="https://...">
+          <p class="muted" style="font-size:12px;margin-top:4px">Unesite URL link do slike. Kasnije možete menjati u dashboard-u.</p>
+        </div>
+
+        <div class="form-group">
+          <label>Audio isečak (Spotify/SoundCloud)</label>
+          <input type="text" [(ngModel)]="audioUrl" class="form-input" placeholder="https://open.spotify.com/...">
+          <p class="muted" style="font-size:12px;margin-top:4px">Opciono: link ka Spotify ili SoundCloud pesmi/plejlisti.</p>
+        </div>
+      </ng-container>
+
+      <!-- STEP 4: Video -->
+      <ng-container *ngIf="step === 4">
+        <div class="form-group">
+          <label>YouTube video linkovi</label>
+          <p class="muted" style="font-size:12px;margin-bottom:12px">Dodajte jedan ili više YouTube linkova.</p>
+          <div *ngFor="let url of videoUrls; let i = index" class="video-input-row">
+            <div style="flex:1">
+              <input type="text" [(ngModel)]="videoUrls[i]" class="form-input" placeholder="https://www.youtube.com/watch?v=...">
+              <p class="error-text" *ngIf="videoErrors[i]" style="font-size:12px;margin-top:2px">{{ videoErrors[i] }}</p>
+            </div>
+            <button *ngIf="videoUrls.length > 1" class="btn" (click)="removeVideoField(i)" style="color:#e74c3c">✕</button>
+          </div>
+          <button class="btn" (click)="addVideoField()" style="border:1px solid var(--card-border);margin-top:8px">+ Dodaj još video</button>
+        </div>
+      </ng-container>
+
+      <!-- Error message -->
+      <p class="error-text" *ngIf="error">{{ error }}</p>
+
+      <!-- Navigation -->
+      <div class="step-nav">
+        <button *ngIf="step > 1" class="btn" (click)="prevStep()" style="border:1px solid var(--card-border)">Nazad</button>
+        <button *ngIf="step < 4" class="btn btn-gold" (click)="nextStep()">Dalje</button>
+        <button *ngIf="step === 4" class="btn btn-gold" (click)="submit()" [disabled]="loading">
+          {{ loading ? 'Slanje...' : 'Pošalji na odobrenje' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="auth-form" *ngIf="step === 5">
+      <div class="success-message">
+        <h2>Profil je poslat na odobrenje!</h2>
+        <p class="muted">Vaš profil je poslat administratoru na pregled. Obavestićemo vas email-om čim bude odobren.</p>
+        <a routerLink="/" class="btn btn-gold" style="margin-top:24px">Nazad na početnu</a>
+      </div>
+    </div>
+  </div>
+</section>

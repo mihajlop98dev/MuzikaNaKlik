@@ -10,7 +10,8 @@
         </div>
         <div class="profile-actions">
           <a routerLink="/upit/{{ performer.id }}" class="btn btn-gold">Pošalji upit</a>
-          <button class="btn fav-btn">♡ Sačuvaj</button>
+          <button class="btn fav-btn" [class.favorited]="favorited" (click)="toggleFavorite()">{{ favorited ? '♥' : '♡' }} {{ favorited ? 'Sačuvano' : 'Sačuvaj' }}</button>
+          <button class="btn fav-btn" (click)="shareProfile()">↗</button>
         </div>
       </div>
     </div>
@@ -35,6 +36,28 @@
         <div class="about-section">
           <h3>Žanrovi</h3>
           <p>{{ performer.genres?.join(', ') || 'Nije navedeno.' }}</p>
+        </div>
+        <div class="about-section" *ngIf="performer.audio_url">
+          <h3>Audio primer</h3>
+          <audio controls style="width:100%">
+            <source [src]="performer.audio_url" type="audio/mpeg">
+          </audio>
+        </div>
+        <div class="about-section" *ngIf="performer.member_count">
+          <h3>Broj članova</h3>
+          <p>{{ performer.member_count }}</p>
+        </div>
+        <div class="about-section" *ngIf="performer.travel_radius">
+          <h3>Radijus putovanja</h3>
+          <p>{{ performer.travel_radius }} km</p>
+        </div>
+        <div class="about-section" *ngIf="performer.equipment">
+          <h3>Oprema</h3>
+          <p>{{ performer.equipment }}</p>
+        </div>
+        <div class="about-section" *ngIf="performer.languages?.length">
+          <h3>Jezici</h3>
+          <p>{{ performer.languages.join(', ') }}</p>
         </div>
       </div>
 
@@ -64,6 +87,10 @@
               <strong>{{ r.rating }}/5</strong>
             </div>
             <p>{{ r.comment }}</p>
+            <div *ngIf="r.reply" class="review-reply">
+              <strong>Odgovor izvođača:</strong>
+              <p>{{ r.reply }}</p>
+            </div>
           </div>
         </div>
       </div>

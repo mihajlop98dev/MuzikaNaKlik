@@ -13,9 +13,7 @@ import { SupabaseService } from '../../services/supabase.service';
 export class RegisterComponent {
   email = '';
   password = '';
-  role: 'client' | 'performer' = 'client';
-  stageName = '';
-  performerType = '';
+  fullName = '';
   error = '';
   loading = false;
 
@@ -25,24 +23,14 @@ export class RegisterComponent {
   ) {}
 
   async register() {
-    if (!this.email || !this.password) return;
-
+    if (!this.email || !this.password || !this.fullName) return;
     this.loading = true;
     this.error = '';
 
-    const metadata: Record<string, any> = { role: this.role };
-
-    if (this.role === 'performer') {
-      if (!this.stageName) {
-        this.error = 'Umetničko ime je obavezno.';
-        this.loading = false;
-        return;
-      }
-      metadata['stage_name'] = this.stageName;
-      metadata['type'] = this.performerType || 'singer';
-    }
-
-    const { error } = await this.supabase.signUp(this.email, this.password, metadata);
+    const { error } = await this.supabase.signUp(this.email, this.password, {
+      role: 'client',
+      full_name: this.fullName,
+    });
 
     if (error) {
       this.error = error.message;
