@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
-import { ApiService } from '../../services/api.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
   selector: 'app-admin-performers',
@@ -12,30 +14,37 @@ export class AdminPerformersComponent implements OnInit {
   performers: any[] = [];
   loading = true;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private http: HttpClient,
+    private supabase: SupabaseService
+  ) {}
 
-  ngOnInit() {
-    this.api.get<any[]>('/admin/performers/pending').subscribe({
-      next: (data) => {
-        console.log('Admin performers data:', data);
-        this.performers = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Admin performers error:', err);
-        this.loading = false;
-      },
+  async ngOnInit() {
+    const { data: { session } } = await this.supabase.getSession();
+    const headers: Record<string, string> = {};
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
+    this.http.get<any[]>(`${environment.apiUrl}/admin/performers/pending`, { headers }).subscribe({
+      next: (data) => { this.performers = data; this.loading = false; },
+      error: () => { this.loading = false; },
     });
   }
 
-  approve(id: string) {
-    this.api.put(`/admin/performers/${id}`, { status: 'approved' }).subscribe({
+  async approve(id: string) {
+    const { data: { session } } = await this.supabase.getSession();
+    const headers: Record<string, string> = {};
+    if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
+    this.http.put(`${environment.apiUrl}/admin/performers/${id}`, { status: 'approved' }, { headers }).subscribe({
       next: () => { this.performers = this.performers.filter((p) => p.id !== id); },
     });
   }
 
-  reject(id: string) {
-    this.api.put(`/admin/performers/${id}`, { status: 'rejected' }).subscribe({
+  async reject(id: string) {
+    const { data: { session } } = await this.supabase.getSession();
+    const headers: Record<string, string> = {};
+    if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
+    this.http.put(`${environment.apiUrl}/admin/performers/${id}`, { status: 'rejected' }, { headers }).subscribe({
       next: () => { this.performers = this.performers.filter((p) => p.id !== id); },
     });
   }
