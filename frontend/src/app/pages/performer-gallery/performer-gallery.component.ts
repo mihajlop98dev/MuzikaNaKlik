@@ -34,6 +34,31 @@ export class PerformerGalleryComponent implements OnInit {
     }
   }
 
+  async uploadImage(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('bucket', 'profiles');
+    formData.append('folder', 'gallery');
+
+    this.adding = true;
+    this.api.post<{ url: string }>('/storage/upload', formData).subscribe({
+      next: (res) => {
+        this.api.post('/performers/me/media', { type: 'image', url: res.url }).subscribe({
+          next: (data: any) => {
+            this.media.push(data);
+            this.adding = false;
+          },
+          error: () => (this.adding = false),
+        });
+      },
+      error: () => (this.adding = false),
+    });
+  }
+
   addImage() {
     if (!this.newUrl) return;
     this.adding = true;

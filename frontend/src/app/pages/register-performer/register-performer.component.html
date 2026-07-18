@@ -119,9 +119,17 @@
       <!-- STEP 3: Profile image -->
       <ng-container *ngIf="step === 3">
         <div class="form-group">
-          <label>URL slike profila</label>
+          <label>Slika profila</label>
+          <div class="upload-area" (click)="fileInput.click()">
+            <input #fileInput type="file" accept="image/*" (change)="uploadImage($event)">
+            <p *ngIf="!profileImageUrl" class="muted">Kliknite za upload slike</p>
+            <img *ngIf="profileImageUrl" [src]="profileImageUrl" class="upload-preview">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>URL slike (alternativno)</label>
           <input type="text" [(ngModel)]="profileImageUrl" class="form-input" placeholder="https://...">
-          <p class="muted" style="font-size:12px;margin-top:4px">Unesite URL link do slike. Kasnije možete menjati u dashboard-u.</p>
         </div>
 
         <div class="form-group">

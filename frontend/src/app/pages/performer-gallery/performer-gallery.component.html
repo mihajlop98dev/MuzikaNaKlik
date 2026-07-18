@@ -3,6 +3,11 @@
     <h2 style="font-size:24px;margin-bottom:24px">Galerija</h2>
 
     <div class="media-add-form">
+      <div class="upload-area" (click)="fileInput.click()" style="flex:1;padding:20px">
+        <input #fileInput type="file" accept="image/*" (change)="uploadImage($event)">
+        <p class="muted" *ngIf="!adding">Kliknite za upload slike</p>
+        <p class="muted" *ngIf="adding">Uploadovanje...</p>
+      </div>
       <input type="text" [(ngModel)]="newUrl" class="form-input" placeholder="URL slike" style="flex:1">
       <button class="btn btn-gold" (click)="addImage()" [disabled]="adding || !newUrl">
         {{ adding ? 'Dodavanje...' : 'Dodaj' }}

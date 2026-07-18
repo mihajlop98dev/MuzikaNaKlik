@@ -131,6 +131,25 @@ export class RegisterPerformerComponent implements OnInit {
     if (this.step > 1) this.step--;
   }
 
+  async uploadImage(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('bucket', 'profiles');
+
+    this.api.post<{ url: string }>('/storage/upload', formData).subscribe({
+      next: (res) => {
+        this.profileImageUrl = res.url;
+      },
+      error: () => {
+        this.error = 'Greška pri uploadu slike. Pokušajte ponovo.';
+      },
+    });
+  }
+
   async submit() {
     if (!this.validateStep()) return;
     this.loading = true;

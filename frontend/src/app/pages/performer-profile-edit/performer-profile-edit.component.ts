@@ -27,6 +27,7 @@ export class PerformerProfileEditComponent implements OnInit {
     genres: '',
     description: '',
     price_from: 0,
+    profile_image_url: '',
   };
 
   constructor(
@@ -48,6 +49,7 @@ export class PerformerProfileEditComponent implements OnInit {
           this.form.genres = (data.genres || []).join(', ');
           this.form.description = data.description || '';
           this.form.price_from = data.price_from || 0;
+          this.form.profile_image_url = data.profile_image_url || '';
           this.loading = false;
         },
         error: () => {
@@ -56,6 +58,25 @@ export class PerformerProfileEditComponent implements OnInit {
         },
       });
     }
+  }
+
+  async uploadImage(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('bucket', 'profiles');
+
+    this.api.post<{ url: string }>('/storage/upload', formData).subscribe({
+      next: (res) => {
+        this.form.profile_image_url = res.url;
+      },
+      error: () => {
+        this.error = 'Greška pri uploadu slike.';
+      },
+    });
   }
 
   async save() {
@@ -70,6 +91,7 @@ export class PerformerProfileEditComponent implements OnInit {
       genres: this.form.genres.split(',').map((g: string) => g.trim()).filter(Boolean),
       description: this.form.description,
       price_from: this.form.price_from,
+      profile_image_url: this.form.profile_image_url || null,
     }).subscribe({
       next: () => {
         this.success = true;

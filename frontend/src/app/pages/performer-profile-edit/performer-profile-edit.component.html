@@ -7,6 +7,15 @@
       <p class="error-text" *ngIf="error">{{ error }}</p>
 
       <div class="form-group">
+        <label>Slika profila</label>
+        <div class="upload-area" (click)="fileInput.click()">
+          <input #fileInput type="file" accept="image/*" (change)="uploadImage($event)">
+          <p *ngIf="!form.profile_image_url" class="muted">Kliknite za upload slike</p>
+          <img *ngIf="form.profile_image_url" [src]="form.profile_image_url" class="upload-preview">
+        </div>
+      </div>
+
+      <div class="form-group">
         <label>Umetničko ime / Naziv benda</label>
         <input type="text" [(ngModel)]="form.stage_name" class="form-input">
       </div>

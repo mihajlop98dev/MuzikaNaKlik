@@ -1220,3 +1220,30 @@ a { text-decoration: none; color: inherit; }
   font-weight: 700;
   margin-left: 4px;
 }
+
+.upload-area {
+  border: 2px dashed var(--card-border);
+  border-radius: var(--radius);
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s ease;
+}
+
+.upload-area:hover {
+  border-color: var(--gold);
+}
+
+.upload-area input {
+  display: none;
+}
+
+.upload-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 12px auto;
+  display: block;
+  border: 3px solid var(--gold);
+}
