@@ -7,6 +7,9 @@ const publicPaths = [
   '/api/auth/register',
   '/api/performers',
   '/api/inquiries',
+  '/api/genres',
+  '/api/equipment',
+  '/api/languages',
 ];
 
 export function middleware(request: NextRequest) {
