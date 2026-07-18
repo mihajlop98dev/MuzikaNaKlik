@@ -6,3 +6,4 @@ dist/
 .env.production
 backend/public/*
 !backend/public/.gitkeep
+.DS_Store
