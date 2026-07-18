@@ -1,0 +1,16 @@
+<article class="performer-card">
+  <div class="performer-media">
+    <span class="badge" *ngIf="featured">Top izbor</span>
+    <button class="fav" (click)="$event.stopPropagation()" aria-label="Sačuvaj">♡</button>
+    <img [src]="performer.avatar_url || 'https://picsum.photos/seed/' + performer.id + '/380/460'" [alt]="performer.stage_name">
+  </div>
+  <div class="performer-body">
+    <h3>{{ performer.stage_name }}</h3>
+    <p class="performer-city">{{ performer.city }}</p>
+    <div class="performer-meta">
+      <span class="rating">★ {{ performer.rating_avg.toFixed(1) }} <em>({{ performer.rating_count }})</em></span>
+      <span class="price">od {{ performer.price_from }} €</span>
+    </div>
+    <a routerLink="/izvodjac/{{ performer.id }}" class="performer-link">Pogledaj profil</a>
+  </div>
+</article>

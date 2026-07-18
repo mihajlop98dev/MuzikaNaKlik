@@ -1,0 +1,76 @@
+<section class="hero">
+  <div class="hero-media" aria-hidden="true"></div>
+  <div class="hero-scrim" aria-hidden="true"></div>
+
+  <div class="wrap hero-inner">
+    <h1 class="hero-title">Pronađi idealnu<br><span class="accent">muziku</span> za svaku<br>proslavu.</h1>
+    <p class="hero-sub">Pevači, bendovi i DJ-evi za svadbe, rođendane, krštenja, korporativne događaje i druge proslave.</p>
+
+    <app-search-panel />
+
+    <div class="quick-filters">
+      <a routerLink="/izvodjaci" [queryParams]="{event_type: 'svadba'}" class="chip">Svadba</a>
+      <a routerLink="/izvodjaci" [queryParams]="{event_type: 'rodjendan'}" class="chip">Rođendan</a>
+      <a routerLink="/izvodjaci" [queryParams]="{event_type: 'krstenje'}" class="chip">Krštenje</a>
+      <a routerLink="/izvodjaci" [queryParams]="{event_type: 'korporativni'}" class="chip">Korporativni događaj</a>
+      <a routerLink="/izvodjaci" [queryParams]="{event_type: 'maturska'}" class="chip">Maturska večer</a>
+      <a routerLink="/izvodjaci" [queryParams]="{event_type: 'drugo'}" class="chip">Drugo</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="izvodjaci">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Istaknuti izvođači</h2>
+      <a routerLink="/izvodjaci" class="link-arrow">Pogledaj sve →</a>
+    </div>
+
+    <div class="performer-grid" *ngIf="!loading; else loadingState">
+      <app-performer-card
+        *ngFor="let p of featuredPerformers"
+        [performer]="p"
+        [featured]="true"
+      />
+    </div>
+    <ng-template #loadingState>
+      <p class="muted">Učitavanje...</p>
+    </ng-template>
+  </div>
+</section>
+
+<section class="section alt" id="kako">
+  <div class="wrap">
+    <div class="section-head center">
+      <h2>Kako funkcioniše?</h2>
+      <p class="muted">Tri jednostavna koraka do savršene muzike</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">1</span>
+        <h3>Pretraži</h3>
+        <p>Izaberi grad, datum, vrstu događaja i pronađi idealne izvođače.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <h3>Pošalji upit</h3>
+        <p>Pošalji upit izvođačima koji ti se najviše dopadaju.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <h3>Rezerviši</h3>
+        <p>Dogovori detalje i rezerviši izvođača za svoju proslavu.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap cta-inner">
+    <div>
+      <h2>Spremni da pronađete idealnu muziku<br>za vašu proslavu?</h2>
+      <a routerLink="/izvodjaci" class="btn btn-gold">Pronađi muziku</a>
+    </div>
+  </div>
+</section>

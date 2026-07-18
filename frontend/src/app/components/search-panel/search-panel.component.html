@@ -1,0 +1,34 @@
+<form class="search-panel" (ngSubmit)="search()">
+  <div class="field">
+    <label>Izaberi grad</label>
+    <div class="field-control">
+      <input type="text" placeholder="Npr. Beograd" [(ngModel)]="city" name="city">
+    </div>
+  </div>
+  <div class="field">
+    <label>Vrsta događaja</label>
+    <div class="field-control">
+      <select [(ngModel)]="eventType" name="eventType">
+        <option value="">Sve</option>
+        <option value="svadba">Svadba</option>
+        <option value="rodjendan">Rođendan</option>
+        <option value="krstenje">Krštenje</option>
+        <option value="korporativni">Korporativni</option>
+        <option value="maturska">Maturska večer</option>
+        <option value="drugo">Drugo</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label>Izvođač</label>
+    <div class="field-control">
+      <select [(ngModel)]="performerType" name="performerType">
+        <option value="">Svi</option>
+        <option value="singer">Pevač</option>
+        <option value="band">Bend</option>
+        <option value="dj">DJ</option>
+      </select>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-gold search-btn">Pronađi muziku</button>
+</form>
