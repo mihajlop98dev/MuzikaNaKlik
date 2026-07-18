@@ -56,9 +56,18 @@ export class RegisterPerformerComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.api.get<any[]>('/genres').subscribe(data => this.availableGenres = data);
-    this.api.get<any[]>('/languages').subscribe(data => this.availableLanguages = data);
-    this.api.get<any[]>('/equipment').subscribe(data => this.availableEquipment = data);
+    this.api.get<any[]>('/genres').subscribe(data => {
+      this.availableGenres = data;
+      console.log('Genres loaded:', data);
+    });
+    this.api.get<any[]>('/languages').subscribe(data => {
+      this.availableLanguages = data;
+      console.log('Languages loaded:', data);
+    });
+    this.api.get<any[]>('/equipment').subscribe(data => {
+      this.availableEquipment = data;
+      console.log('Equipment loaded:', data);
+    });
   }
 
   toggleGenre(name: string) {
