@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { createClient } from '@supabase/supabase-js';
+
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -13,13 +13,12 @@ export async function GET(request: Request) {
   const { data: profile } = await supabaseAdmin.from('profiles').select('role').eq('id', user.id).single();
   if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
   const [performers, clients, pendingPerformers, inquiries, activeSubscriptions] = await Promise.all([
-    supabase.from('performers').select('*', { count: 'exact', head: true }).eq('status', 'approved'),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'client'),
-    supabase.from('performers').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabase.from('inquiries').select('*', { count: 'exact', head: true }),
-    supabase.from('subscriptions').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+    supabaseAdmin.from('performers').select('*', { count: 'exact', head: true }).eq('status', 'approved'),
+    supabaseAdmin.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'client'),
+    supabaseAdmin.from('performers').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+    supabaseAdmin.from('inquiries').select('*', { count: 'exact', head: true }),
+    supabaseAdmin.from('subscriptions').select('*', { count: 'exact', head: true }).eq('status', 'active'),
   ]);
 
   return NextResponse.json({

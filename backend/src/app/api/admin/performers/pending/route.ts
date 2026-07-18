@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { createClient } from '@supabase/supabase-js';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -13,7 +12,6 @@ export async function GET(request: Request) {
   const { data: profile } = await supabaseAdmin.from('profiles').select('role').eq('id', user.id).single();
   if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
-  const { data } = await supabase.from('performers').select('*').eq('status', 'pending');
+  const { data } = await supabaseAdmin.from('performers').select('*').eq('status', 'pending');
   return NextResponse.json(data || []);
 }
