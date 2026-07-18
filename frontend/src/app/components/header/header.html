@@ -22,6 +22,10 @@
       <ng-container *ngIf="user$ | async as user; else guestLinks">
         <a routerLink="/omiljeni" class="link-plain">Omiljeni</a>
         <a routerLink="/moji-upiti" class="link-plain">Moji upiti</a>
+        <a routerLink="/notifikacije" class="link-plain">
+          Notifikacije
+          <span *ngIf="unreadCount > 0" class="notif-badge">{{ unreadCount }}</span>
+        </a>
         <button class="btn btn-gold" (click)="signOut()">Odjava</button>
       </ng-container>
       <ng-template #guestLinks>

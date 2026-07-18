@@ -37,6 +37,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    await supabase.from('notifications').insert({
+      user_id: performer_id,
+      type: 'new_inquiry',
+      title: 'Novi upit',
+      message: `Imate novi upit od ${full_name} za ${event_type || 'događaj'}.`,
+      link: '/moj-nalog/izvodjac/upiti',
+    });
+
     return NextResponse.json(data, { status: 201 });
   } catch (_err) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

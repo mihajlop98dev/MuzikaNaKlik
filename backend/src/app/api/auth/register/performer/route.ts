@@ -71,6 +71,22 @@ export async function POST(request: Request) {
       await supabase.from('performer_media').insert(videoRecords);
     }
 
+    const { data: adminProfiles } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('role', 'admin');
+
+    if (adminProfiles) {
+      const adminNotifications = adminProfiles.map((admin: { id: string }) => ({
+        user_id: admin.id,
+        type: 'new_performer',
+        title: 'Novi izvođač na čekanju',
+        message: `${stage_name} se registrovao i čeka odobrenje.`,
+        link: '/admin/izvodjaci',
+      }));
+      await supabase.from('notifications').insert(adminNotifications);
+    }
+
     return NextResponse.json({
       user: { id: authData.user.id, email: authData.user.email, role: 'performer' },
     }, { status: 201 });

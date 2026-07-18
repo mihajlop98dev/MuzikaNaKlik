@@ -1206,3 +1206,17 @@ a { text-decoration: none; color: inherit; }
   align-items: flex-start;
   margin-bottom: 8px;
 }
+
+.notif-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #1b1409;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 4px;
+}

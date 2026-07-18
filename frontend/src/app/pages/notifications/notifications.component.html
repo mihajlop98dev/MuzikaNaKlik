@@ -1,0 +1,20 @@
+<section class="section">
+  <div class="wrap">
+    <h2 style="font-size:24px;margin-bottom:24px">Notifikacije</h2>
+
+    <div class="inquiry-list" *ngIf="!loading && notifications.length > 0; else emptyState">
+      <div *ngFor="let n of notifications" class="inquiry-card" [style.opacity]="n.is_read ? '0.6' : '1'" (click)="markRead(n.id)">
+        <div class="inquiry-card-header">
+          <strong>{{ n.title }}</strong>
+          <span style="font-size:12px;color:var(--text-muted)">{{ n.created_at | date }}</span>
+        </div>
+        <p class="inquiry-card-message">{{ n.message }}</p>
+        <a *ngIf="n.link" [routerLink]="n.link" class="link-arrow" style="margin-top:8px;display:inline-block">Pogledaj →</a>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <p class="muted" *ngIf="!loading">Nema notifikacija.</p>
+    </ng-template>
+  </div>
+</section>

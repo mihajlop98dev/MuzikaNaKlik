@@ -96,6 +96,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent),
   },
   {
+    path: 'notifikacije',
+    loadComponent: () => import('./pages/notifications/notifications.component').then(m => m.NotificationsComponent),
+  },
+  {
     path: 'moji-upiti',
     loadComponent: () => import('./pages/client-inquiries/client-inquiries.component').then(m => m.ClientInquiriesComponent),
   },
