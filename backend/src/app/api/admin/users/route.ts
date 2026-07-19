@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 
   let query = supabaseAdmin
     .from('profiles')
-    .select('id, full_name, email, phone, role, created_at')
+    .select('id, full_name, phone, role, created_at')
     .order('created_at', { ascending: false });
 
   if (role) {
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
   }
 
   if (search) {
-    query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);
+    query = query.ilike('full_name', `%${search}%`);
   }
 
   const { data: profiles, error } = await query;
