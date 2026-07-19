@@ -2,7 +2,11 @@
   <div class="wrap">
     <h2 style="font-size:24px;margin-bottom:24px">Galerija</h2>
 
-    <div class="media-add-form">
+    <p *ngIf="!loading" style="font-size:13px;color:var(--text-muted);margin-bottom:12px">
+      Slika: {{ media.length }} / {{ maxImages === 999 ? '∞' : maxImages }}
+    </p>
+
+    <div class="media-add-form" *ngIf="!atLimit; else limitReached">
       <div class="upload-area" (click)="fileInput.click()" style="flex:1;padding:20px">
         <input #fileInput type="file" accept="image/*" (change)="uploadImage($event)">
         <p class="muted" *ngIf="!adding">Kliknite za upload slike</p>
@@ -13,6 +17,10 @@
         {{ adding ? 'Dodavanje...' : 'Dodaj' }}
       </button>
     </div>
+
+    <ng-template #limitReached>
+      <p class="muted" style="margin-bottom:12px">Dostigli ste limit od {{ maxImages }} slika za vaš paket. Nadogradite paket za više.</p>
+    </ng-template>
 
     <div class="gallery-grid" *ngIf="!loading && media.length > 0; else emptyState">
       <div *ngFor="let m of media" class="gallery-item">

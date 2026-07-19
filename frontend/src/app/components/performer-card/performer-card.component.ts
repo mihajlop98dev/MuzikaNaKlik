@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Performer } from '../../models/performer.model';
@@ -19,7 +19,8 @@ export class PerformerCardComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private supabase: SupabaseService
+    private supabase: SupabaseService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -31,7 +32,7 @@ export class PerformerCardComponent implements OnInit {
     event.stopPropagation();
     if (!this.isLoggedIn) return;
     this.api.post('/favorites', { performer_id: this.performer.id }).subscribe({
-      next: (res: any) => { this.favorited = res.favorited; },
+      next: (res: any) => { this.favorited = res.favorited; this.cdr.detectChanges(); },
     });
   }
 }

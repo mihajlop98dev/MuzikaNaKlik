@@ -12,6 +12,7 @@ export async function GET() {
     .select('*')
     .eq('status', 'approved')
     .eq('subscription_status', 'active')
+    .eq('has_top_pick_badge', true)
     .order('rating_count', { ascending: false })
     .limit(6);
 

@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     if (isComplete) {
       const { data: plan } = await supabaseAdmin
         .from('subscription_plans')
-        .select('price')
+        .select('price, max_images, max_videos, has_repertoire, has_availability, has_review_reply, has_featured_badge, has_top_pick_badge, has_verified_badge, search_priority')
         .eq('id', plan_id)
         .single();
 
@@ -96,6 +96,18 @@ export async function POST(request: Request) {
         period_end: periodEnd.toISOString().split('T')[0],
         status: 'active',
       });
+
+      await supabaseAdmin.from('performers').update({
+        search_priority: plan?.search_priority ?? 0,
+        plan_max_images: plan?.max_images ?? 1,
+        plan_max_videos: plan?.max_videos ?? 1,
+        has_repertoire: plan?.has_repertoire ?? false,
+        has_availability: plan?.has_availability ?? false,
+        has_review_reply: plan?.has_review_reply ?? false,
+        has_featured_badge: plan?.has_featured_badge ?? false,
+        has_top_pick_badge: plan?.has_top_pick_badge ?? false,
+        has_verified_badge: plan?.has_verified_badge ?? false,
+      }).eq('id', authData.user.id);
     }
 
     const { data: adminProfiles } = await supabase

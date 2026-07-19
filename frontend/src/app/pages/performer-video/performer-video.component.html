@@ -2,12 +2,20 @@
   <div class="wrap">
     <h2 style="font-size:24px;margin-bottom:24px">Video</h2>
 
-    <div class="media-add-form">
+    <p *ngIf="!loading" style="font-size:13px;color:var(--text-muted);margin-bottom:12px">
+      Video: {{ videos.length }} / {{ maxVideos === 999 ? '∞' : maxVideos }}
+    </p>
+
+    <div class="media-add-form" *ngIf="!atLimit; else videoLimitReached">
       <input type="text" [(ngModel)]="newUrl" class="form-input" placeholder="YouTube URL" style="flex:1">
       <button class="btn btn-gold" (click)="addVideo()" [disabled]="adding || !newUrl">
         {{ adding ? 'Dodavanje...' : 'Dodaj' }}
       </button>
     </div>
+
+    <ng-template #videoLimitReached>
+      <p class="muted" style="margin-bottom:12px">Dostigli ste limit od {{ maxVideos }} videa za vaš paket. Nadogradite paket za više.</p>
+    </ng-template>
 
     <div class="video-grid" *ngIf="!loading && videos.length > 0; else emptyState">
       <div *ngFor="let v of videos" class="video-item">

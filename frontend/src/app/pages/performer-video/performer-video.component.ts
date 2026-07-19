@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -18,22 +18,34 @@ export class PerformerVideoComponent implements OnInit {
   loading = true;
   newUrl = '';
   adding = false;
+  maxVideos = 999;
+  myProfile: any = null;
 
   constructor(
     private supabase: SupabaseService,
     private performerService: PerformerService,
     private api: ApiService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
     const { data: { session } } = await this.supabase.getSession();
     if (session?.user.id) {
-      this.performerService.getMedia(session.user.id).subscribe((data) => {
-        this.videos = data.filter((m) => m.type === 'video');
-        this.loading = false;
+      this.performerService.getMyProfile().subscribe((profile) => {
+        this.myProfile = profile;
+        this.maxVideos = profile.plan_max_videos || 999;
+        this.performerService.getMedia(session.user.id).subscribe((data) => {
+          this.videos = data.filter((m) => m.type === 'video');
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
       });
     }
+  }
+
+  get atLimit(): boolean {
+    return this.videos.length >= this.maxVideos;
   }
 
   addVideo() {
@@ -44,8 +56,9 @@ export class PerformerVideoComponent implements OnInit {
         this.videos.push(data);
         this.newUrl = '';
         this.adding = false;
+        this.cdr.detectChanges();
       },
-      error: () => (this.adding = false),
+      error: () => { this.adding = false; this.cdr.detectChanges(); },
     });
   }
 
@@ -53,6 +66,7 @@ export class PerformerVideoComponent implements OnInit {
     this.api.delete(`/performers/me/media?id=${id}`).subscribe({
       next: () => {
         this.videos = this.videos.filter((v) => v.id !== id);
+        this.cdr.detectChanges();
       },
     });
   }

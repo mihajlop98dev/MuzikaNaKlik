@@ -1,0 +1,9 @@
+ALTER TABLE performers ADD COLUMN IF NOT EXISTS search_priority int DEFAULT 0;
+ALTER TABLE performers ADD COLUMN IF NOT EXISTS plan_max_images int DEFAULT 1;
+ALTER TABLE performers ADD COLUMN IF NOT EXISTS plan_max_videos int DEFAULT 1;
+ALTER TABLE performers ADD COLUMN IF NOT EXISTS has_repertoire boolean DEFAULT false;
+ALTER TABLE performers ADD COLUMN IF NOT EXISTS has_availability boolean DEFAULT false;
+ALTER TABLE performers ADD COLUMN IF NOT EXISTS has_review_reply boolean DEFAULT false;
+ALTER TABLE performers ADD COLUMN IF NOT EXISTS has_featured_badge boolean DEFAULT false;
+ALTER TABLE performers ADD COLUMN IF NOT EXISTS has_top_pick_badge boolean DEFAULT false;
+ALTER TABLE performers ADD COLUMN IF NOT EXISTS has_verified_badge boolean DEFAULT false;

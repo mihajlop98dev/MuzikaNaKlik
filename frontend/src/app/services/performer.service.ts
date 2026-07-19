@@ -29,6 +29,10 @@ export class PerformerService {
     return this.api.get<Performer>(`/performers/${id}`);
   }
 
+  getMyProfile(): Observable<Performer> {
+    return this.api.get<Performer>('/performers/me');
+  }
+
   getMedia(performerId: string) {
     return from(this.supabase.client
       .from('performer_media')

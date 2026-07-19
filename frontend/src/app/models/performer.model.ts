@@ -17,6 +17,15 @@ export interface Performer {
   languages?: string[];
   status: string;
   subscription_status: string;
+  search_priority?: number;
+  plan_max_images?: number;
+  plan_max_videos?: number;
+  has_repertoire?: boolean;
+  has_availability?: boolean;
+  has_review_reply?: boolean;
+  has_featured_badge?: boolean;
+  has_top_pick_badge?: boolean;
+  has_verified_badge?: boolean;
 }
 
 export interface PerformerMedia {

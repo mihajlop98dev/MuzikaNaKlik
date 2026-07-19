@@ -39,6 +39,9 @@ export async function GET(request: Request) {
     query = query.lte('price_from', parseInt(priceMax));
   }
 
+  // Always sort by search_priority first (highest plan first), then by user's sort
+  query = query.order('search_priority', { ascending: false });
+
   switch (sort) {
     case 'price_asc':
       query = query.order('price_from', { ascending: true });
@@ -61,5 +64,5 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ data: data || [], count: count || 0 });
+  return NextResponse.json({ data: data || [], count: count || 0, sort: sort });
 }
