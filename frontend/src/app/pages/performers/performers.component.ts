@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -38,7 +38,8 @@ export class PerformersComponent implements OnInit {
   constructor(
     private performerService: PerformerService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -53,13 +54,16 @@ export class PerformersComponent implements OnInit {
   search() {
     this.loading = true;
     const searchParams: any = { ...this.filters, page: this.page, limit: this.limit };
+    if (searchParams.price_min === 0) delete searchParams.price_min;
+    if (searchParams.price_max === 5000) delete searchParams.price_max;
     this.performerService.search(searchParams).subscribe({
       next: (result) => {
         this.performers = result.data;
         this.totalCount = result.count;
         this.loading = false;
+        this.cdr.detectChanges();
       },
-      error: () => (this.loading = false),
+      error: () => { this.loading = false; this.cdr.detectChanges(); },
     });
   }
 
