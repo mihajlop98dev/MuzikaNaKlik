@@ -10,6 +10,7 @@ const publicPaths = [
   '/api/genres',
   '/api/equipment',
   '/api/languages',
+  '/api/subscription-plans',
 ];
 
 export function middleware(request: NextRequest) {
