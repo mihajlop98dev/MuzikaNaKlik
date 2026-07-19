@@ -1,4 +1,4 @@
-INSERT INTO subscription_plans (name, price, is_active) VALUES
-  ('Basic', 1990, true),
-  ('Featured', 3990, true),
-  ('Premium', 7990, true);
+INSERT INTO subscription_plans (name, price, is_active, description, max_images, max_videos, has_repertoire, has_availability, has_review_reply, has_featured_badge, has_top_pick_badge, has_featured_home, has_verified_badge, has_monthly_report, has_priority_support, search_priority) VALUES
+  ('Basic', 999, true, 'Profil vidljiv u pretrazi, osnovni opis, do 1 slike i 1 video, prijem upita, cenovnik', 1, 1, false, false, false, false, false, false, false, false, false, 0),
+  ('Standard', 1999, true, 'Sve iz Basic paketa plus do 10 slika, 5 video snimaka, repertoar, kalendar termina, prioritet u pretrazi, bedž Istaknuto, odgovor na recenzije', 10, 5, true, true, true, true, false, false, false, false, false, 1),
+  ('Premium', 3499, true, 'Sve iz Standard paketa plus neograničena galerija i video, bedž Top izbor, najviši prioritet u pretrazi, featured na naslovnoj, verifikacija, mesečni izveštaj, prioritetna podrška', 999, 999, true, true, true, false, true, true, true, true, true, 2);
