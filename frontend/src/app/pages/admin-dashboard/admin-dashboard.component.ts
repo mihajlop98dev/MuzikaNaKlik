@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
@@ -13,12 +13,15 @@ export class AdminDashboardComponent implements OnInit {
   stats: any = {};
   loading = true;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.api.get<any>('/admin/stats').subscribe({
-      next: (data) => { this.stats = data; this.loading = false; },
-      error: () => (this.loading = false),
+      next: (data) => { this.stats = data; this.loading = false; this.cdr.detectChanges(); },
+      error: () => { this.loading = false; this.cdr.detectChanges(); },
     });
   }
 }

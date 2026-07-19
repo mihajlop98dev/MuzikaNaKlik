@@ -1,21 +1,53 @@
-<section class="section">
-  <div class="wrap">
-    <h1 style="font-size:24px;margin-bottom:24px">Admin Dashboard</h1>
+<div>
+  <h1 style="font-size:24px;margin-bottom:24px">Dashboard</h1>
 
-    <div class="dashboard-grid" *ngIf="!loading">
-      <div class="dashboard-card"><h3>Izvođači</h3><p>{{ stats.total_performers }}</p></div>
-      <div class="dashboard-card"><h3>Klijenti</h3><p>{{ stats.total_clients }}</p></div>
-      <div class="dashboard-card"><h3>Na čekanju</h3><p>{{ stats.pending_performers }}</p></div>
-      <div class="dashboard-card"><h3>Upiti (mesec)</h3><p>{{ stats.total_inquiries }}</p></div>
-      <div class="dashboard-card"><h3>Aktivne pretplate</h3><p>{{ stats.active_subscriptions }}</p></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:32px">
+    <div class="dashboard-card" *ngIf="!loading">
+      <h3 style="font-size:13px;color:#888;margin:0 0 8px">Izvođači</h3>
+      <p style="font-size:32px;font-weight:700;margin:0">{{ stats.total_performers }}</p>
     </div>
-
-    <div class="dashboard-nav">
-      <a routerLink="/admin/izvodjaci" class="dashboard-nav-item">Izvođači na čekanju</a>
-      <a routerLink="/admin/korisnici" class="dashboard-nav-item">Svi korisnici</a>
-      <a routerLink="/admin/pretplate" class="dashboard-nav-item">Pretplate</a>
-      <a routerLink="/admin/recenzije" class="dashboard-nav-item">Recenzije</a>
-      <a routerLink="/admin/statistika" class="dashboard-nav-item">Statistika</a>
+    <div class="dashboard-card" *ngIf="!loading">
+      <h3 style="font-size:13px;color:#888;margin:0 0 8px">Klijenti</h3>
+      <p style="font-size:32px;font-weight:700;margin:0">{{ stats.total_clients }}</p>
+    </div>
+    <div class="dashboard-card" *ngIf="!loading">
+      <h3 style="font-size:13px;color:#888;margin:0 0 8px">Na čekanju</h3>
+      <p style="font-size:32px;font-weight:700;margin:0">{{ stats.pending_performers }}</p>
+    </div>
+    <div class="dashboard-card" *ngIf="!loading">
+      <h3 style="font-size:13px;color:#888;margin:0 0 8px">Upiti</h3>
+      <p style="font-size:32px;font-weight:700;margin:0">{{ stats.total_inquiries }}</p>
+    </div>
+    <div class="dashboard-card" *ngIf="!loading">
+      <h3 style="font-size:13px;color:#888;margin:0 0 8px">Aktivne pretplate</h3>
+      <p style="font-size:32px;font-weight:700;margin:0">{{ stats.active_subscriptions }}</p>
     </div>
   </div>
-</section>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px">
+    <a routerLink="/admin/korisnici" class="dashboard-card" style="display:block;text-decoration:none;color:inherit">
+      <h3 style="font-size:16px;margin:0 0 4px">👥 Korisnici</h3>
+      <p style="margin:0;color:#888;font-size:13px">Pregled i upravljanje korisnicima</p>
+    </a>
+    <a routerLink="/admin/pretplate" class="dashboard-card" style="display:block;text-decoration:none;color:inherit">
+      <h3 style="font-size:16px;margin:0 0 4px">💳 Pretplate</h3>
+      <p style="margin:0;color:#888;font-size:13px">Upravljanje pretplatama izvođača</p>
+    </a>
+    <a routerLink="/admin/recenzije" class="dashboard-card" style="display:block;text-decoration:none;color:inherit">
+      <h3 style="font-size:16px;margin:0 0 4px">⭐ Recenzije</h3>
+      <p style="margin:0;color:#888;font-size:13px">Moderacija recenzija</p>
+    </a>
+    <a routerLink="/admin/izvestaji" class="dashboard-card" style="display:block;text-decoration:none;color:inherit">
+      <h3 style="font-size:16px;margin:0 0 4px">📈 Izveštaji</h3>
+      <p style="margin:0;color:#888;font-size:13px">Grafikoni i statistika</p>
+    </a>
+    <a routerLink="/admin/aktivnosti" class="dashboard-card" style="display:block;text-decoration:none;color:inherit">
+      <h3 style="font-size:16px;margin:0 0 4px">📋 Aktivnosti</h3>
+      <p style="margin:0;color:#888;font-size:13px">Dnevnik aktivnosti</p>
+    </a>
+    <a routerLink="/admin/podesavanja" class="dashboard-card" style="display:block;text-decoration:none;color:inherit">
+      <h3 style="font-size:16px;margin:0 0 4px">⚙️ Podešavanja</h3>
+      <p style="margin:0;color:#888;font-size:13px">Podešavanje planova</p>
+    </a>
+  </div>
+</div>

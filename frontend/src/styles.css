@@ -851,6 +851,11 @@ a { text-decoration: none; color: inherit; }
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
   padding: 20px;
+  transition: box-shadow 0.2s;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .dashboard-card h3 {

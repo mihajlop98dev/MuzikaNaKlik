@@ -45,6 +45,10 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [AdminGuard],
+    loadComponent: () =>
+      import('./layouts/admin-layout/admin-layout.component').then(
+        (m) => m.AdminLayoutComponent
+      ),
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'admin', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -84,10 +88,24 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'statistika',
+        path: 'izvestaji',
         loadComponent: () =>
           import('./pages/admin-stats/admin-stats.component').then(
             (m) => m.AdminStatsComponent
+          ),
+      },
+      {
+        path: 'aktivnosti',
+        loadComponent: () =>
+          import('./pages/admin-activity/admin-activity.component').then(
+            (m) => m.AdminActivityComponent
+          ),
+      },
+      {
+        path: 'podesavanja',
+        loadComponent: () =>
+          import('./pages/admin-settings/admin-settings.component').then(
+            (m) => m.AdminSettingsComponent
           ),
       },
     ],

@@ -1,0 +1,26 @@
+<div class="admin-layout">
+  <aside class="admin-sidebar" [class.open]="sidebarOpen">
+    <div class="sidebar-logo">
+      <a routerLink="/admin/dashboard">
+        Muzika Na Klik<br>
+        <small>Admin panel</small>
+      </a>
+      <button class="hamburger" (click)="toggleSidebar()">☰</button>
+    </div>
+    <nav class="sidebar-nav">
+      <a *ngFor="let item of navItems"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: item.path === '/admin/dashboard'}">
+        <span>{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button (click)="signOut()">Izloguj se</button>
+    </div>
+  </aside>
+  <main class="admin-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
