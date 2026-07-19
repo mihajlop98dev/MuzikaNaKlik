@@ -66,6 +66,7 @@ export class AdminUsersComponent implements OnInit {
     this.selectedUser = { ...user };
     this.subPlanId = '';
     this.subBillingPeriod = 'monthly';
+    this.cdr.detectChanges();
   }
 
   closeModal() {
