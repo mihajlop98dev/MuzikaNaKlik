@@ -1,3 +1,8 @@
+:host-context(.admin-layout) .site-header,
+.site-header {
+  display: none !important;
+}
+
 .admin-layout {
   display: flex;
   min-height: 100vh;

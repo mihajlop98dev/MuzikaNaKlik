@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { NgFor, NgClass } from '@angular/common';
 import { SupabaseService } from '../../services/supabase.service';
 
@@ -13,14 +13,18 @@ import { SupabaseService } from '../../services/supabase.service';
 export class AdminLayoutComponent {
   sidebarOpen = false;
 
-  constructor(private supabase: SupabaseService) {}
+  constructor(
+    private supabase: SupabaseService,
+    private router: Router
+  ) {}
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
   }
 
-  signOut() {
-    this.supabase.signOut();
+  async signOut() {
+    await this.supabase.signOut();
+    this.router.navigate(['/prijava']);
   }
 
   navItems = [
