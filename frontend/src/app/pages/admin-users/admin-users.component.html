@@ -34,7 +34,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let u of filtered" (click)="openUser(u)" style="border-top:1px solid #f0f0f0;cursor:pointer"
-        (mouseenter)="$event.currentTarget.style.background='#f8f9fa'" (mouseleave)="$event.currentTarget.style.background=''">
+        (mouseenter)="hoverRow($event, true)" (mouseleave)="hoverRow($event, false)">
         <td style="padding:12px 16px;font-weight:500">{{ u.stage_name || u.full_name || '-' }}</td>
         <td style="padding:12px 16px;color:#555">{{ u.phone || '-' }}</td>
         <td style="padding:12px 16px">

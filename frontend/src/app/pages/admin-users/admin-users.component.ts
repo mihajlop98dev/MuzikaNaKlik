@@ -52,6 +52,11 @@ export class AdminUsersComponent implements OnInit {
     this.fetchUsers();
   }
 
+  hoverRow(event: MouseEvent, enter: boolean) {
+    const el = event.currentTarget as HTMLElement;
+    if (el) el.style.background = enter ? '#f8f9fa' : '';
+  }
+
   setRole(role: string) {
     this.roleFilter = role;
     this.fetchUsers();
