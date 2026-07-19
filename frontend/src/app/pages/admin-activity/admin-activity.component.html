@@ -4,21 +4,21 @@
   <div style="display:flex;gap:12px;margin-bottom:20px">
     <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="fetchActivities()"
       placeholder="Pretraži aktivnosti..."
-      style="flex:1;max-width:400px;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px">
-    <button class="btn" (click)="fetchActivities()" style="background:#1a1a2e;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer">Pretraži</button>
+      style="flex:1;max-width:400px;padding:10px 14px;border:1px solid var(--card-border);border-radius:8px;font-size:14px;background:var(--card);color:var(--text)">
+    <button class="btn" (click)="fetchActivities()" style="background:var(--gold);color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer">Pretraži</button>
   </div>
 
   <div *ngIf="loading" class="muted">Učitavanje...</div>
   <div *ngIf="!loading && activities.length === 0" class="muted">Nema aktivnosti.</div>
 
-  <div *ngIf="!loading && activities.length > 0" style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
-    <div *ngFor="let a of activities" style="padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center">
+  <div *ngIf="!loading && activities.length > 0" style="background:var(--card);border-radius:12px;overflow:hidden">
+    <div *ngFor="let a of activities" style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center">
       <div>
-        <strong style="font-size:14px">{{ a.user_email }}</strong>
-        <span style="margin:0 8px;color:#888">—</span>
-        <span style="font-size:14px">{{ a.action }}</span>
+        <strong style="font-size:14px;color:var(--text)">{{ a.user_email }}</strong>
+        <span style="margin:0 8px;color:var(--text-muted)">—</span>
+        <span style="font-size:14px;color:var(--text)">{{ a.action }}</span>
       </div>
-      <div style="font-size:13px;color:#888">{{ a.created_at | date:'dd.MM.yyyy HH:mm' }}</div>
+      <div style="font-size:13px;color:var(--text-muted)">{{ a.created_at | date:'dd.MM.yyyy HH:mm' }}</div>
     </div>
   </div>
 </div>

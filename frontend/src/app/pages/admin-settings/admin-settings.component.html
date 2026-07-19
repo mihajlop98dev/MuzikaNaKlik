@@ -7,21 +7,21 @@
     <div *ngFor="let plan of plans" class="dashboard-card">
       <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
         <input type="text" [(ngModel)]="plan.name"
-          style="flex:1;min-width:120px;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;font-weight:600">
+          style="flex:1;min-width:120px;padding:8px 12px;border:1px solid var(--card-border);border-radius:6px;font-size:14px;font-weight:600;background:var(--card);color:var(--text)">
 
         <div style="display:flex;align-items:center;gap:4px">
           <input type="number" [(ngModel)]="plan.price"
-            style="width:100px;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px">
-          <span style="font-size:14px;color:#888">({{ plan.price / 100 }}€)</span>
+            style="width:100px;padding:8px 12px;border:1px solid var(--card-border);border-radius:6px;font-size:14px;background:var(--card);color:var(--text)">
+          <span style="font-size:14px;color:var(--text-muted)">({{ plan.price / 100 }}€)</span>
         </div>
 
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;color:var(--text)">
           <input type="checkbox" [(ngModel)]="plan.is_active">
           Aktivno
         </label>
 
         <button (click)="savePlan(plan)"
-          style="padding:8px 20px;background:#1a1a2e;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px"
+          style="padding:8px 20px;background:var(--gold);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px"
           [disabled]="savingId === plan.id">
           {{ savingId === plan.id ? 'Čuvanje...' : 'Sačuvaj' }}
         </button>

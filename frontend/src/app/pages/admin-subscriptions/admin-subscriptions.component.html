@@ -2,44 +2,44 @@
   <h1 style="font-size:24px;margin-bottom:24px">Pretplate</h1>
 
   <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-    <button (click)="setFilter('')" style="padding:6px 14px;border-radius:20px;border:1px solid #ddd;cursor:pointer;font-size:13px;background:#fff"
-      [style.background]="statusFilter === '' ? '#1a1a2e' : '#fff'" [style.color]="statusFilter === '' ? '#fff' : '#333'">Sve</button>
-    <button (click)="setFilter('active')" style="padding:6px 14px;border-radius:20px;border:1px solid #ddd;cursor:pointer;font-size:13px;background:#fff"
-      [style.background]="statusFilter === 'active' ? '#1a1a2e' : '#fff'" [style.color]="statusFilter === 'active' ? '#fff' : '#333'">Aktivne</button>
-    <button (click)="setFilter('expired')" style="padding:6px 14px;border-radius:20px;border:1px solid #ddd;cursor:pointer;font-size:13px;background:#fff"
-      [style.background]="statusFilter === 'expired' ? '#1a1a2e' : '#fff'" [style.color]="statusFilter === 'expired' ? '#fff' : '#333'">Istekle</button>
-    <button (click)="setFilter('cancelled')" style="padding:6px 14px;border-radius:20px;border:1px solid #ddd;cursor:pointer;font-size:13px;background:#fff"
-      [style.background]="statusFilter === 'cancelled' ? '#1a1a2e' : '#fff'" [style.color]="statusFilter === 'cancelled' ? '#fff' : '#333'">Otkazane</button>
+    <button (click)="setFilter('')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--card-border);cursor:pointer;font-size:13px;background:var(--card)"
+      [style.background]="statusFilter === '' ? 'var(--gold)' : 'var(--card)'" [style.color]="statusFilter === '' ? '#fff' : 'var(--text)'">Sve</button>
+    <button (click)="setFilter('active')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--card-border);cursor:pointer;font-size:13px;background:var(--card)"
+      [style.background]="statusFilter === 'active' ? 'var(--gold)' : 'var(--card)'" [style.color]="statusFilter === 'active' ? '#fff' : 'var(--text)'">Aktivne</button>
+    <button (click)="setFilter('expired')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--card-border);cursor:pointer;font-size:13px;background:var(--card)"
+      [style.background]="statusFilter === 'expired' ? 'var(--gold)' : 'var(--card)'" [style.color]="statusFilter === 'expired' ? '#fff' : 'var(--text)'">Istekle</button>
+    <button (click)="setFilter('cancelled')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--card-border);cursor:pointer;font-size:13px;background:var(--card)"
+      [style.background]="statusFilter === 'cancelled' ? 'var(--gold)' : 'var(--card)'" [style.color]="statusFilter === 'cancelled' ? '#fff' : 'var(--text)'">Otkazane</button>
   </div>
 
   <div *ngIf="loading" class="muted">Učitavanje...</div>
   <div *ngIf="!loading && subscriptions.length === 0" class="muted">Nema pretplati.</div>
 
-  <table *ngIf="!loading && subscriptions.length > 0" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+  <table *ngIf="!loading && subscriptions.length > 0" style="width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden">
     <thead>
-      <tr style="background:#f8f9fa;text-align:left">
-        <th style="padding:12px 16px;font-size:13px;color:#888">Izvođač</th>
-        <th style="padding:12px 16px;font-size:13px;color:#888">Plan</th>
-        <th style="padding:12px 16px;font-size:13px;color:#888">Iznos</th>
-        <th style="padding:12px 16px;font-size:13px;color:#888">Period</th>
-        <th style="padding:12px 16px;font-size:13px;color:#888">Status</th>
-        <th style="padding:12px 16px;font-size:13px;color:#888">Način</th>
+      <tr style="background:rgba(255,255,255,0.05);text-align:left">
+        <th style="padding:12px 16px;font-size:13px;color:var(--text-muted)">Izvođač</th>
+        <th style="padding:12px 16px;font-size:13px;color:var(--text-muted)">Plan</th>
+        <th style="padding:12px 16px;font-size:13px;color:var(--text-muted)">Iznos</th>
+        <th style="padding:12px 16px;font-size:13px;color:var(--text-muted)">Period</th>
+        <th style="padding:12px 16px;font-size:13px;color:var(--text-muted)">Status</th>
+        <th style="padding:12px 16px;font-size:13px;color:var(--text-muted)">Način</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let s of subscriptions" style="border-top:1px solid #f0f0f0">
-        <td style="padding:12px 16px;font-weight:500">{{ s.performers?.stage_name || '-' }}</td>
-        <td style="padding:12px 16px">{{ s.subscription_plans?.name || '-' }}</td>
-        <td style="padding:12px 16px">{{ (s.amount / 100) | number:'1.2-2' }}€</td>
-        <td style="padding:12px 16px;font-size:13px;color:#555">{{ s.period_start }} — {{ s.period_end }}</td>
+      <tr *ngFor="let s of subscriptions" style="border-top:1px solid rgba(255,255,255,0.08)">
+        <td style="padding:12px 16px;font-weight:500;color:var(--text)">{{ s.performers?.stage_name || '-' }}</td>
+        <td style="padding:12px 16px;color:var(--text)">{{ s.subscription_plans?.name || '-' }}</td>
+        <td style="padding:12px 16px;color:var(--text)">{{ (s.amount / 100) | number:'1.2-2' }}€</td>
+        <td style="padding:12px 16px;font-size:13px;color:var(--text-muted)">{{ s.period_start }} — {{ s.period_end }}</td>
         <td style="padding:12px 16px">
           <span style="padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500"
-            [style.background]="s.status === 'active' ? '#e8f5e9' : s.status === 'expired' ? '#fff3e0' : '#f5f5f5'"
-            [style.color]="s.status === 'active' ? '#2e7d32' : s.status === 'expired' ? '#e65100' : '#888'">
+            [style.background]="s.status === 'active' ? 'rgba(46,125,50,0.15)' : s.status === 'expired' ? 'rgba(230,81,0,0.15)' : 'rgba(255,255,255,0.05)'"
+            [style.color]="s.status === 'active' ? '#81c784' : s.status === 'expired' ? '#ffb74d' : 'var(--text-muted)'">
             {{ getStatusLabel(s.status) }}
           </span>
         </td>
-        <td style="padding:12px 16px;font-size:13px;color:#555">{{ s.payment_method === 'manual' ? 'Ručno' : 'Stripe' }}</td>
+        <td style="padding:12px 16px;font-size:13px;color:var(--text-muted)">{{ s.payment_method === 'manual' ? 'Ručno' : 'Stripe' }}</td>
       </tr>
     </tbody>
   </table>
