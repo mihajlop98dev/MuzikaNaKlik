@@ -15,6 +15,9 @@ export class AdminUsersComponent implements OnInit {
   loading = true;
   searchTerm = '';
   roleFilter = '';
+  selectedUser: any = null;
+  roleOptions = ['client', 'performer', 'admin'];
+  performerStatusOptions = ['approved', 'pending', 'rejected'];
 
   constructor(
     private api: ApiService,
@@ -44,5 +47,29 @@ export class AdminUsersComponent implements OnInit {
   setRole(role: string) {
     this.roleFilter = role;
     this.fetchUsers();
+  }
+
+  openUser(user: any) {
+    this.selectedUser = { ...user };
+  }
+
+  closeModal() {
+    this.selectedUser = null;
+  }
+
+  saveUser() {
+    if (!this.selectedUser) return;
+    this.api.put(`/admin/users/${this.selectedUser.id}`, {
+      role: this.selectedUser.role,
+      performer_status: this.selectedUser.performer_status,
+    }).subscribe({
+      next: () => {
+        this.fetchUsers();
+        this.closeModal();
+      },
+      error: () => {
+        this.closeModal();
+      },
+    });
   }
 }
