@@ -13,7 +13,19 @@ export async function GET(request: Request) {
   const { data: profile } = await supabaseAdmin.from('profiles').select('role').eq('id', user.id).single();
   if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  const { data } = await supabaseAdmin.from('subscriptions').select('*, performers(stage_name), subscription_plans(name)').order('created_at', { ascending: false });
+  const { searchParams } = new URL(request.url);
+  const status = searchParams.get('status') || '';
+
+  let query = supabaseAdmin
+    .from('subscriptions')
+    .select('*, performers(stage_name, id), subscription_plans(name, price)')
+    .order('created_at', { ascending: false });
+
+  if (status) {
+    query = query.eq('status', status);
+  }
+
+  const { data } = await query;
   return NextResponse.json(data || []);
 }
 
