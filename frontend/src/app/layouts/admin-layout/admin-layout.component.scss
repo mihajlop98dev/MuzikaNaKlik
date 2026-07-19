@@ -1,12 +1,8 @@
-:host-context(.admin-layout) .site-header,
-.site-header {
-  display: none !important;
-}
-
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  background: #f5f6fa;
+  background: #17161b;
+  color: #f3f2ef;
 }
 
 .admin-sidebar {

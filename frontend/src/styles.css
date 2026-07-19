@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+app-admin-layout ~ .site-header,
+app-admin-layout .site-header,
+body:has(app-admin-layout) .site-header { display: none; }
+
 @theme {
   --color-bg: #0a0a0d;
   --color-bg-alt: #101013;
