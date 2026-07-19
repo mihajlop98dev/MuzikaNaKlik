@@ -15,14 +15,18 @@
         <h3>Ocena</h3>
         <p>★ {{ performer.rating_avg.toFixed(1) }} ({{ performer.rating_count }})</p>
       </div>
+      <div class="dashboard-card" *ngIf="performer.has_verified_badge">
+        <h3>Verifikacija</h3>
+        <p style="color:var(--gold)">✅ Verifikovano</p>
+      </div>
     </div>
 
-    <div class="dashboard-nav">
+    <div class="dashboard-nav" *ngIf="performer">
       <a routerLink="/moj-nalog/izvodjac/profil" class="dashboard-nav-item">Uredi profil</a>
       <a routerLink="/moj-nalog/izvodjac/galerija" class="dashboard-nav-item">Galerija</a>
       <a routerLink="/moj-nalog/izvodjac/video" class="dashboard-nav-item">Video</a>
-      <a routerLink="/moj-nalog/izvodjac/repertoar" class="dashboard-nav-item">Repertoar</a>
-      <a routerLink="/moj-nalog/izvodjac/termini" class="dashboard-nav-item">Slobodni termini</a>
+      <a routerLink="/moj-nalog/izvodjac/repertoar" class="dashboard-nav-item" *ngIf="performer.has_repertoire">Repertoar</a>
+      <a routerLink="/moj-nalog/izvodjac/termini" class="dashboard-nav-item" *ngIf="performer.has_availability">Slobodni termini</a>
       <a routerLink="/moj-nalog/izvodjac/upiti" class="dashboard-nav-item">Primljeni upiti</a>
       <a routerLink="/moj-nalog/izvodjac/pretplata" class="dashboard-nav-item">Pretplata</a>
     </div>

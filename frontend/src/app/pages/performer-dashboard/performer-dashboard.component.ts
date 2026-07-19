@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SupabaseService } from '../../services/supabase.service';
@@ -17,7 +17,8 @@ export class PerformerDashboardComponent implements OnInit {
 
   constructor(
     private supabase: SupabaseService,
-    private performerService: PerformerService
+    private performerService: PerformerService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -27,8 +28,9 @@ export class PerformerDashboardComponent implements OnInit {
         next: (data) => {
           this.performer = data;
           this.loading = false;
+          this.cdr.detectChanges();
         },
-        error: () => (this.loading = false),
+        error: () => { this.loading = false; this.cdr.detectChanges(); },
       });
     }
   }
