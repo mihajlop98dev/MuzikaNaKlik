@@ -49,11 +49,25 @@ export async function GET(request: Request) {
     }
   }
 
+  let subscriptionsMap: Record<string, any> = {};
+  if (performerIds.length > 0) {
+    const { data: subscriptions } = await supabaseAdmin
+      .from('subscriptions')
+      .select('performer_id, plan_id, amount, period_start, period_end, status, subscription_plans(name)')
+      .eq('status', 'active')
+      .in('performer_id', performerIds);
+
+    if (subscriptions) {
+      subscriptions.forEach(s => { subscriptionsMap[s.performer_id] = s; });
+    }
+  }
+
   const result = profiles?.map(p => ({
     ...p,
     stage_name: performersMap[p.id]?.stage_name || null,
     performer_status: performersMap[p.id]?.status || null,
     subscription_status: performersMap[p.id]?.subscription_status || null,
+    subscription: subscriptionsMap[p.id] || null,
   })) || [];
 
   return NextResponse.json(result);
