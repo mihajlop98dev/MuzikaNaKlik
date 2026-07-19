@@ -4,34 +4,29 @@ import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: Request) {
   try {
-    const { email, password, stage_name, type, city, phone, genres, description, price_from, equipment, languages, member_count, travel_radius, audio_url, profile_image_url, videos } = await request.json();
+    const { email, password, stage_name, type, city, phone, genres, description, price_from, equipment, languages, member_count, travel_radius, audio_url, profile_image_url, videos, plan_id, billing_period } = await request.json();
 
     if (!email || !password || !stage_name) {
       return NextResponse.json({ error: 'Email, password, and stage name are required' }, { status: 400 });
     }
 
-    // Create auth user
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
-      user_metadata: {
-        role: 'performer',
-        full_name: stage_name,
-        stage_name,
-        type: type || 'singer',
-      },
+      user_metadata: { role: 'performer', full_name: stage_name, stage_name, type: type || 'singer' },
     });
 
     if (authError) {
       return NextResponse.json({ error: authError.message }, { status: 400 });
     }
 
-    // Update performer record with all data
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
+
+    const isComplete = !!(plan_id && billing_period);
 
     const performerUpdates: Record<string, any> = {
       stage_name,
@@ -48,6 +43,14 @@ export async function POST(request: Request) {
       profile_image_url: profile_image_url || null,
     };
 
+    if (isComplete) {
+      performerUpdates.status = 'approved';
+      performerUpdates.subscription_status = 'active';
+      performerUpdates.subscription_expires_at = new Date(
+        Date.now() + (billing_period === 'yearly' ? 365 : 30) * 24 * 60 * 60 * 1000
+      ).toISOString();
+    }
+
     const { error: updateError } = await supabase
       .from('performers')
       .update(performerUpdates)
@@ -57,10 +60,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
 
-    // Update profile phone
     await supabase.from('profiles').update({ phone: phone || null }).eq('id', authData.user.id);
 
-    // Insert videos if provided
     if (videos && Array.isArray(videos) && videos.length > 0) {
       const videoRecords = videos.map((url: string) => ({
         performer_id: authData.user.id,
@@ -69,6 +70,32 @@ export async function POST(request: Request) {
         sort_order: 0,
       }));
       await supabase.from('performer_media').insert(videoRecords);
+    }
+
+    if (isComplete) {
+      const { data: plan } = await supabaseAdmin
+        .from('subscription_plans')
+        .select('price')
+        .eq('id', plan_id)
+        .single();
+
+      const now = new Date();
+      const periodEnd = new Date(now);
+      if (billing_period === 'yearly') {
+        periodEnd.setFullYear(periodEnd.getFullYear() + 1);
+      } else {
+        periodEnd.setMonth(periodEnd.getMonth() + 1);
+      }
+
+      await supabase.from('subscriptions').insert({
+        performer_id: authData.user.id,
+        plan_id,
+        amount: plan?.price || 0,
+        payment_method: 'manual',
+        period_start: now.toISOString().split('T')[0],
+        period_end: periodEnd.toISOString().split('T')[0],
+        status: 'active',
+      });
     }
 
     const { data: adminProfiles } = await supabase
@@ -80,8 +107,10 @@ export async function POST(request: Request) {
       const adminNotifications = adminProfiles.map((admin: { id: string }) => ({
         user_id: admin.id,
         type: 'new_performer',
-        title: 'Novi izvođač na čekanju',
-        message: `${stage_name} se registrovao i čeka odobrenje.`,
+        title: isComplete ? 'Novi izvođač registrovan' : 'Novi izvođač na čekanju',
+        message: isComplete
+          ? `${stage_name} se registrovao sa aktivnom pretplatom.`
+          : `${stage_name} se registrovao i čeka odobrenje.`,
         link: '/admin/izvodjaci',
       }));
       await supabase.from('notifications').insert(adminNotifications);
