@@ -31,11 +31,11 @@ export async function GET(request: Request) {
     query = query.eq('type', type);
   }
 
-  if (priceMin) {
+  if (priceMin && parseInt(priceMin) > 0) {
     query = query.gte('price_from', parseInt(priceMin));
   }
 
-  if (priceMax) {
+  if (priceMax && parseInt(priceMax) < 99999) {
     query = query.lte('price_from', parseInt(priceMax));
   }
 
