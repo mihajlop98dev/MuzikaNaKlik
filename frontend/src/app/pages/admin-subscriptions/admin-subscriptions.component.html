@@ -1,16 +1,46 @@
-<section class="section">
-  <div class="wrap">
-    <h2 style="font-size:24px;margin-bottom:24px">Pretplate</h2>
-    <div *ngIf="loading" class="muted">Učitavanje...</div>
+<div>
+  <h1 style="font-size:24px;margin-bottom:24px">Pretplate</h1>
 
-    <div class="admin-table" *ngIf="!loading">
-      <div *ngFor="let s of subscriptions" class="admin-row">
-        <div class="admin-row-info">
-          <strong>{{ s.performers?.stage_name || 'Nepoznat' }}</strong>
-          <span class="muted">{{ s.subscription_plans?.name || 'Nepoznat paket' }} • {{ s.amount / 100 }} €</span>
-        </div>
-        <span>{{ s.status }} • {{ s.period_start }} — {{ s.period_end }}</span>
-      </div>
-    </div>
+  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+    <button (click)="setFilter('')" style="padding:6px 14px;border-radius:20px;border:1px solid #ddd;cursor:pointer;font-size:13px;background:#fff"
+      [style.background]="statusFilter === '' ? '#1a1a2e' : '#fff'" [style.color]="statusFilter === '' ? '#fff' : '#333'">Sve</button>
+    <button (click)="setFilter('active')" style="padding:6px 14px;border-radius:20px;border:1px solid #ddd;cursor:pointer;font-size:13px;background:#fff"
+      [style.background]="statusFilter === 'active' ? '#1a1a2e' : '#fff'" [style.color]="statusFilter === 'active' ? '#fff' : '#333'">Aktivne</button>
+    <button (click)="setFilter('expired')" style="padding:6px 14px;border-radius:20px;border:1px solid #ddd;cursor:pointer;font-size:13px;background:#fff"
+      [style.background]="statusFilter === 'expired' ? '#1a1a2e' : '#fff'" [style.color]="statusFilter === 'expired' ? '#fff' : '#333'">Istekle</button>
+    <button (click)="setFilter('cancelled')" style="padding:6px 14px;border-radius:20px;border:1px solid #ddd;cursor:pointer;font-size:13px;background:#fff"
+      [style.background]="statusFilter === 'cancelled' ? '#1a1a2e' : '#fff'" [style.color]="statusFilter === 'cancelled' ? '#fff' : '#333'">Otkazane</button>
   </div>
-</section>
+
+  <div *ngIf="loading" class="muted">Učitavanje...</div>
+  <div *ngIf="!loading && subscriptions.length === 0" class="muted">Nema pretplati.</div>
+
+  <table *ngIf="!loading && subscriptions.length > 0" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+    <thead>
+      <tr style="background:#f8f9fa;text-align:left">
+        <th style="padding:12px 16px;font-size:13px;color:#888">Izvođač</th>
+        <th style="padding:12px 16px;font-size:13px;color:#888">Plan</th>
+        <th style="padding:12px 16px;font-size:13px;color:#888">Iznos</th>
+        <th style="padding:12px 16px;font-size:13px;color:#888">Period</th>
+        <th style="padding:12px 16px;font-size:13px;color:#888">Status</th>
+        <th style="padding:12px 16px;font-size:13px;color:#888">Način</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of subscriptions" style="border-top:1px solid #f0f0f0">
+        <td style="padding:12px 16px;font-weight:500">{{ s.performers?.stage_name || '-' }}</td>
+        <td style="padding:12px 16px">{{ s.subscription_plans?.name || '-' }}</td>
+        <td style="padding:12px 16px">{{ (s.amount / 100) | number:'1.2-2' }}€</td>
+        <td style="padding:12px 16px;font-size:13px;color:#555">{{ s.period_start }} — {{ s.period_end }}</td>
+        <td style="padding:12px 16px">
+          <span style="padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500"
+            [style.background]="s.status === 'active' ? '#e8f5e9' : s.status === 'expired' ? '#fff3e0' : '#f5f5f5'"
+            [style.color]="s.status === 'active' ? '#2e7d32' : s.status === 'expired' ? '#e65100' : '#888'">
+            {{ getStatusLabel(s.status) }}
+          </span>
+        </td>
+        <td style="padding:12px 16px;font-size:13px;color:#555">{{ s.payment_method === 'manual' ? 'Ručno' : 'Stripe' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

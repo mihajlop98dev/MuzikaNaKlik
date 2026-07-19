@@ -1,13 +1,34 @@
-<section class="section">
-  <div class="wrap">
-    <h2 style="font-size:24px;margin-bottom:24px">Statistika</h2>
+<div>
+  <h1 style="font-size:24px;margin-bottom:24px">Izveštaji</h1>
 
-    <div class="dashboard-grid" *ngIf="!loading">
-      <div class="dashboard-card"><h3>Ukupno izvođača</h3><p style="font-size:28px;font-weight:700">{{ stats.total_performers }}</p></div>
-      <div class="dashboard-card"><h3>Ukupno klijenata</h3><p style="font-size:28px;font-weight:700">{{ stats.total_clients }}</p></div>
-      <div class="dashboard-card"><h3>Na čekanju</h3><p style="font-size:28px;font-weight:700">{{ stats.pending_performers }}</p></div>
-      <div class="dashboard-card"><h3>Upiti</h3><p style="font-size:28px;font-weight:700">{{ stats.total_inquiries }}</p></div>
-      <div class="dashboard-card"><h3>Aktivne pretplate</h3><p style="font-size:28px;font-weight:700">{{ stats.active_subscriptions }}</p></div>
+  <div *ngIf="loading" class="muted">Učitavanje...</div>
+
+  <div *ngIf="!loading" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:24px">
+    <div class="dashboard-card">
+      <h3 style="margin:0 0 16px">Registracije (12 meseci)</h3>
+      <canvas *ngIf="registrationsData" baseChart
+        [data]="registrationsData"
+        [options]="registrationsOptions"
+        type="bar">
+      </canvas>
+    </div>
+
+    <div class="dashboard-card">
+      <h3 style="margin:0 0 16px">Planovi pretplate</h3>
+      <canvas baseChart
+        [data]="{ labels: planLabels, datasets: [{ data: planData }] }"
+        [options]="{ responsive: true, plugins: { legend: { position: 'bottom' } } }"
+        type="pie">
+      </canvas>
+    </div>
+
+    <div class="dashboard-card">
+      <h3 style="margin:0 0 16px">Status izvođača</h3>
+      <canvas baseChart
+        [data]="{ labels: statusLabels, datasets: [{ data: statusData }] }"
+        [options]="{ responsive: true, plugins: { legend: { position: 'bottom' } } }"
+        type="pie">
+      </canvas>
     </div>
   </div>
-</section>
+</div>
