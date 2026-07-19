@@ -80,6 +80,7 @@ export class AdminUsersComponent implements OnInit {
 
   closeModal() {
     this.selectedUser = null;
+    this.cdr.detectChanges();
   }
 
   saveUser() {
