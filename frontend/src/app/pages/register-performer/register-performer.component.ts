@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -45,6 +45,12 @@ export class RegisterPerformerComponent implements OnInit {
   // Step 3 - Profile image
   profileImageUrl = '';
 
+  // Step 5 - Subscription
+  subscriptionPlans: any[] = [];
+  selectedPlanId = '';
+  billingPeriod: 'monthly' | 'yearly' = 'monthly';
+  submitting = false;
+
   // Step 4 - Video
   videoUrls: string[] = [''];
   videoErrors: string[] = [''];
@@ -52,21 +58,26 @@ export class RegisterPerformerComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.api.get<any[]>('/genres').subscribe(data => {
       this.availableGenres = data;
-      console.log('Genres loaded:', data);
+      this.cdr.detectChanges();
     });
     this.api.get<any[]>('/languages').subscribe(data => {
       this.availableLanguages = data;
-      console.log('Languages loaded:', data);
+      this.cdr.detectChanges();
     });
     this.api.get<any[]>('/equipment').subscribe(data => {
       this.availableEquipment = data;
-      console.log('Equipment loaded:', data);
+      this.cdr.detectChanges();
+    });
+    this.api.get<any[]>('/subscription-plans').subscribe(data => {
+      this.subscriptionPlans = data;
+      this.cdr.detectChanges();
     });
   }
 
@@ -86,6 +97,18 @@ export class RegisterPerformerComponent implements OnInit {
     const idx = this.selectedEquipment.indexOf(name);
     if (idx >= 0) this.selectedEquipment.splice(idx, 1);
     else this.selectedEquipment.push(name);
+  }
+
+  selectPlan(id: string) {
+    this.selectedPlanId = id;
+  }
+
+  getPlanPrice(price: number): number {
+    return this.billingPeriod === 'yearly' ? price * 10 : price;
+  }
+
+  getPlanPeriod(): string {
+    return this.billingPeriod === 'yearly' ? 'godišnje' : 'mesečno';
   }
 
   addVideoField() {
@@ -128,6 +151,9 @@ export class RegisterPerformerComponent implements OnInit {
           this.videoErrors[i] = '';
         }
         return true;
+      case 5:
+        if (!this.selectedPlanId) { this.error = 'Izaberite paket.'; return false; }
+        return true;
       default:
         return true;
     }
@@ -155,16 +181,18 @@ export class RegisterPerformerComponent implements OnInit {
     this.api.post<{ url: string }>('/storage/upload', formData).subscribe({
       next: (res) => {
         this.profileImageUrl = res.url;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = 'Greška pri uploadu slike. Pokušajte ponovo.';
+        this.cdr.detectChanges();
       },
     });
   }
 
   async submit() {
     if (!this.validateStep()) return;
-    this.loading = true;
+    this.submitting = true;
     this.error = '';
 
     const validVideos = this.videoUrls
@@ -192,16 +220,20 @@ export class RegisterPerformerComponent implements OnInit {
       audio_url: this.audioUrl || null,
       profile_image_url: this.profileImageUrl || null,
       videos: validVideos,
+      plan_id: this.selectedPlanId,
+      billing_period: this.billingPeriod,
     };
 
     this.api.post('/auth/register/performer', payload).subscribe({
       next: () => {
-        this.step = 5;
-        this.loading = false;
+        this.step = 6;
+        this.submitting = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.error = err.error?.error || 'Došlo je do greške. Pokušajte ponovo.';
-        this.loading = false;
+        this.submitting = false;
+        this.cdr.detectChanges();
       },
     });
   }
