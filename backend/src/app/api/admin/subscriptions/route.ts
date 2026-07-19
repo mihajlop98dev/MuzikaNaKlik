@@ -41,16 +41,40 @@ export async function POST(request: Request) {
   if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const body = await request.json();
+
+  const { data: plan } = await supabaseAdmin
+    .from('subscription_plans')
+    .select('price')
+    .eq('id', body.plan_id)
+    .single();
+
+  const billingPeriod = body.billing_period || 'monthly';
+  const amount = billingPeriod === 'yearly' ? (plan?.price || 0) * 10 : (plan?.price || 0);
+  const now = new Date();
+  const periodEnd = new Date(now);
+
+  if (billingPeriod === 'yearly') {
+    periodEnd.setFullYear(periodEnd.getFullYear() + 1);
+  } else {
+    periodEnd.setMonth(periodEnd.getMonth() + 1);
+  }
+
   const { data, error } = await supabaseAdmin.from('subscriptions').insert({
     performer_id: body.performer_id,
     plan_id: body.plan_id,
-    amount: body.amount,
+    amount,
     payment_method: 'manual',
-    period_start: body.period_start,
-    period_end: body.period_end,
+    period_start: now.toISOString().split('T')[0],
+    period_end: periodEnd.toISOString().split('T')[0],
     status: 'active',
     marked_by_admin: user.id,
   }).select().single();
+
+  await supabaseAdmin.from('performers').update({
+    subscription_status: 'active',
+    subscription_expires_at: periodEnd.toISOString(),
+  }).eq('id', body.performer_id);
+
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data, { status: 201 });
 }

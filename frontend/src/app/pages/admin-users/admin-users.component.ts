@@ -19,6 +19,11 @@ export class AdminUsersComponent implements OnInit {
   roleOptions = ['client', 'performer', 'admin'];
   performerStatusOptions = ['approved', 'pending', 'rejected'];
 
+  subscriptionPlans: any[] = [];
+  subPlanId = '';
+  subBillingPeriod: 'monthly' | 'yearly' = 'monthly';
+  assigningSub = false;
+
   constructor(
     private api: ApiService,
     private cdr: ChangeDetectorRef
@@ -26,6 +31,9 @@ export class AdminUsersComponent implements OnInit {
 
   ngOnInit() {
     this.fetchUsers();
+    this.api.get<any[]>('/subscription-plans').subscribe(data => {
+      this.subscriptionPlans = data;
+    });
   }
 
   fetchUsers() {
@@ -51,6 +59,8 @@ export class AdminUsersComponent implements OnInit {
 
   openUser(user: any) {
     this.selectedUser = { ...user };
+    this.subPlanId = '';
+    this.subBillingPeriod = 'monthly';
   }
 
   closeModal() {
@@ -69,6 +79,25 @@ export class AdminUsersComponent implements OnInit {
       },
       error: () => {
         this.closeModal();
+      },
+    });
+  }
+
+  assignSubscription() {
+    if (!this.selectedUser || !this.subPlanId) return;
+    this.assigningSub = true;
+    this.api.post('/admin/subscriptions', {
+      performer_id: this.selectedUser.id,
+      plan_id: this.subPlanId,
+      billing_period: this.subBillingPeriod,
+    }).subscribe({
+      next: () => {
+        this.assigningSub = false;
+        this.selectedUser.subscription_status = 'active';
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.assigningSub = false;
       },
     });
   }

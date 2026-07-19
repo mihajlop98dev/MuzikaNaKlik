@@ -90,6 +90,30 @@
         </div>
         <button (click)="saveUser()" style="margin-top:16px;width:100%;padding:10px;background:#1a1a2e;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px">Sačuvaj izmene</button>
       </div>
+
+      <div *ngIf="selectedUser.role === 'performer'" style="border-top:1px solid #eee;padding-top:20px;margin-top:20px">
+        <h3 style="font-size:16px;margin:0 0 16px">Dodeli pretplatu</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <label style="display:block;font-size:13px;color:#888;margin-bottom:4px">Plan</label>
+            <select [(ngModel)]="subPlanId" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px">
+              <option value="">Izaberi plan</option>
+              <option *ngFor="let p of subscriptionPlans" [value]="p.id">{{ p.name }} — {{ p.price / 100 }}€/mes</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:13px;color:#888;margin-bottom:4px">Period</label>
+            <select [(ngModel)]="subBillingPeriod" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px">
+              <option value="monthly">Mesečno</option>
+              <option value="yearly">Godišnje</option>
+            </select>
+          </div>
+        </div>
+        <button (click)="assignSubscription()" [disabled]="!subPlanId || assigningSub"
+          style="margin-top:16px;width:100%;padding:10px;background:#2e7d32;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px">
+          {{ assigningSub ? 'Dodeljivanje...' : 'Dodeli pretplatu' }}
+        </button>
+      </div>
     </div>
   </div>
 </div>
