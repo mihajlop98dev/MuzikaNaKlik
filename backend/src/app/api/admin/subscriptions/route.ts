@@ -59,22 +59,52 @@ export async function POST(request: Request) {
     periodEnd.setMonth(periodEnd.getMonth() + 1);
   }
 
-  const { data, error } = await supabaseAdmin.from('subscriptions').insert({
-    performer_id: body.performer_id,
-    plan_id: body.plan_id,
-    amount,
-    payment_method: 'manual',
-    period_start: now.toISOString().split('T')[0],
-    period_end: periodEnd.toISOString().split('T')[0],
-    status: 'active',
-    marked_by_admin: user.id,
-  }).select().single();
+  // Check if performer already has an active subscription
+  const { data: existing } = await supabaseAdmin
+    .from('subscriptions')
+    .select('id')
+    .eq('performer_id', body.performer_id)
+    .eq('status', 'active')
+    .maybeSingle();
+
+  let result;
+
+  if (existing) {
+    const { data, error } = await supabaseAdmin
+      .from('subscriptions')
+      .update({
+        plan_id: body.plan_id,
+        amount,
+        period_start: now.toISOString().split('T')[0],
+        period_end: periodEnd.toISOString().split('T')[0],
+        marked_by_admin: user.id,
+      })
+      .eq('id', existing.id)
+      .select()
+      .single();
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    result = data;
+  } else {
+    const { data, error } = await supabaseAdmin.from('subscriptions').insert({
+      performer_id: body.performer_id,
+      plan_id: body.plan_id,
+      amount,
+      payment_method: 'manual',
+      period_start: now.toISOString().split('T')[0],
+      period_end: periodEnd.toISOString().split('T')[0],
+      status: 'active',
+      marked_by_admin: user.id,
+    }).select().single();
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    result = data;
+  }
 
   await supabaseAdmin.from('performers').update({
     subscription_status: 'active',
     subscription_expires_at: periodEnd.toISOString(),
   }).eq('id', body.performer_id);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data, { status: 201 });
+  return NextResponse.json({ updated: !!existing, data: result }, { status: 201 });
 }

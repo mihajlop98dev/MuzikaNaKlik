@@ -1,6 +1,12 @@
 <div>
   <h1 style="font-size:24px;margin-bottom:24px">Korisnici</h1>
 
+  <div *ngIf="toastMessage" style="position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;z-index:9999;font-size:14px;font-weight:600"
+    [style.background]="toastType === 'success' ? 'rgba(46,125,50,0.9)' : 'rgba(198,40,40,0.9)'"
+    [style.color]="'#fff'">
+    {{ toastMessage }}
+  </div>
+
   <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
     <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="search()"
       placeholder="Pretraži po imenu..."

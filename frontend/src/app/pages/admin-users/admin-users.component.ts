@@ -18,6 +18,8 @@ export class AdminUsersComponent implements OnInit {
   selectedUser: any = null;
   roleOptions = ['client', 'performer', 'admin'];
   performerStatusOptions = ['approved', 'pending', 'rejected'];
+  toastMessage = '';
+  toastType: 'success' | 'error' = 'success';
 
   subscriptionPlans: any[] = [];
   subPlanId = '';
@@ -69,6 +71,13 @@ export class AdminUsersComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  showToast(message: string, type: 'success' | 'error' = 'success') {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.cdr.detectChanges();
+    setTimeout(() => { this.toastMessage = ''; this.cdr.detectChanges(); }, 3000);
+  }
+
   closeModal() {
     this.selectedUser = null;
   }
@@ -80,11 +89,12 @@ export class AdminUsersComponent implements OnInit {
       performer_status: this.selectedUser.performer_status,
     }).subscribe({
       next: () => {
+        this.showToast('Korisnik uspešno ažuriran.');
         this.fetchUsers();
         this.closeModal();
       },
       error: () => {
-        this.closeModal();
+        this.showToast('Greška pri ažuriranju korisnika.', 'error');
       },
     });
   }
@@ -97,13 +107,15 @@ export class AdminUsersComponent implements OnInit {
       plan_id: this.subPlanId,
       billing_period: this.subBillingPeriod,
     }).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.assigningSub = false;
         this.selectedUser.subscription_status = 'active';
+        this.showToast(res.updated ? 'Pretplata uspešno ažurirana.' : 'Pretplata uspešno dodeljena.');
         this.cdr.detectChanges();
       },
       error: () => {
         this.assigningSub = false;
+        this.showToast('Greška pri dodeli pretplate.', 'error');
       },
     });
   }
