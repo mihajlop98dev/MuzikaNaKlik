@@ -59,7 +59,7 @@ export class PerformerGalleryComponent implements OnInit {
     this.adding = true;
     this.api.post<{ url: string }>('/storage/upload', formData).subscribe({
       next: (res) => {
-        this.api.post('/performers/me/media', { type: 'image', url: res.url }).subscribe({
+        this.performerService.addMedia('image', res.url).subscribe({
           next: (data: any) => {
             this.media.push(data);
             this.adding = false;
@@ -75,7 +75,7 @@ export class PerformerGalleryComponent implements OnInit {
   addImage() {
     if (!this.newUrl) return;
     this.adding = true;
-    this.api.post('/performers/me/media', { type: 'image', url: this.newUrl }).subscribe({
+    this.performerService.addMedia('image', this.newUrl).subscribe({
       next: (data: any) => {
         this.media.push(data);
         this.newUrl = '';
@@ -87,7 +87,7 @@ export class PerformerGalleryComponent implements OnInit {
   }
 
   remove(id: string) {
-    this.api.delete(`/performers/me/media?id=${id}`).subscribe({
+    this.performerService.deleteMedia(id).subscribe({
       next: () => {
         this.media = this.media.filter((m) => m.id !== id);
         this.cdr.detectChanges();

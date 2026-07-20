@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgFor, NgIf, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ApiService } from '../../services/api.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-notifications',
@@ -13,20 +13,24 @@ export class NotificationsComponent implements OnInit {
   notifications: any[] = [];
   loading = true;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private notificationService: NotificationService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    this.api.get<any[]>('/notifications').subscribe({
-      next: (data) => { this.notifications = data; this.loading = false; },
-      error: () => (this.loading = false),
+    this.notificationService.getMine().subscribe({
+      next: (data) => { this.notifications = data; this.loading = false; this.cdr.detectChanges(); },
+      error: () => { this.loading = false; this.cdr.detectChanges(); },
     });
   }
 
   markRead(id: string) {
-    this.api.put('/notifications', { id }).subscribe({
+    this.notificationService.markRead(id).subscribe({
       next: () => {
         const n = this.notifications.find(n => n.id === id);
         if (n) n.is_read = true;
+        this.cdr.detectChanges();
       },
     });
   }

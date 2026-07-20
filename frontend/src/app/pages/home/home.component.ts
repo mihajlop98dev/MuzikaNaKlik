@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SearchPanelComponent } from '../../components/search-panel/search-panel.component';
@@ -20,7 +20,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private performerService: PerformerService,
-    private supabase: SupabaseService
+    private supabase: SupabaseService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -28,8 +29,9 @@ export class HomeComponent implements OnInit {
       next: (data) => {
         this.featuredPerformers = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
-      error: () => (this.loading = false),
+      error: () => { this.loading = false; this.cdr.detectChanges(); },
     });
 
     this.supabase.client

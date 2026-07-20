@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -34,7 +34,8 @@ export class PerformerProfileEditComponent implements OnInit {
     private supabase: SupabaseService,
     private performerService: PerformerService,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -51,9 +52,11 @@ export class PerformerProfileEditComponent implements OnInit {
           this.form.price_from = data.price_from || 0;
           this.form.profile_image_url = data.profile_image_url || '';
           this.loading = false;
+          this.cdr.detectChanges();
         },
         error: () => {
           this.loading = false;
+          this.cdr.detectChanges();
           this.router.navigate(['/moj-nalog/izvodjac']);
         },
       });
@@ -72,9 +75,11 @@ export class PerformerProfileEditComponent implements OnInit {
     this.api.post<{ url: string }>('/storage/upload', formData).subscribe({
       next: (res) => {
         this.form.profile_image_url = res.url;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = 'Greška pri uploadu slike.';
+        this.cdr.detectChanges();
       },
     });
   }
@@ -84,22 +89,24 @@ export class PerformerProfileEditComponent implements OnInit {
     this.error = '';
     this.success = false;
 
-    this.api.put('/performers/me', {
+    this.performerService.updateMyProfile({
       stage_name: this.form.stage_name,
-      type: this.form.type,
+      type: this.form.type as any,
       city: this.form.city,
       genres: this.form.genres.split(',').map((g: string) => g.trim()).filter(Boolean),
       description: this.form.description,
       price_from: this.form.price_from,
       profile_image_url: this.form.profile_image_url || null,
-    }).subscribe({
+    } as any).subscribe({
       next: () => {
         this.success = true;
         this.saving = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.error = err.error?.error || 'Greška pri čuvanju.';
         this.saving = false;
+        this.cdr.detectChanges();
       },
     });
   }

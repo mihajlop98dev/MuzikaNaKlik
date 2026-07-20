@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
@@ -18,7 +18,8 @@ export class LoginComponent {
 
   constructor(
     private supabase: SupabaseService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async login() {
@@ -26,12 +27,14 @@ export class LoginComponent {
 
     this.loading = true;
     this.error = '';
+    this.cdr.detectChanges();
 
     const { error } = await this.supabase.signIn(this.email, this.password);
 
     if (error) {
       this.error = error.message;
       this.loading = false;
+      this.cdr.detectChanges();
       return;
     }
 
@@ -45,6 +48,10 @@ export class LoginComponent {
 
       if (profile?.role === 'admin') {
         this.router.navigate(['/admin']);
+        return;
+      }
+      if (profile?.role === 'performer') {
+        this.router.navigate(['/moj-nalog/izvodjac/dashboard']);
         return;
       }
     }

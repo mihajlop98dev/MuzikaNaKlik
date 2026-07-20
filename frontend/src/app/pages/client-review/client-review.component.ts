@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -21,7 +21,8 @@ export class ClientReviewComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private reviewService: ReviewService
+    private reviewService: ReviewService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -34,8 +35,8 @@ export class ClientReviewComponent implements OnInit {
 
   submit() {
     this.reviewService.submitReview(this.performerId, this.inquiryId, this.rating, this.comment).subscribe({
-      next: () => { this.submitted = true; },
-      error: (err) => { this.error = err.error?.error || 'Greška.'; },
+      next: () => { this.submitted = true; this.cdr.detectChanges(); },
+      error: (err) => { this.error = err.error?.error || 'Greška.'; this.cdr.detectChanges(); },
     });
   }
 }

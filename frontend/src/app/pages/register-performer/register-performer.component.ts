@@ -30,7 +30,6 @@ export class RegisterPerformerComponent implements OnInit {
   description = '';
   priceFrom = 0;
   memberCount = 3;
-  travelRadius = '';
 
   // Step 2 - Language
   availableLanguages: any[] = [];
@@ -196,8 +195,7 @@ export class RegisterPerformerComponent implements OnInit {
     this.error = '';
 
     const validVideos = this.videoUrls
-      .map(u => this.extractYoutubeId(u))
-      .filter((id): id is string => id !== null);
+      .filter((u) => u && this.extractYoutubeId(u) !== null);
 
     const allGenres = [...this.selectedGenres, ...this.customGenres.split(',').map(g => g.trim()).filter(Boolean)];
     const allLanguages = [...this.selectedLanguages, ...this.customLanguages.split(',').map(l => l.trim()).filter(Boolean)];
@@ -214,7 +212,6 @@ export class RegisterPerformerComponent implements OnInit {
       description: this.description,
       price_from: this.priceFrom || null,
       member_count: this.memberCount,
-      travel_radius: this.travelRadius || null,
       equipment: allEquipment,
       languages: allLanguages,
       audio_url: this.audioUrl || null,

@@ -1,16 +1,30 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from './api.service';
-import { Observable } from 'rxjs';
+import { SupabaseService } from './supabase.service';
+import { Observable, from, switchMap, throwError } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
-  constructor(private api: ApiService) {}
-
-  getClientInquiries(): Observable<any[]> {
-    return this.api.get<any[]>('/inquiries/mine');
-  }
+  constructor(private supabase: SupabaseService) {}
 
   submitReview(performerId: string, inquiryId: string, rating: number, comment: string): Observable<any> {
-    return this.api.post<any>('/reviews', { performer_id: performerId, inquiry_id: inquiryId, rating, comment });
+    return from(this.supabase.getSession()).pipe(
+      switchMap(({ data: { session } }) => {
+        if (!session?.user.id) return throwError(() => new Error('Not authenticated'));
+        return from(
+          this.supabase.client
+            .from('reviews')
+            .insert({
+              performer_id: performerId,
+              client_id: session.user.id,
+              inquiry_id: inquiryId,
+              rating,
+              comment,
+            })
+            .select()
+            .single()
+        );
+      }),
+      switchMap(({ data, error }: any) => (error ? throwError(() => error) : [data]))
+    );
   }
 }

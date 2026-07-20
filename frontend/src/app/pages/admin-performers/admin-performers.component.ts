@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { SupabaseService } from '../../services/supabase.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-performers',
@@ -13,38 +13,47 @@ import { SupabaseService } from '../../services/supabase.service';
 export class AdminPerformersComponent implements OnInit {
   performers: any[] = [];
   loading = true;
+  private token: string | null = null;
 
   constructor(
     private http: HttpClient,
-    private supabase: SupabaseService
+    private supabase: SupabaseService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
     const { data: { session } } = await this.supabase.getSession();
-    const token = session?.access_token;
+    if (!session?.access_token) {
+      this.loading = false;
+      this.cdr.detectChanges();
+      return;
+    }
+    this.token = session.access_token;
+    this.fetchPending();
+  }
+
+  private fetchPending() {
     this.http.get<any[]>(`${environment.apiUrl}/admin/performers/pending`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${this.token}` }
     }).subscribe({
-      next: (data) => { this.performers = data; this.loading = false; },
-      error: (err) => { console.error(err); this.loading = false; },
+      next: (data) => { this.performers = data; this.loading = false; this.cdr.detectChanges(); },
+      error: (err) => { console.error(err); this.loading = false; this.cdr.detectChanges(); },
     });
   }
 
-  async approve(id: string) {
-    const { data: { session } } = await this.supabase.getSession();
-    const headers: Record<string, string> = {};
-    if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
-    this.http.put(`${environment.apiUrl}/admin/performers/${id}`, { status: 'approved' }, { headers }).subscribe({
-      next: () => { this.performers = this.performers.filter((p) => p.id !== id); },
+  approve(id: string) {
+    this.http.put(`${environment.apiUrl}/admin/performers/${id}`, { status: 'approved' }, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    }).subscribe({
+      next: () => { this.performers = this.performers.filter((p) => p.id !== id); this.cdr.detectChanges(); },
     });
   }
 
-  async reject(id: string) {
-    const { data: { session } } = await this.supabase.getSession();
-    const headers: Record<string, string> = {};
-    if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
-    this.http.put(`${environment.apiUrl}/admin/performers/${id}`, { status: 'rejected' }, { headers }).subscribe({
-      next: () => { this.performers = this.performers.filter((p) => p.id !== id); },
+  reject(id: string) {
+    this.http.put(`${environment.apiUrl}/admin/performers/${id}`, { status: 'rejected' }, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    }).subscribe({
+      next: () => { this.performers = this.performers.filter((p) => p.id !== id); this.cdr.detectChanges(); },
     });
   }
 }

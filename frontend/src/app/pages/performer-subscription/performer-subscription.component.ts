@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
-import { ApiService } from '../../services/api.service';
+import { PerformerService } from '../../services/performer.service';
 
 @Component({
   selector: 'app-performer-subscription',
@@ -12,15 +12,19 @@ export class PerformerSubscriptionComponent implements OnInit {
   subscriptions: any[] = [];
   loading = true;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private performerService: PerformerService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    this.api.get<any[]>('/performers/me/subscriptions').subscribe({
+    this.performerService.getSubscriptions().subscribe({
       next: (data) => {
         this.subscriptions = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
-      error: () => (this.loading = false),
+      error: () => { this.loading = false; this.cdr.detectChanges(); },
     });
   }
 }

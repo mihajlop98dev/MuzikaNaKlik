@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { SupabaseService } from '../../services/supabase.service';
 import { PerformerService } from '../../services/performer.service';
-import { ApiService } from '../../services/api.service';
 import { PerformerMedia } from '../../models/performer.model';
 
 @Component({
@@ -24,7 +23,6 @@ export class PerformerVideoComponent implements OnInit {
   constructor(
     private supabase: SupabaseService,
     private performerService: PerformerService,
-    private api: ApiService,
     private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef
   ) {}
@@ -51,7 +49,7 @@ export class PerformerVideoComponent implements OnInit {
   addVideo() {
     if (!this.newUrl) return;
     this.adding = true;
-    this.api.post('/performers/me/media', { type: 'video', url: this.newUrl }).subscribe({
+    this.performerService.addMedia('video', this.newUrl).subscribe({
       next: (data: any) => {
         this.videos.push(data);
         this.newUrl = '';
@@ -63,7 +61,7 @@ export class PerformerVideoComponent implements OnInit {
   }
 
   remove(id: string) {
-    this.api.delete(`/performers/me/media?id=${id}`).subscribe({
+    this.performerService.deleteMedia(id).subscribe({
       next: () => {
         this.videos = this.videos.filter((v) => v.id !== id);
         this.cdr.detectChanges();
