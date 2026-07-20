@@ -1,8 +1,8 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { SupabaseService } from '../../services/supabase.service';
+import { RouterLink, Router } from '@angular/router';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-register',
@@ -16,53 +16,32 @@ export class RegisterComponent {
   fullName = '';
   error = '';
   loading = false;
-  submitted = false;
 
   constructor(
-    private supabase: SupabaseService,
+    private api: ApiService,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
-  async register() {
+  register() {
     if (!this.email || !this.password || !this.fullName) return;
     this.loading = true;
     this.error = '';
     this.cdr.detectChanges();
 
-    const { error } = await this.supabase.client.auth.signUp({
+    this.api.post('/auth/register/client', {
       email: this.email,
       password: this.password,
-      options: {
-        data: { role: 'client', full_name: this.fullName },
-        emailRedirectTo: `${window.location.origin}/potvrda-naloga`,
+      full_name: this.fullName,
+    }).subscribe({
+      next: () => {
+        this.router.navigate(['/prijava']);
+      },
+      error: (err) => {
+        this.error = err.error?.error || 'Došlo je do greške. Pokušajte ponovo.';
+        this.loading = false;
+        this.cdr.detectChanges();
       },
     });
-
-    if (error) {
-      this.error = this.translateError(error.message);
-      this.loading = false;
-      this.cdr.detectChanges();
-      return;
-    }
-
-    this.submitted = true;
-    this.loading = false;
-    this.cdr.detectChanges();
-  }
-
-  private translateError(message: string): string {
-    if (/already registered|already exists/i.test(message)) {
-      return 'Nalog sa ovim emailom već postoji. Pokušajte da se prijavite.';
-    }
-    if (/rate limit/i.test(message)) {
-      return 'Previše pokušaja u kratkom roku. Sačekajte malo pa pokušajte ponovo.';
-    }
-    if (/invalid/i.test(message) && /email/i.test(message)) {
-      return 'Email adresa nije validna. Proverite da li je ispravno uneta.';
-    }
-    if (/password/i.test(message) && /(short|weak|6 char)/i.test(message)) {
-      return 'Lozinka je previše kratka (minimalno 6 karaktera).';
-    }
-    return message;
   }
 }
