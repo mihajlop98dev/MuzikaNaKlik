@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase.service';
-import { ApiService } from '../../services/api.service';
+import { NotificationService } from '../../services/notification.service';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 
@@ -18,7 +18,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private supabase: SupabaseService,
-    private api: ApiService,
+    private notificationService: NotificationService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.user$ = this.supabase.user$;
   }
@@ -26,8 +28,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.sub = this.supabase.user$.subscribe(user => {
       if (user) {
-        this.api.get<any[]>('/notifications').subscribe(data => {
+        this.notificationService.getMine().subscribe(data => {
           this.unreadCount = data.filter(n => !n.is_read).length;
+          this.cdr.detectChanges();
         });
       }
     });
@@ -39,5 +42,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   async signOut() {
     await this.supabase.signOut();
+    this.router.navigate(['/prijava']);
   }
 }
