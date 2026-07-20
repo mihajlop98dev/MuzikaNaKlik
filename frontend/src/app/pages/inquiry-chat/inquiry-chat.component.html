@@ -1,0 +1,34 @@
+<section class="section">
+  <div class="wrap chat-wrap">
+    <p class="muted" *ngIf="loading">Učitavanje...</p>
+
+    <ng-container *ngIf="!loading && inquiry">
+      <div class="chat-header">
+        <a [routerLink]="myRole === 'performer' ? ['/moj-nalog/izvodjac/upiti'] : ['/moji-upiti']" class="link-arrow">← Nazad</a>
+        <h2>{{ myRole === 'performer' ? inquiry.full_name : (inquiry.performers?.stage_name || 'Izvođač') }}</h2>
+        <p class="muted">{{ inquiry.event_type || 'Nije navedeno' }} • {{ inquiry.event_date || 'Nije navedeno' }}</p>
+      </div>
+
+      <div class="chat-thread">
+        <div *ngFor="let m of messages" class="chat-bubble" [class.mine]="m.sender_id === myUserId">
+          <p>{{ m.body }}</p>
+          <span class="chat-bubble-time">{{ m.created_at | date:'short' }}</span>
+        </div>
+        <div #scrollAnchor></div>
+      </div>
+
+      <div class="chat-input">
+        <textarea
+          [(ngModel)]="draft"
+          (keydown.enter)="onEnter($event)"
+          class="form-input"
+          rows="2"
+          placeholder="Napišite poruku..."
+        ></textarea>
+        <button class="btn btn-gold" (click)="send()" [disabled]="!draft.trim()">Pošalji</button>
+      </div>
+    </ng-container>
+
+    <p class="muted" *ngIf="!loading && notFound">Razgovor nije pronađen ili nemate pristup.</p>
+  </div>
+</section>

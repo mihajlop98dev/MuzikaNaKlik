@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ApiService } from '../../services/api.service';
+import { InquiryService } from '../../services/inquiry.service';
 
 @Component({
   selector: 'app-client-inquiries',
@@ -13,12 +13,15 @@ export class ClientInquiriesComponent implements OnInit {
   inquiries: any[] = [];
   loading = true;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private inquiryService: InquiryService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    this.api.get<any[]>('/inquiries/mine').subscribe({
-      next: (data) => { this.inquiries = data; this.loading = false; },
-      error: () => (this.loading = false),
+    this.inquiryService.getMine().subscribe({
+      next: (data) => { this.inquiries = data; this.loading = false; this.cdr.detectChanges(); },
+      error: () => { this.loading = false; this.cdr.detectChanges(); },
     });
   }
 }

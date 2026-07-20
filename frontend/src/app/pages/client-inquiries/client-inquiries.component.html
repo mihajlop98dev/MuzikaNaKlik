@@ -5,12 +5,15 @@
     <div class="inquiry-list" *ngIf="!loading && inquiries.length > 0; else emptyState">
       <div *ngFor="let i of inquiries" class="inquiry-card">
         <div class="inquiry-card-header">
-          <strong>{{ i.performer_id }}</strong>
+          <strong>{{ i.performers?.stage_name || 'Izvođač' }}</strong>
           <span class="inquiry-status">{{ i.status === 'new' ? 'Novo' : i.status === 'read' ? 'Pročitano' : 'Odgovoreno' }}</span>
         </div>
         <p class="inquiry-card-meta">{{ i.event_type || 'Nije navedeno' }} • {{ i.event_date || 'Nije navedeno' }}</p>
         <p class="inquiry-card-message">{{ i.message }}</p>
-        <a [routerLink]="['/recenzija', i.performer_id, i.id]" class="link-arrow">Ostavi recenziju</a>
+        <div class="inquiry-card-links">
+          <a [routerLink]="[i.id]" class="link-arrow">Otvori razgovor →</a>
+          <a [routerLink]="['/recenzija', i.performer_id, i.id]" class="link-arrow">Ostavi recenziju</a>
+        </div>
       </div>
     </div>
 

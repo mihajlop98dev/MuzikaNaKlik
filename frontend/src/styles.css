@@ -4,6 +4,10 @@ app-admin-layout ~ .site-header,
 app-admin-layout .site-header,
 body:has(app-admin-layout) .site-header { display: none; }
 
+app-performer-layout ~ .site-header,
+app-performer-layout .site-header,
+body:has(app-performer-layout) .site-header { display: none; }
+
 @theme {
   --color-bg: #0a0a0d;
   --color-bg-alt: #101013;
@@ -467,6 +471,14 @@ a { text-decoration: none; color: inherit; }
   display: flex;
   gap: 32px;
   margin-bottom: 32px;
+}
+
+.profile-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: var(--radius);
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .profile-info h1 { font-size: 32px; margin-bottom: 8px; }
@@ -993,6 +1005,109 @@ a { text-decoration: none; color: inherit; }
   color: #e74c3c;
 }
 
+.avail-calendar {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 480px;
+}
+
+.avail-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+
+.avail-calendar-header .btn {
+  padding: 6px 14px;
+}
+
+.avail-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.avail-calendar-weekdays {
+  margin-bottom: 6px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.avail-day {
+  aspect-ratio: 1;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.avail-day:hover:not(:disabled) {
+  border-color: var(--gold);
+}
+
+.avail-day.empty {
+  border: none;
+  cursor: default;
+}
+
+.avail-day.past {
+  opacity: .3;
+  cursor: not-allowed;
+}
+
+.avail-day.free {
+  background: rgba(46, 204, 113, 0.18);
+  border-color: #2ecc71;
+  color: #2ecc71;
+}
+
+.avail-day.booked {
+  background: rgba(231, 76, 60, 0.18);
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+
+.avail-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.avail-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.avail-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: transparent;
+  border: 1px solid var(--card-border);
+  display: inline-block;
+}
+
+.avail-dot.free {
+  background: rgba(46, 204, 113, 0.4);
+  border-color: #2ecc71;
+}
+
+.avail-dot.booked {
+  background: rgba(231, 76, 60, 0.4);
+  border-color: #e74c3c;
+}
+
 .inquiry-list {
   display: flex;
   flex-direction: column;
@@ -1000,11 +1115,19 @@ a { text-decoration: none; color: inherit; }
 }
 
 .inquiry-card {
+  display: block;
   background: var(--card);
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
   padding: 20px;
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.inquiry-card .link-arrow {
+  display: inline-block;
+  margin-top: 12px;
 }
 
 .inquiry-card-header {
@@ -1043,6 +1166,77 @@ a { text-decoration: none; color: inherit; }
   font-size: 12px;
   color: var(--text-muted);
   margin-top: 8px;
+}
+
+.inquiry-card-links {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.chat-wrap {
+  max-width: 640px;
+}
+
+.chat-header {
+  margin-bottom: 16px;
+}
+
+.chat-header h2 {
+  font-size: 22px;
+  margin: 8px 0 4px;
+}
+
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.chat-bubble {
+  align-self: flex-start;
+  max-width: 75%;
+  background: var(--bg-alt, rgba(255,255,255,0.06));
+  border-radius: 12px 12px 12px 2px;
+  padding: 10px 14px;
+}
+
+.chat-bubble.mine {
+  align-self: flex-end;
+  background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+  color: #1b1409;
+  border-radius: 12px 12px 2px 12px;
+}
+
+.chat-bubble p {
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.chat-bubble-time {
+  display: block;
+  font-size: 11px;
+  opacity: .65;
+  margin-top: 4px;
+}
+
+.chat-input {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  align-items: flex-end;
+}
+
+.chat-input textarea {
+  flex: 1;
+  resize: none;
 }
 
 .review-slider {
