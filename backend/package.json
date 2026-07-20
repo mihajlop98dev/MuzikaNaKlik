@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "vercel-build": "cd ../frontend && npm ci && npm run build -- --configuration production && rm -rf ../backend/public && mkdir -p ../backend/public && cp -r dist/muzika-na-klik/browser/. ../backend/public/ && cd ../backend && next build"
   },
   "dependencies": {
     "next": "^15.1.0",

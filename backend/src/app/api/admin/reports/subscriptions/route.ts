@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     .eq('status', 'active');
 
   const planCounts: Record<string, number> = {};
-  planDist?.forEach(s => {
+  planDist?.forEach((s: any) => {
     const name = s.subscription_plans?.name || 'Unknown';
     planCounts[name] = (planCounts[name] || 0) + 1;
   });
