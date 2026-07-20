@@ -1,37 +1,50 @@
 <section class="section">
   <div class="wrap">
-    <div class="auth-form">
-      <h2>Registracija — Klijent</h2>
-      <p class="muted">Napravi nalog i prati svoje upite.</p>
-
-      <div class="form-group">
-        <label>Ime i prezime</label>
-        <input type="text" [(ngModel)]="fullName" class="form-input" placeholder="Vaše ime i prezime">
-      </div>
-
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" [(ngModel)]="email" class="form-input" placeholder="vas@email.com">
-      </div>
-
-      <div class="form-group">
-        <label>Lozinka</label>
-        <input type="password" [(ngModel)]="password" class="form-input" placeholder="Minimalno 6 karaktera">
-      </div>
-
-      <p class="error-text" *ngIf="error">{{ error }}</p>
-
-      <button class="btn btn-gold auth-btn" (click)="register()" [disabled]="loading">
-        {{ loading ? 'Registracija...' : 'Registruj se' }}
-      </button>
-
-      <p class="auth-link" style="margin-top:12px">
-        Registracija za izvođače? <a routerLink="/registracija-izvodjac">Klikni ovde</a>
+    <div class="auth-form" *ngIf="submitted; else form">
+      <h2>Proverite email</h2>
+      <p class="muted">
+        Poslali smo vam link za potvrdu naloga na <strong>{{ email }}</strong>.
+        Kliknite na njega da aktivirate nalog, pa se prijavite.
       </p>
-
-      <p class="auth-link">
-        Već imaš nalog? <a routerLink="/prijava">Prijavi se</a>
+      <p class="auth-link" style="margin-top:12px">
+        Već potvrdili? <a routerLink="/prijava">Prijavi se</a>
       </p>
     </div>
+
+    <ng-template #form>
+      <div class="auth-form">
+        <h2>Registracija — Klijent</h2>
+        <p class="muted">Napravi nalog i prati svoje upite.</p>
+
+        <div class="form-group">
+          <label>Ime i prezime</label>
+          <input type="text" [(ngModel)]="fullName" class="form-input" placeholder="Vaše ime i prezime">
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="email" class="form-input" placeholder="vas@email.com">
+        </div>
+
+        <div class="form-group">
+          <label>Lozinka</label>
+          <input type="password" [(ngModel)]="password" class="form-input" placeholder="Minimalno 6 karaktera">
+        </div>
+
+        <p class="error-text" *ngIf="error">{{ error }}</p>
+
+        <button class="btn btn-gold auth-btn" (click)="register()" [disabled]="loading">
+          {{ loading ? 'Registracija...' : 'Registruj se' }}
+        </button>
+
+        <p class="auth-link" style="margin-top:12px">
+          Registracija za izvođače? <a routerLink="/registracija-izvodjac">Klikni ovde</a>
+        </p>
+
+        <p class="auth-link">
+          Već imaš nalog? <a routerLink="/prijava">Prijavi se</a>
+        </p>
+      </div>
+    </ng-template>
   </div>
 </section>

@@ -43,6 +43,11 @@ export const routes: Routes = [
       import('./pages/register-performer/register-performer.component').then((m) => m.RegisterPerformerComponent),
   },
   {
+    path: 'potvrda-naloga',
+    loadComponent: () =>
+      import('./pages/confirm-account/confirm-account.component').then((m) => m.ConfirmAccountComponent),
+  },
+  {
     path: 'admin',
     canActivate: [AdminGuard],
     loadComponent: () =>

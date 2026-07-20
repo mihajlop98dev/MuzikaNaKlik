@@ -1,0 +1,23 @@
+<section class="section">
+  <div class="wrap">
+    <div class="auth-form">
+      <ng-container *ngIf="loading">
+        <h2>Potvrđivanje naloga...</h2>
+        <p class="muted">Sačekajte trenutak.</p>
+      </ng-container>
+
+      <ng-container *ngIf="!loading && confirmed">
+        <h2>Nalog je potvrđen!</h2>
+        <p class="muted">Preusmeravamo vas na početnu...</p>
+      </ng-container>
+
+      <ng-container *ngIf="!loading && !confirmed">
+        <h2>Link nije važeći</h2>
+        <p class="muted">Link za potvrdu je istekao ili je već iskorišćen.</p>
+        <p class="auth-link" style="margin-top:12px">
+          <a routerLink="/registracija">Registruj se ponovo</a> ili <a routerLink="/prijava">Prijavi se</a>
+        </p>
+      </ng-container>
+    </div>
+  </div>
+</section>
