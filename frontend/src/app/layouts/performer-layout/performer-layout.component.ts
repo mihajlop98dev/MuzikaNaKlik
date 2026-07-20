@@ -63,6 +63,7 @@ export class PerformerLayoutComponent implements OnInit {
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
+    this.cdr.detectChanges();
   }
 
   async signOut() {

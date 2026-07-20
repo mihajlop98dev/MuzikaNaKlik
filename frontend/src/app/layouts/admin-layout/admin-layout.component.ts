@@ -30,6 +30,7 @@ export class AdminLayoutComponent implements OnInit {
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
+    this.cdr.detectChanges();
   }
 
   async signOut() {

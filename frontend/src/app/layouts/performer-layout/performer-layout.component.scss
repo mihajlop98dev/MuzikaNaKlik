@@ -69,6 +69,11 @@
     font-size: 24px;
     cursor: pointer;
     padding: 0;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
   }
 }
 
@@ -90,7 +95,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     .sidebar-logo { flex: 1; }
-    .hamburger { display: block; }
+    .hamburger { display: flex; }
     .sidebar-nav, .sidebar-footer { display: none; flex-basis: 100%; width: 100%; }
     &.open .sidebar-nav, &.open .sidebar-footer { display: block; }
   }
