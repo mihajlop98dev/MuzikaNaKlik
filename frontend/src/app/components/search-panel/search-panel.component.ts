@@ -11,6 +11,7 @@ import { SupabaseService } from '../../services/supabase.service';
   templateUrl: './search-panel.component.html',
 })
 export class SearchPanelComponent implements OnInit {
+  query = '';
   city = '';
   eventType = '';
   performerType = '';
@@ -26,6 +27,7 @@ export class SearchPanelComponent implements OnInit {
 
   search() {
     const params: Record<string, string> = {};
+    if (this.query) params['q'] = this.query;
     if (this.city) params['city'] = this.city;
     if (this.eventType) params['event_type'] = this.eventType;
     if (this.performerType) params['type'] = this.performerType;

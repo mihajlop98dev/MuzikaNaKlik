@@ -82,6 +82,7 @@ export interface Review {
 }
 
 export interface PerformerSearchParams {
+  q?: string;
   city?: string;
   event_date?: string;
   event_type?: string;

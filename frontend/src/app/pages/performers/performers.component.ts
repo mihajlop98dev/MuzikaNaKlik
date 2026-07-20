@@ -22,6 +22,7 @@ export class PerformersComponent implements OnInit {
   limit = 12;
 
   filters: {
+    q: string;
     city: string;
     type: string;
     event_type: string;
@@ -30,6 +31,7 @@ export class PerformersComponent implements OnInit {
     price_max: number;
     sort: string;
   } = {
+    q: '',
     city: '',
     type: '',
     event_type: '',
@@ -52,6 +54,7 @@ export class PerformersComponent implements OnInit {
     this.isLoggedIn = !!session;
 
     this.route.queryParams.subscribe((params) => {
+      if (params['q']) this.filters.q = params['q'];
       if (params['city']) this.filters.city = params['city'];
       if (params['event_type']) this.filters.event_type = params['event_type'];
       if (params['type']) this.filters.type = params['type'];

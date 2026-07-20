@@ -39,6 +39,7 @@ export class PerformerService {
       .eq('status', 'approved')
       .eq('subscription_status', 'active');
 
+    if (params.q) query = query.ilike('stage_name', `%${params.q}%`);
     if (params.city) query = query.ilike('city', `%${params.city}%`);
     if (params.type) query = query.eq('type', params.type);
     if (params.price_min && params.price_min > 0) query = query.gte('price_from', params.price_min);

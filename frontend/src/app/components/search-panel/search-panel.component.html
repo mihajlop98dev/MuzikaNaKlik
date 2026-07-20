@@ -1,41 +1,49 @@
 <form class="search-panel" (ngSubmit)="search()">
-  <div class="field">
-    <label>Izaberi grad</label>
-    <div class="field-control">
-      <input type="text" placeholder="Npr. Beograd" [(ngModel)]="city" name="city">
+  <div class="search-panel-grid">
+    <div class="field">
+      <label>Naziv izvođača</label>
+      <div class="field-control">
+        <input type="text" placeholder="Npr. Amadeus Bend" [(ngModel)]="query" name="query">
+      </div>
     </div>
-  </div>
-  <div class="field">
-    <label>Vrsta događaja</label>
-    <div class="field-control">
-      <select [(ngModel)]="eventType" name="eventType">
-        <option value="">Sve</option>
-        <option value="svadba">Svadba</option>
-        <option value="rodjendan">Rođendan</option>
-        <option value="krstenje">Krštenje</option>
-        <option value="korporativni">Korporativni</option>
-        <option value="maturska">Maturska večer</option>
-        <option value="drugo">Drugo</option>
-      </select>
+    <div class="field">
+      <label>Grad</label>
+      <div class="field-control">
+        <input type="text" placeholder="Npr. Beograd" [(ngModel)]="city" name="city">
+      </div>
     </div>
-  </div>
-  <div class="field">
-    <label>Izvođač</label>
-    <div class="field-control">
-      <select [(ngModel)]="performerType" name="performerType">
-        <option value="">Svi</option>
-        <option value="singer">Pevač</option>
-        <option value="band">Bend</option>
-        <option value="dj">DJ</option>
-      </select>
+    <div class="field">
+      <label>Vrsta događaja</label>
+      <div class="field-control">
+        <select [(ngModel)]="eventType" name="eventType">
+          <option value="">Sve</option>
+          <option value="svadba">Svadba</option>
+          <option value="rodjendan">Rođendan</option>
+          <option value="krstenje">Krštenje</option>
+          <option value="korporativni">Korporativni</option>
+          <option value="maturska">Maturska večer</option>
+          <option value="drugo">Drugo</option>
+        </select>
+      </div>
     </div>
-  </div>
-  <div class="field">
-    <label>Datum događaja</label>
-    <div class="field-control">
-      <input type="date" [(ngModel)]="eventDate" name="eventDate">
+    <div class="field">
+      <label>Izvođač</label>
+      <div class="field-control">
+        <select [(ngModel)]="performerType" name="performerType">
+          <option value="">Svi</option>
+          <option value="singer">Pevač</option>
+          <option value="band">Bend</option>
+          <option value="dj">DJ</option>
+        </select>
+      </div>
     </div>
-    <p *ngIf="!isLoggedIn" class="muted" style="font-size:11px;margin-top:4px">Prijavite se da vidite ko je slobodan za izabrani datum.</p>
+    <div class="field">
+      <label>Datum događaja</label>
+      <div class="field-control">
+        <input type="date" [(ngModel)]="eventDate" name="eventDate">
+      </div>
+      <p *ngIf="!isLoggedIn" class="search-hint">Prijavite se da vidite ko je slobodan za izabrani datum.</p>
+    </div>
   </div>
   <button type="submit" class="btn btn-gold search-btn">Pronađi muziku</button>
 </form>

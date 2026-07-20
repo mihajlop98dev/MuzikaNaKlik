@@ -5,6 +5,11 @@
         <h3>Filteri</h3>
 
         <div class="filter-group">
+          <label>Naziv izvođača</label>
+          <input type="text" [(ngModel)]="filters.q" placeholder="Npr. Amadeus Bend" class="filter-input">
+        </div>
+
+        <div class="filter-group">
           <label>Grad</label>
           <input type="text" [(ngModel)]="filters.city" placeholder="Npr. Beograd" class="filter-input">
         </div>
