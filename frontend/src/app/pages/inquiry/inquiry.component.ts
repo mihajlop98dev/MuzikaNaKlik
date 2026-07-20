@@ -38,7 +38,13 @@ export class InquiryComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    const { data: { session } } = await this.supabase.getSession();
+    if (!session) {
+      this.router.navigate(['/prijava']);
+      return;
+    }
+
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.router.navigate(['/']);

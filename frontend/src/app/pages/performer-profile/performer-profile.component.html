@@ -10,7 +10,8 @@
           <span class="price">od {{ performer.price_from }} €</span>
         </div>
         <div class="profile-actions">
-          <a routerLink="/upit/{{ performer.id }}" class="btn btn-gold">Pošalji upit</a>
+          <a *ngIf="isLoggedIn" routerLink="/upit/{{ performer.id }}" class="btn btn-gold">Pošalji upit</a>
+          <a *ngIf="!isLoggedIn" routerLink="/prijava" class="btn btn-gold">Prijavite se da pošaljete upit</a>
           <button class="btn fav-btn" [class.favorited]="favorited" (click)="toggleFavorite()">{{ favorited ? '♥' : '♡' }} {{ favorited ? 'Sačuvano' : 'Sačuvaj' }}</button>
           <button class="btn fav-btn" (click)="shareProfile()">↗</button>
           <a *ngIf="isLoggedIn && phone" href="tel:{{ phone }}" class="btn fav-btn">📞 {{ phone }}</a>

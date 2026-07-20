@@ -16,11 +16,6 @@ export class InquiryService {
   }
 
   create(inquiry: Partial<Inquiry>): Observable<Inquiry> {
-    // No .select() here on purpose: a guest submitter has no SELECT policy
-    // that makes their own just-created inquiry visible (no client_id to
-    // match), so requesting the row back via RETURNING fails RLS even
-    // though the INSERT itself is fully permitted. The caller only needs
-    // to know it succeeded.
     return from(
       this.supabase.client.from('inquiries').insert(inquiry)
     ).pipe(
