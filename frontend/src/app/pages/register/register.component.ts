@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
-import { SupabaseService } from '../../services/supabase.service';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-register',
@@ -18,26 +18,30 @@ export class RegisterComponent {
   loading = false;
 
   constructor(
-    private supabase: SupabaseService,
-    private router: Router
+    private api: ApiService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  async register() {
+  register() {
     if (!this.email || !this.password || !this.fullName) return;
     this.loading = true;
     this.error = '';
+    this.cdr.detectChanges();
 
-    const { error } = await this.supabase.signUp(this.email, this.password, {
-      role: 'client',
+    this.api.post('/auth/register/client', {
+      email: this.email,
+      password: this.password,
       full_name: this.fullName,
+    }).subscribe({
+      next: () => {
+        this.router.navigate(['/prijava']);
+      },
+      error: (err) => {
+        this.error = err.error?.error || 'Došlo je do greške. Pokušajte ponovo.';
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
     });
-
-    if (error) {
-      this.error = error.message;
-      this.loading = false;
-      return;
-    }
-
-    this.router.navigate(['/prijava']);
   }
 }
