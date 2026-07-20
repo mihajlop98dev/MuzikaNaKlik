@@ -2,7 +2,14 @@
   <div class="wrap">
     <h2 style="font-size:24px;margin-bottom:24px">Pretplata</h2>
 
-    <div class="inquiry-list" *ngIf="!loading && subscriptions.length > 0; else emptyState">
+    <p class="muted" *ngIf="paymentResult === 'success'" style="color:#4caf50;margin-bottom:16px">
+      Plaćanje je uspešno primljeno! Pretplata je aktivirana.
+    </p>
+    <p class="muted" *ngIf="paymentResult === 'canceled'" style="margin-bottom:16px">
+      Plaćanje je otkazano. Možete pokušati ponovo kad god želite.
+    </p>
+
+    <div class="inquiry-list" *ngIf="!loading && subscriptions.length > 0">
       <div *ngFor="let s of subscriptions" class="inquiry-card">
         <div class="inquiry-card-header">
           <strong>{{ s.subscription_plans?.name || 'Paket' }}</strong>
@@ -16,8 +23,25 @@
       </div>
     </div>
 
-    <ng-template #emptyState>
-      <p class="muted" *ngIf="!loading">Nemate aktivnu pretplatu. Kontaktirajte administratora.</p>
-    </ng-template>
+    <p class="muted" *ngIf="!loading && subscriptions.length === 0" style="margin-bottom:24px">
+      Nemate aktivnu pretplatu.
+    </p>
+
+    <h3 style="font-size:18px;margin:32px 0 16px">Izaberite paket</h3>
+    <p class="error-text" *ngIf="error">{{ error }}</p>
+
+    <div class="inquiry-list" *ngIf="plans.length > 0">
+      <div *ngFor="let p of plans" class="inquiry-card">
+        <div class="inquiry-card-header">
+          <strong>{{ p.name }}</strong>
+          <span>{{ p.price / 100 }} €/mes.</span>
+        </div>
+        <p class="inquiry-card-meta">{{ p.description }}</p>
+        <div class="inquiry-card-links">
+          <button class="btn btn-gold" [disabled]="paying" (click)="pay(p.id, 'monthly')">Plati mesečno</button>
+          <button class="btn btn-gold" [disabled]="paying" (click)="pay(p.id, 'yearly')">Plati godišnje ({{ (p.price * 10) / 100 }} €)</button>
+        </div>
+      </div>
+    </div>
   </div>
 </section>

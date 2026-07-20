@@ -9,6 +9,7 @@ const publicPaths = [
   '/api/equipment',
   '/api/languages',
   '/api/subscription-plans',
+  '/api/stripe/webhook',
 ];
 
 export function middleware(request: NextRequest) {
