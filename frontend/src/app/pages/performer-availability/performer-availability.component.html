@@ -1,28 +1,38 @@
 <section class="section">
   <div class="wrap">
-    <h2 style="font-size:24px;margin-bottom:24px">Slobodni termini</h2>
+    <h2 style="font-size:24px;margin-bottom:8px">Slobodni termini</h2>
+    <p class="muted" style="margin-bottom:24px;font-size:13px">Kliknite na datum: prvi klik označava slobodan, drugi zauzet, treći uklanja oznaku.</p>
 
-    <div class="media-add-form">
-      <input type="date" [(ngModel)]="newDate" class="form-input" style="flex:1">
-      <select [(ngModel)]="newStatus" class="form-input" style="flex:0 0 140px">
-        <option value="free">Slobodan</option>
-        <option value="booked">Zauzet</option>
-      </select>
-      <button class="btn btn-gold" (click)="addDate()" [disabled]="!newDate">Dodaj</button>
-    </div>
+    <div class="avail-calendar" *ngIf="!loading">
+      <div class="avail-calendar-header">
+        <button class="btn" (click)="prevMonth()">←</button>
+        <strong>{{ monthLabel }}</strong>
+        <button class="btn" (click)="nextMonth()">→</button>
+      </div>
 
-    <div class="availability-list" *ngIf="!loading && dates.length > 0; else emptyState">
-      <div *ngFor="let d of dates" class="availability-item" [class.booked]="d.status === 'booked'">
-        <span>{{ d.date }}</span>
-        <span class="availability-status" (click)="toggleStatus(d)">
-          {{ d.status === 'free' ? 'Slobodan' : 'Zauzet' }}
-        </span>
-        <button class="repertoire-remove" (click)="removeDate(d.id)">✕</button>
+      <div class="avail-calendar-grid avail-calendar-weekdays">
+        <span *ngFor="let w of weekdayLabels">{{ w }}</span>
+      </div>
+
+      <div class="avail-calendar-grid">
+        <button
+          *ngFor="let cell of calendarDays"
+          type="button"
+          class="avail-day"
+          [class.empty]="!cell.inMonth"
+          [class.past]="cell.isPast"
+          [class.free]="cell.status === 'free'"
+          [class.booked]="cell.status === 'booked'"
+          [disabled]="!cell.inMonth || cell.isPast"
+          (click)="dayClick(cell)"
+        >{{ cell.inMonth ? cell.day : '' }}</button>
+      </div>
+
+      <div class="avail-legend">
+        <span><i class="avail-dot free"></i>Slobodno</span>
+        <span><i class="avail-dot booked"></i>Zauzeto</span>
+        <span><i class="avail-dot"></i>Nije postavljeno</span>
       </div>
     </div>
-
-    <ng-template #emptyState>
-      <p class="muted" *ngIf="!loading">Nema unetih termina.</p>
-    </ng-template>
   </div>
 </section>

@@ -19,16 +19,35 @@
         <h3>Verifikacija</h3>
         <p style="color:var(--gold)">✅ Verifikovano</p>
       </div>
+      <div class="dashboard-card">
+        <h3>Nepročitani upiti</h3>
+        <p>{{ unreadInquiries }}</p>
+      </div>
     </div>
 
-    <div class="dashboard-nav" *ngIf="performer">
-      <a routerLink="/moj-nalog/izvodjac/profil" class="dashboard-nav-item">Uredi profil</a>
-      <a routerLink="/moj-nalog/izvodjac/galerija" class="dashboard-nav-item">Galerija</a>
-      <a routerLink="/moj-nalog/izvodjac/video" class="dashboard-nav-item">Video</a>
-      <a routerLink="/moj-nalog/izvodjac/repertoar" class="dashboard-nav-item" *ngIf="performer.has_repertoire">Repertoar</a>
-      <a routerLink="/moj-nalog/izvodjac/termini" class="dashboard-nav-item" *ngIf="performer.has_availability">Slobodni termini</a>
-      <a routerLink="/moj-nalog/izvodjac/upiti" class="dashboard-nav-item">Primljeni upiti</a>
-      <a routerLink="/moj-nalog/izvodjac/pretplata" class="dashboard-nav-item">Pretplata</a>
+    <div class="dashboard-grid" *ngIf="!loading && performer" style="margin-top:24px">
+      <div class="dashboard-card">
+        <h3>Poslednje recenzije</h3>
+        <p class="muted" *ngIf="recentReviews.length === 0">Još nema recenzija.</p>
+        <div *ngFor="let r of recentReviews" style="margin-bottom:8px">
+          <strong>★ {{ r.rating }}/5</strong>
+          <p class="muted" style="font-size:13px">{{ r.comment }}</p>
+        </div>
+      </div>
+
+      <div class="dashboard-card">
+        <h3>Kompletnost profila</h3>
+        <p class="muted" *ngIf="missingProfileItems.length === 0">Profil je kompletan 🎉</p>
+        <ul *ngIf="missingProfileItems.length > 0" style="padding-left:18px;margin:0">
+          <li *ngFor="let item of missingProfileItems" class="muted" style="font-size:13px">{{ item }}</li>
+        </ul>
+      </div>
+
+      <div class="dashboard-card">
+        <h3>Nadolazeći zauzeti termini</h3>
+        <p class="muted" *ngIf="upcomingBusyDates.length === 0">Nemate zakazane zauzete termine.</p>
+        <div *ngFor="let a of upcomingBusyDates" style="font-size:13px">{{ a.date | date:'dd.MM.yyyy.' }}</div>
+      </div>
     </div>
 
     <ng-template #loadingState>

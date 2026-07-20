@@ -123,6 +123,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/client-inquiries/client-inquiries.component').then(m => m.ClientInquiriesComponent),
   },
   {
+    path: 'moji-upiti/:id',
+    loadComponent: () => import('./pages/inquiry-chat/inquiry-chat.component').then(m => m.InquiryChatComponent),
+  },
+  {
     path: 'omiljeni',
     loadComponent: () => import('./pages/favorites/favorites.component').then(m => m.FavoritesComponent),
   },
@@ -133,6 +137,10 @@ export const routes: Routes = [
   {
     path: 'moj-nalog/izvodjac',
     canActivate: [PerformerGuard],
+    loadComponent: () =>
+      import('./layouts/performer-layout/performer-layout.component').then(
+        (m) => m.PerformerLayoutComponent
+      ),
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
@@ -157,10 +165,10 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'profil',
+        path: 'video',
         loadComponent: () =>
-          import('./pages/performer-profile-edit/performer-profile-edit.component').then(
-            (m) => m.PerformerProfileEditComponent
+          import('./pages/performer-video/performer-video.component').then(
+            (m) => m.PerformerVideoComponent
           ),
       },
       {
@@ -174,6 +182,10 @@ export const routes: Routes = [
       {
         path: 'upiti',
         loadComponent: () => import('./pages/performer-inbox/performer-inbox.component').then(m => m.PerformerInboxComponent),
+      },
+      {
+        path: 'upiti/:id',
+        loadComponent: () => import('./pages/inquiry-chat/inquiry-chat.component').then(m => m.InquiryChatComponent),
       },
       {
         path: 'pretplata',

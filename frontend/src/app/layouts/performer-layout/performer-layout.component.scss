@@ -1,0 +1,95 @@
+.performer-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #17161b;
+  color: #f3f2ef;
+}
+
+.performer-sidebar {
+  width: 240px;
+  background: #1a1a2e;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
+
+  .sidebar-logo {
+    padding: 24px 20px;
+    font-size: 16px;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    a { color: #fff; text-decoration: none; }
+    small { font-weight: 400; opacity: 0.6; font-size: 12px; }
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 16px 0;
+    a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s;
+      &:hover, &.active { background: rgba(255,255,255,0.08); color: #fff; }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    button {
+      width: 100%;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      &:hover { background: rgba(255,255,255,0.2); }
+    }
+  }
+
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+  }
+}
+
+.performer-content {
+  margin-left: 240px;
+  flex: 1;
+  padding: 32px;
+  min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .performer-sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    flex-direction: row;
+    flex-wrap: wrap;
+    .sidebar-logo { flex: 1; }
+    .hamburger { display: block; }
+    .sidebar-nav, .sidebar-footer { display: none; width: 100%; }
+    &.open .sidebar-nav, &.open .sidebar-footer { display: block; }
+  }
+  .performer-content { margin-left: 0; }
+}

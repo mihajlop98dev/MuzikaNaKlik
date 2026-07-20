@@ -1,0 +1,26 @@
+<div class="performer-layout">
+  <aside class="performer-sidebar" [class.open]="sidebarOpen">
+    <div class="sidebar-logo">
+      <a routerLink="/moj-nalog/izvodjac/dashboard">
+        Muzika Na Klik<br>
+        <small>Panel izvođača</small>
+      </a>
+      <button class="hamburger" (click)="toggleSidebar()">☰</button>
+    </div>
+    <nav class="sidebar-nav">
+      <a *ngFor="let item of navItems"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: item.path === '/moj-nalog/izvodjac/dashboard'}">
+        <span>{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button (click)="signOut()">Izloguj se</button>
+    </div>
+  </aside>
+  <main class="performer-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
