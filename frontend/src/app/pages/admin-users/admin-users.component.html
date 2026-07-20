@@ -28,7 +28,8 @@
   <div *ngIf="loading" class="muted">Učitavanje...</div>
   <div *ngIf="!loading && filtered.length === 0" class="muted">Nema korisnika.</div>
 
-  <table *ngIf="!loading && filtered.length > 0" style="width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden">
+  <div class="table-scroll" *ngIf="!loading && filtered.length > 0">
+  <table style="width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden">
     <thead>
       <tr style="background:rgba(255,255,255,0.05);text-align:left">
         <th style="padding:12px 16px;font-size:13px;color:var(--text-muted)">Ime</th>
@@ -58,6 +59,7 @@
       </tr>
     </tbody>
   </table>
+  </div>
 
   <!-- Modal -->
   <div *ngIf="selectedUser" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1000" (click)="closeModal()">

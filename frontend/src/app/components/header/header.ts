@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router, NavigationStart } from '@angular/router';
 import { SupabaseService } from '../../services/supabase.service';
 import { NotificationService } from '../../services/notification.service';
 import { NgIf, AsyncPipe } from '@angular/common';
@@ -14,7 +14,9 @@ import { Subscription } from 'rxjs';
 export class HeaderComponent implements OnInit, OnDestroy {
   user$;
   unreadCount = 0;
+  menuOpen = false;
   private sub?: Subscription;
+  private routerSub?: Subscription;
 
   constructor(
     private supabase: SupabaseService,
@@ -34,10 +36,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
         });
       }
     });
+
+    this.routerSub = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.closeMenu();
+      }
+    });
   }
 
   ngOnDestroy() {
     this.sub?.unsubscribe();
+    this.routerSub?.unsubscribe();
+  }
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+    this.cdr.detectChanges();
+  }
+
+  closeMenu() {
+    if (!this.menuOpen) return;
+    this.menuOpen = false;
+    this.cdr.detectChanges();
   }
 
   async signOut() {

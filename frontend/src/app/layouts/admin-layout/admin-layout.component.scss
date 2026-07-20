@@ -80,6 +80,9 @@
 }
 
 @media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
   .admin-sidebar {
     width: 100%;
     height: auto;
@@ -88,7 +91,7 @@
     flex-wrap: wrap;
     .sidebar-logo { flex: 1; }
     .hamburger { display: block; }
-    .sidebar-nav, .sidebar-footer { display: none; width: 100%; }
+    .sidebar-nav, .sidebar-footer { display: none; flex-basis: 100%; width: 100%; }
     &.open .sidebar-nav, &.open .sidebar-footer { display: block; }
   }
   .admin-content { margin-left: 0; }

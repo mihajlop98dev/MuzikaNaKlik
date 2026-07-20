@@ -162,12 +162,74 @@ a { text-decoration: none; color: inherit; }
 .link-plain { font-size: 14px; color: var(--text); opacity: .85; }
 .link-plain:hover { opacity: 1; }
 
-@media (max-width: 960px) {
-  .main-nav { display: none; }
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  flex-shrink: 0;
 }
 
-@media (max-width: 640px) {
-  .header-actions .link-plain { display: none; }
+.menu-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.menu-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.open span:nth-child(2) { opacity: 0; }
+.menu-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 0;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,.06);
+  background: rgba(10,10,13,.98);
+  transition: max-height .25s ease;
+}
+
+.mobile-menu.open {
+  max-height: 480px;
+}
+
+.mobile-nav,
+.mobile-actions {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 20px;
+  gap: 4px;
+}
+
+.mobile-nav { border-bottom: 1px solid rgba(255,255,255,.06); }
+
+.mobile-nav a,
+.mobile-actions a {
+  padding: 12px 4px;
+  font-size: 15px;
+  color: var(--text);
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+
+.mobile-nav a.active { color: var(--gold); }
+.mobile-actions .btn { margin-top: 8px; width: 100%; }
+
+@media (max-width: 960px) {
+  .main-nav { display: none; }
+  .header-actions { display: none; }
+  .menu-toggle { display: flex; }
+  .mobile-menu { display: flex; }
 }
 
 .hero {
@@ -216,25 +278,33 @@ a { text-decoration: none; color: inherit; }
 }
 
 .search-panel {
-  display: flex;
-  align-items: flex-end;
-  gap: 0;
-  background: rgba(23,22,27,.9);
+  background: rgba(23,22,27,.92);
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
-  padding: 14px;
+  padding: 20px;
   backdrop-filter: blur(6px);
-  flex-wrap: wrap;
+  box-shadow: 0 20px 50px rgba(0,0,0,.35);
+}
+
+.search-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px 20px;
+  margin-bottom: 18px;
 }
 
 .field {
-  flex: 1 1 170px;
-  padding: 4px 18px;
-  border-right: 1px solid rgba(255,255,255,.08);
-  min-width: 150px;
+  min-width: 0;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: border-color .15s ease;
 }
 
-.field:last-of-type { border-right: none; }
+.field:focus-within {
+  border-color: var(--gold);
+}
 
 .field label {
   display: block;
@@ -242,7 +312,7 @@ a { text-decoration: none; color: inherit; }
   text-transform: uppercase;
   letter-spacing: .04em;
   color: var(--text-muted);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .field-control {
@@ -265,9 +335,15 @@ a { text-decoration: none; color: inherit; }
 .field-control input::placeholder { color: #6f6d74; }
 .field-control select option { background: var(--card); color: var(--text); }
 
+.search-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
 .search-btn {
-  margin: 4px;
-  flex-shrink: 0;
+  width: 100%;
   padding: 16px 26px;
 }
 
@@ -461,9 +537,7 @@ a { text-decoration: none; color: inherit; }
 
 @media (max-width: 640px) {
   .performer-grid { grid-template-columns: 1fr; }
-  .search-panel { flex-direction: column; align-items: stretch; }
-  .field { border-right: none; border-bottom: 1px solid rgba(255,255,255,.08); padding: 10px 4px; }
-  .search-btn { width: 100%; }
+  .search-panel-grid { grid-template-columns: 1fr; }
   .cta h2 { font-size: 21px; }
 }
 
@@ -1449,4 +1523,13 @@ a { text-decoration: none; color: inherit; }
   margin: 12px auto;
   display: block;
   border: 3px solid var(--gold);
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll table {
+  min-width: 640px;
 }

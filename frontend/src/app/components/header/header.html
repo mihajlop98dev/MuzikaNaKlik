@@ -28,10 +28,42 @@
         </a>
         <button class="btn btn-gold" (click)="signOut()">Odjava</button>
       </ng-container>
-      <ng-template #guestLinks>
-        <a routerLink="/prijava" class="link-plain">Prijava</a>
-        <a routerLink="/registracija" class="btn btn-gold">Registracija</a>
-      </ng-template>
+    </div>
+
+    <button
+      class="menu-toggle"
+      type="button"
+      (click)="toggleMenu()"
+      [class.open]="menuOpen"
+      [attr.aria-expanded]="menuOpen"
+      aria-label="Meni"
+    >
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="mobile-menu" [class.open]="menuOpen">
+    <nav class="mobile-nav">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Početna</a>
+      <a routerLink="/izvodjaci" routerLinkActive="active">Izvođači</a>
+      <a routerLink="/kontakt" routerLinkActive="active">Kontakt</a>
+    </nav>
+
+    <div class="mobile-actions">
+      <ng-container *ngIf="user$ | async as user; else guestLinks">
+        <a routerLink="/omiljeni" class="link-plain">Omiljeni</a>
+        <a routerLink="/moji-upiti" class="link-plain">Moji upiti</a>
+        <a routerLink="/notifikacije" class="link-plain">
+          Notifikacije
+          <span *ngIf="unreadCount > 0" class="notif-badge">{{ unreadCount }}</span>
+        </a>
+        <button class="btn btn-gold" (click)="signOut()">Odjava</button>
+      </ng-container>
     </div>
   </div>
+
+  <ng-template #guestLinks>
+    <a routerLink="/prijava" class="link-plain">Prijava</a>
+    <a routerLink="/registracija" class="btn btn-gold">Registracija</a>
+  </ng-template>
 </header>

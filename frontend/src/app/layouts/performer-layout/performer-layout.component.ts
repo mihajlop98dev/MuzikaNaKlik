@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationStart } from '@angular/router';
 import { NgFor } from '@angular/common';
 import { SupabaseService } from '../../services/supabase.service';
 import { PerformerService } from '../../services/performer.service';
@@ -49,6 +49,13 @@ export class PerformerLayoutComponent implements OnInit {
     this.performerService.getById(session.user.id).subscribe((performer) => {
       if (performer.has_repertoire) {
         this.navItems = [...BASE_NAV_ITEMS, REPERTOIRE_ITEM, ...TAIL_NAV_ITEMS];
+        this.cdr.detectChanges();
+      }
+    });
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart && this.sidebarOpen) {
+        this.sidebarOpen = false;
         this.cdr.detectChanges();
       }
     });
