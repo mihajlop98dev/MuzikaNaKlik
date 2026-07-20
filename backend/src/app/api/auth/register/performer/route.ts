@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: Request) {
   try {
-    const { email, password, stage_name, type, city, phone, genres, description, price_from, equipment, languages, member_count, travel_radius, audio_url, profile_image_url, videos, plan_id, billing_period } = await request.json();
+    const { email, password, stage_name, type, city, phone, genres, description, price_from, equipment, languages, member_count, audio_url, profile_image_url, videos, plan_id, billing_period } = await request.json();
 
     if (!email || !password || !stage_name) {
       return NextResponse.json({ error: 'Email, password, and stage name are required' }, { status: 400 });
@@ -21,11 +20,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: authError.message }, { status: 400 });
     }
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
     const isComplete = !!(plan_id && billing_period);
 
     const performerUpdates: Record<string, any> = {
@@ -38,7 +32,6 @@ export async function POST(request: Request) {
       equipment: equipment || [],
       languages: languages || [],
       member_count: member_count || null,
-      travel_radius: travel_radius || null,
       audio_url: audio_url || null,
       profile_image_url: profile_image_url || null,
     };
@@ -51,7 +44,7 @@ export async function POST(request: Request) {
       ).toISOString();
     }
 
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from('performers')
       .update(performerUpdates)
       .eq('id', authData.user.id);
@@ -60,7 +53,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
 
-    await supabase.from('profiles').update({ phone: phone || null }).eq('id', authData.user.id);
+    await supabaseAdmin.from('profiles').update({ phone: phone || null }).eq('id', authData.user.id);
 
     if (videos && Array.isArray(videos) && videos.length > 0) {
       const videoRecords = videos.map((url: string) => ({
@@ -69,7 +62,7 @@ export async function POST(request: Request) {
         url: url,
         sort_order: 0,
       }));
-      await supabase.from('performer_media').insert(videoRecords);
+      await supabaseAdmin.from('performer_media').insert(videoRecords);
     }
 
     if (isComplete) {
@@ -87,7 +80,7 @@ export async function POST(request: Request) {
         periodEnd.setMonth(periodEnd.getMonth() + 1);
       }
 
-      await supabase.from('subscriptions').insert({
+      await supabaseAdmin.from('subscriptions').insert({
         performer_id: authData.user.id,
         plan_id,
         amount: plan?.price || 0,
@@ -97,7 +90,7 @@ export async function POST(request: Request) {
         status: 'active',
       });
 
-      await supabase.from('performers').update({
+      await supabaseAdmin.from('performers').update({
         search_priority: plan?.search_priority ?? 0,
         plan_max_images: plan?.max_images ?? 1,
         plan_max_videos: plan?.max_videos ?? 1,
@@ -114,13 +107,12 @@ export async function POST(request: Request) {
         equipment: equipment || [],
         languages: languages || [],
         member_count: member_count || null,
-        travel_radius: travel_radius || null,
         city: city || null,
         genres: genres || [],
       }).eq('id', authData.user.id);
     }
 
-    const { data: adminProfiles } = await supabase
+    const { data: adminProfiles } = await supabaseAdmin
       .from('profiles')
       .select('id')
       .eq('role', 'admin');
@@ -135,7 +127,7 @@ export async function POST(request: Request) {
           : `${stage_name} se registrovao i čeka odobrenje.`,
         link: '/admin/izvodjaci',
       }));
-      await supabase.from('notifications').insert(adminNotifications);
+      await supabaseAdmin.from('notifications').insert(adminNotifications);
     }
 
     return NextResponse.json({
