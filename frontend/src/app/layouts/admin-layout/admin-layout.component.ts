@@ -29,6 +29,7 @@ export class AdminLayoutComponent {
 
   navItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: '📊' },
+    { path: '/admin/izvodjaci', label: 'Izvođači', icon: '🎤' },
     { path: '/admin/korisnici', label: 'Korisnici', icon: '👥' },
     { path: '/admin/pretplate', label: 'Pretplate', icon: '💳' },
     { path: '/admin/recenzije', label: 'Recenzije', icon: '⭐' },

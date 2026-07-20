@@ -13,7 +13,8 @@ export async function GET(request: Request) {
   const { data: profile } = await supabaseAdmin.from('profiles').select('role').eq('id', user.id).single();
   if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  const { data } = await supabaseAdmin.from('reviews').select('*, performers(stage_name), profiles(full_name)').order('created_at', { ascending: false });
+  const { data, error } = await supabaseAdmin.from('reviews').select('*, performers(stage_name), profiles(full_name)').order('created_at', { ascending: false });
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data || []);
 }
 
@@ -31,5 +32,14 @@ export async function PUT(request: Request) {
   const body = await request.json();
   const { data, error } = await supabaseAdmin.from('reviews').update({ status: body.status }).eq('id', body.id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const { error: logError } = await supabaseAdmin.from('activity_logs').insert({
+    user_id: user.id,
+    user_email: user.email,
+    action: 'moderate_review',
+    details: { review_id: body.id, status: body.status },
+  });
+  if (logError) console.error('Failed to write activity log:', logError);
+
   return NextResponse.json(data);
 }

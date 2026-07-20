@@ -21,5 +21,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
   const { data, error } = await supabaseAdmin.from('subscription_plans').update(updates).eq('id', id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const { error: logError } = await supabaseAdmin.from('activity_logs').insert({
+    user_id: user.id,
+    user_email: user.email,
+    action: 'update_plan',
+    details: { plan_id: id, changes: updates },
+  });
+  if (logError) console.error('Failed to write activity log:', logError);
+
   return NextResponse.json(data);
 }

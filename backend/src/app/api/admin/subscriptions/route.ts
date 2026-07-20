@@ -115,5 +115,13 @@ export async function POST(request: Request) {
     has_verified_badge: plan?.has_verified_badge ?? false,
   }).eq('id', body.performer_id);
 
+  const { error: logError } = await supabaseAdmin.from('activity_logs').insert({
+    user_id: user.id,
+    user_email: user.email,
+    action: existing ? 'renew_subscription' : 'create_subscription',
+    details: { performer_id: body.performer_id, plan_id: body.plan_id, billing_period: billingPeriod },
+  });
+  if (logError) console.error('Failed to write activity log:', logError);
+
   return NextResponse.json({ updated: !!existing, data: result }, { status: 201 });
 }

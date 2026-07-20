@@ -23,5 +23,13 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     await supabaseAdmin.from('performers').update({ status: body.performer_status }).eq('id', id);
   }
 
+  const { error: logError } = await supabaseAdmin.from('activity_logs').insert({
+    user_id: user.id,
+    user_email: user.email,
+    action: 'update_user',
+    details: { target_user_id: id, role: body.role, performer_status: body.performer_status },
+  });
+  if (logError) console.error('Failed to write activity log:', logError);
+
   return NextResponse.json({ success: true });
 }
