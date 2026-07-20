@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Performer } from '../../models/performer.model';
-import { ApiService } from '../../services/api.service';
+import { FavoritesService } from '../../services/favorites.service';
 import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class PerformerCardComponent implements OnInit {
   favorited = false;
 
   constructor(
-    private api: ApiService,
+    private favoritesService: FavoritesService,
     private supabase: SupabaseService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -31,8 +31,8 @@ export class PerformerCardComponent implements OnInit {
   toggleFavorite(event: Event) {
     event.stopPropagation();
     if (!this.isLoggedIn) return;
-    this.api.post('/favorites', { performer_id: this.performer.id }).subscribe({
-      next: (res: any) => { this.favorited = res.favorited; this.cdr.detectChanges(); },
+    this.favoritesService.toggle(this.performer.id).subscribe({
+      next: (res) => { this.favorited = res.favorited; this.cdr.detectChanges(); },
     });
   }
 }

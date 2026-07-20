@@ -1,9 +1,10 @@
 <section class="section" *ngIf="!loading && performer; else loadingState">
   <div class="wrap">
     <div class="profile-header">
+      <img class="profile-avatar" [src]="performer.profile_image_url || 'https://picsum.photos/seed/' + performer.id + '/380/460'" [alt]="performer.stage_name">
       <div class="profile-info">
         <h1>{{ performer.stage_name }}</h1>
-        <p class="performer-city">{{ performer.city }}</p>
+        <p class="performer-city">{{ performer.city }}<ng-container *ngIf="getTypeLabel()"> · {{ getTypeLabel() }}</ng-container></p>
         <div class="performer-meta">
           <span class="rating">★ {{ performer.rating_avg.toFixed(1) }} <em>({{ performer.rating_count }} recenzija)</em></span>
           <span class="price">od {{ performer.price_from }} €</span>
@@ -12,18 +13,19 @@
           <a routerLink="/upit/{{ performer.id }}" class="btn btn-gold">Pošalji upit</a>
           <button class="btn fav-btn" [class.favorited]="favorited" (click)="toggleFavorite()">{{ favorited ? '♥' : '♡' }} {{ favorited ? 'Sačuvano' : 'Sačuvaj' }}</button>
           <button class="btn fav-btn" (click)="shareProfile()">↗</button>
+          <a *ngIf="isLoggedIn && phone" href="tel:{{ phone }}" class="btn fav-btn">📞 {{ phone }}</a>
         </div>
       </div>
     </div>
 
     <div class="profile-tabs">
       <button
-        *ngFor="let tab of ['about', 'gallery', 'video', 'reviews']"
+        *ngFor="let tab of ['about', 'gallery', 'video', 'availability', 'reviews']"
         class="tab-btn"
         [class.active]="activeTab === tab"
         (click)="setTab(tab)"
       >
-        {{ tab === 'about' ? 'O nama' : tab === 'gallery' ? 'Galerija' : tab === 'video' ? 'Video' : 'Recenzije' }}
+        {{ tab === 'about' ? 'O nama' : tab === 'gallery' ? 'Galerija' : tab === 'video' ? 'Video' : tab === 'availability' ? 'Dostupnost' : 'Recenzije' }}
       </button>
     </div>
 
@@ -51,9 +53,9 @@
           <h3>Radijus putovanja</h3>
           <p>{{ performer.travel_radius }} km</p>
         </div>
-        <div class="about-section" *ngIf="performer.equipment">
+        <div class="about-section" *ngIf="performer.equipment?.length">
           <h3>Oprema</h3>
-          <p>{{ performer.equipment }}</p>
+          <p>{{ performer.equipment!.join(', ') }}</p>
         </div>
         <div class="about-section" *ngIf="performer.languages?.length">
           <h3>Jezici</h3>
@@ -71,11 +73,26 @@
         <div class="video-grid" *ngIf="videos.length > 0; else noContent">
           <div *ngFor="let v of videos" class="video-embed">
             <iframe
-              *ngIf="getYoutubeId(v.url)"
-              [src]="'https://www.youtube.com/embed/' + getYoutubeId(v.url)"
+              *ngIf="getSafeVideoUrl(v.url)"
+              [src]="getSafeVideoUrl(v.url)"
               frameborder="0"
               allowfullscreen>
             </iframe>
+          </div>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'availability'">
+        <div *ngIf="!isLoggedIn" class="about-section">
+          <p class="muted">Prijavite se da vidite dostupnost izvođača.</p>
+          <a routerLink="/prijava" class="btn btn-gold" style="margin-top:12px;display:inline-block">Prijavi se</a>
+        </div>
+        <div *ngIf="isLoggedIn">
+          <div class="availability-list" *ngIf="upcomingAvailability.length > 0; else noContent">
+            <div *ngFor="let a of upcomingAvailability" class="about-section" style="display:flex;justify-content:space-between;align-items:center">
+              <span>{{ a.date | date:'dd.MM.yyyy.' }}</span>
+              <span [style.color]="a.status === 'booked' ? '#e57373' : '#81c784'">{{ a.status === 'booked' ? 'Zauzeto' : 'Slobodno' }}</span>
+            </div>
           </div>
         </div>
       </div>

@@ -1,21 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { NgFor, NgIf, NgSwitch, NgSwitchCase, DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PerformerService } from '../../services/performer.service';
-import { ApiService } from '../../services/api.service';
+import { FavoritesService } from '../../services/favorites.service';
 import { SupabaseService } from '../../services/supabase.service';
-import { Performer, PerformerMedia, Review } from '../../models/performer.model';
+import { Performer, PerformerMedia, PerformerAvailability, Review } from '../../models/performer.model';
 
 @Component({
   selector: 'app-performer-profile',
   standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, RouterLink],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, RouterLink, DatePipe],
   templateUrl: './performer-profile.component.html',
 })
 export class PerformerProfileComponent implements OnInit {
   performer?: Performer;
   media: PerformerMedia[] = [];
   reviews: Review[] = [];
+  availability: PerformerAvailability[] = [];
+  phone: string | null = null;
   activeTab = 'about';
   loading = true;
   isLoggedIn = false;
@@ -24,8 +27,10 @@ export class PerformerProfileComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private performerService: PerformerService,
-    private api: ApiService,
-    private supabase: SupabaseService
+    private favoritesService: FavoritesService,
+    private supabase: SupabaseService,
+    private sanitizer: DomSanitizer,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -39,16 +44,39 @@ export class PerformerProfileComponent implements OnInit {
       next: (data) => {
         this.performer = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
-      error: () => (this.loading = false),
+      error: () => { this.loading = false; this.cdr.detectChanges(); },
     });
 
-    this.performerService.getMedia(id).subscribe((data) => (this.media = data));
-    this.performerService.getReviews(id).subscribe((data) => (this.reviews = data));
+    this.performerService.getMedia(id).subscribe((data) => {
+      this.media = data;
+      this.cdr.detectChanges();
+    });
+    this.performerService.getReviews(id).subscribe((data) => {
+      this.reviews = data;
+      this.cdr.detectChanges();
+    });
+
+    if (this.isLoggedIn) {
+      this.performerService.getAvailability(id).subscribe((data) => {
+        this.availability = data;
+        this.cdr.detectChanges();
+      });
+      this.performerService.getPerformerPhone(id).subscribe((phone) => {
+        this.phone = phone;
+        this.cdr.detectChanges();
+      });
+      this.favoritesService.isFavorited(id).subscribe((favorited) => {
+        this.favorited = favorited;
+        this.cdr.detectChanges();
+      });
+    }
   }
 
   setTab(tab: string) {
     this.activeTab = tab;
+    this.cdr.detectChanges();
   }
 
   get images() {
@@ -59,15 +87,37 @@ export class PerformerProfileComponent implements OnInit {
     return this.media.filter((m) => m.type === 'video');
   }
 
+  get upcomingAvailability() {
+    const today = new Date().toISOString().split('T')[0];
+    return this.availability
+      .filter((a) => a.date >= today)
+      .sort((a, b) => a.date.localeCompare(b.date));
+  }
+
   getYoutubeId(url: string): string | null {
     const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
     return match ? match[1] : null;
   }
 
+  getSafeVideoUrl(url: string): SafeResourceUrl | null {
+    const id = this.getYoutubeId(url);
+    if (!id) return null;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${id}`);
+  }
+
+  getTypeLabel(): string {
+    switch (this.performer?.type) {
+      case 'band': return 'Bend';
+      case 'dj': return 'DJ';
+      case 'singer': return 'Pevač';
+      default: return '';
+    }
+  }
+
   toggleFavorite() {
     if (!this.isLoggedIn || !this.performer) return;
-    this.api.post('/favorites', { performer_id: this.performer.id }).subscribe({
-      next: (res: any) => { this.favorited = res.favorited; },
+    this.favoritesService.toggle(this.performer.id).subscribe({
+      next: (res) => { this.favorited = res.favorited; this.cdr.detectChanges(); },
     });
   }
 

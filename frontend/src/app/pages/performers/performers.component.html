@@ -20,6 +20,12 @@
         </div>
 
         <div class="filter-group">
+          <label>Datum događaja</label>
+          <input type="date" [(ngModel)]="filters.event_date" class="filter-input">
+          <p *ngIf="!isLoggedIn" class="muted" style="font-size:11px;margin-top:4px">Prijavite se da vidite ko je slobodan za izabrani datum.</p>
+        </div>
+
+        <div class="filter-group">
           <label>Sortiranje</label>
           <select [(ngModel)]="filters.sort" class="filter-input">
             <option value="popularity">Popularnost</option>

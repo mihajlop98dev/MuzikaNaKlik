@@ -3,6 +3,7 @@
     <span class="badge" *ngIf="featured || performer.has_top_pick_badge">Top izbor</span>
     <span class="badge" *ngIf="!featured && !performer.has_top_pick_badge && performer.has_featured_badge" style="background:#5c6bc0">Istaknuto</span>
     <span class="badge" *ngIf="performer.has_verified_badge" style="background:#2e7d32;right:12px;left:auto">Verifikovano</span>
+    <span class="badge" *ngIf="performer.busy" style="background:#b23b3b;top:auto;bottom:12px;left:12px">Zauzeto na ovaj datum</span>
     <button class="fav" [class.favorited]="favorited" (click)="toggleFavorite($event)" aria-label="Sačuvaj">{{ favorited ? '♥' : '♡' }}</button>
     <img [src]="performer.profile_image_url || 'https://picsum.photos/seed/' + performer.id + '/380/460'" [alt]="performer.stage_name">
   </div>
