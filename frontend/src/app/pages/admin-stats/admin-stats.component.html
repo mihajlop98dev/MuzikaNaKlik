@@ -3,32 +3,53 @@
 
   <div *ngIf="loading" class="muted">Učitavanje...</div>
 
-  <div *ngIf="!loading" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:24px">
-    <div class="dashboard-card">
-      <h3 style="margin:0 0 16px">Registracije (12 meseci)</h3>
-      <canvas *ngIf="registrationsData" baseChart
-        [data]="registrationsData"
-        [options]="registrationsOptions"
-        type="bar">
-      </canvas>
+  <div *ngIf="!loading">
+    <div class="kpi-grid">
+      <div class="dashboard-card kpi-tile" *ngFor="let kpi of kpis">
+        <h3>{{ kpi.label }}</h3>
+        <p class="kpi-value">{{ kpi.value }}</p>
+        <p class="kpi-delta" *ngIf="kpi.delta" [class.up]="kpi.deltaDirection === 'up'" [class.down]="kpi.deltaDirection === 'down'">
+          <span *ngIf="kpi.deltaDirection === 'up'">▲</span><span *ngIf="kpi.deltaDirection === 'down'">▼</span>
+          {{ kpi.delta }}
+        </p>
+      </div>
     </div>
 
-    <div class="dashboard-card">
-      <h3 style="margin:0 0 16px">Planovi pretplate</h3>
-      <canvas baseChart
-        [data]="{ labels: planLabels, datasets: [{ data: planData }] }"
-        [options]="{ responsive: true, plugins: { legend: { position: 'bottom' } } }"
-        type="pie">
-      </canvas>
+    <div class="dashboard-card chart-card">
+      <h3 class="chart-title">Registracije (12 meseci)</h3>
+      <div class="chart-area chart-area-tall">
+        <canvas *ngIf="registrationsData" baseChart
+          [data]="registrationsData"
+          [options]="registrationsOptions"
+          type="line">
+        </canvas>
+      </div>
     </div>
 
-    <div class="dashboard-card">
-      <h3 style="margin:0 0 16px">Status izvođača</h3>
-      <canvas baseChart
-        [data]="{ labels: statusLabels, datasets: [{ data: statusData }] }"
-        [options]="{ responsive: true, plugins: { legend: { position: 'bottom' } } }"
-        type="pie">
-      </canvas>
+    <div class="chart-row">
+      <div class="dashboard-card chart-card">
+        <h3 class="chart-title">Planovi pretplate</h3>
+        <div class="chart-area" *ngIf="hasPlanData">
+          <canvas baseChart
+            [data]="planData!"
+            [options]="planOptions"
+            type="bar">
+          </canvas>
+        </div>
+        <p class="muted" *ngIf="!hasPlanData">Nema aktivnih pretplata.</p>
+      </div>
+
+      <div class="dashboard-card chart-card">
+        <h3 class="chart-title">Status izvođača</h3>
+        <div class="chart-area" *ngIf="hasStatusData">
+          <canvas baseChart
+            [data]="statusData!"
+            [options]="statusOptions"
+            type="bar">
+          </canvas>
+        </div>
+        <p class="muted" *ngIf="!hasStatusData">Nema podataka.</p>
+      </div>
     </div>
   </div>
 </div>
