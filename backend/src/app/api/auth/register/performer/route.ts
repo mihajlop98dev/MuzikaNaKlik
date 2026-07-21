@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { stripe } from '@/lib/stripe';
 
 export async function POST(request: Request) {
   try {
@@ -9,6 +10,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email, password, and stage name are required' }, { status: 400 });
     }
 
+    // Subscription activation (status/badges/search priority) is never set
+    // here from client input — it only ever happens via activateSubscription(),
+    // called from the Stripe webhook after a real payment, or by an admin.
+    // See supabase/migrations/019_prevent_performer_self_upgrade.sql.
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
@@ -19,8 +24,6 @@ export async function POST(request: Request) {
     if (authError) {
       return NextResponse.json({ error: authError.message }, { status: 400 });
     }
-
-    const isComplete = !!(plan_id && billing_period);
 
     const performerUpdates: Record<string, any> = {
       stage_name,
@@ -35,14 +38,6 @@ export async function POST(request: Request) {
       audio_url: audio_url || null,
       profile_image_url: profile_image_url || null,
     };
-
-    if (isComplete) {
-      performerUpdates.status = 'approved';
-      performerUpdates.subscription_status = 'active';
-      performerUpdates.subscription_expires_at = new Date(
-        Date.now() + (billing_period === 'yearly' ? 365 : 30) * 24 * 60 * 60 * 1000
-      ).toISOString();
-    }
 
     const { error: updateError } = await supabaseAdmin
       .from('performers')
@@ -65,53 +60,6 @@ export async function POST(request: Request) {
       await supabaseAdmin.from('performer_media').insert(videoRecords);
     }
 
-    if (isComplete) {
-      const { data: plan } = await supabaseAdmin
-        .from('subscription_plans')
-        .select('price, max_images, max_videos, has_repertoire, has_availability, has_review_reply, has_featured_badge, has_top_pick_badge, has_verified_badge, search_priority')
-        .eq('id', plan_id)
-        .single();
-
-      const now = new Date();
-      const periodEnd = new Date(now);
-      if (billing_period === 'yearly') {
-        periodEnd.setFullYear(periodEnd.getFullYear() + 1);
-      } else {
-        periodEnd.setMonth(periodEnd.getMonth() + 1);
-      }
-
-      await supabaseAdmin.from('subscriptions').insert({
-        performer_id: authData.user.id,
-        plan_id,
-        amount: plan?.price || 0,
-        payment_method: 'manual',
-        period_start: now.toISOString().split('T')[0],
-        period_end: periodEnd.toISOString().split('T')[0],
-        status: 'active',
-      });
-
-      await supabaseAdmin.from('performers').update({
-        search_priority: plan?.search_priority ?? 0,
-        plan_max_images: plan?.max_images ?? 1,
-        plan_max_videos: plan?.max_videos ?? 1,
-        has_repertoire: plan?.has_repertoire ?? false,
-        has_availability: plan?.has_availability ?? false,
-        has_review_reply: plan?.has_review_reply ?? false,
-        has_featured_badge: plan?.has_featured_badge ?? false,
-        has_top_pick_badge: plan?.has_top_pick_badge ?? false,
-        has_verified_badge: plan?.has_verified_badge ?? false,
-        profile_image_url: profile_image_url || null,
-        audio_url: audio_url || null,
-        description: description || null,
-        price_from: price_from || null,
-        equipment: equipment || [],
-        languages: languages || [],
-        member_count: member_count || null,
-        city: city || null,
-        genres: genres || [],
-      }).eq('id', authData.user.id);
-    }
-
     const { data: adminProfiles } = await supabaseAdmin
       .from('profiles')
       .select('id')
@@ -121,17 +69,58 @@ export async function POST(request: Request) {
       const adminNotifications = adminProfiles.map((admin: { id: string }) => ({
         user_id: admin.id,
         type: 'new_performer',
-        title: isComplete ? 'Novi izvođač registrovan' : 'Novi izvođač na čekanju',
-        message: isComplete
-          ? `${stage_name} se registrovao sa aktivnom pretplatom.`
-          : `${stage_name} se registrovao i čeka odobrenje.`,
+        title: 'Novi izvođač na čekanju',
+        message: `${stage_name} se registrovao i čeka odobrenje.`,
         link: '/admin/izvodjaci',
       }));
       await supabaseAdmin.from('notifications').insert(adminNotifications);
     }
 
+    let checkoutUrl: string | null = null;
+
+    if (plan_id && ['monthly', 'yearly'].includes(billing_period)) {
+      const { data: plan } = await supabaseAdmin
+        .from('subscription_plans')
+        .select('id, name, price, is_active')
+        .eq('id', plan_id)
+        .single();
+
+      if (plan?.is_active) {
+        const amountCents = billing_period === 'yearly' ? plan.price * 10 : plan.price;
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:4200';
+
+        const session = await stripe.checkout.sessions.create({
+          mode: 'payment',
+          payment_method_types: ['card'],
+          customer_email: email,
+          line_items: [
+            {
+              price_data: {
+                currency: 'eur',
+                product_data: {
+                  name: `${plan.name} — ${billing_period === 'yearly' ? 'godišnja' : 'mesečna'} pretplata`,
+                },
+                unit_amount: amountCents,
+              },
+              quantity: 1,
+            },
+          ],
+          success_url: `${siteUrl}/prijava?registracija=uspesna`,
+          cancel_url: `${siteUrl}/prijava?registracija=placanje-otkazano`,
+          metadata: {
+            performer_id: authData.user.id,
+            plan_id: plan.id,
+            billing_period,
+          },
+        });
+
+        checkoutUrl = session.url;
+      }
+    }
+
     return NextResponse.json({
       user: { id: authData.user.id, email: authData.user.email, role: 'performer' },
+      checkoutUrl,
     }, { status: 201 });
 
   } catch (_err) {

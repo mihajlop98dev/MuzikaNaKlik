@@ -221,8 +221,12 @@ export class RegisterPerformerComponent implements OnInit {
       billing_period: this.billingPeriod,
     };
 
-    this.api.post('/auth/register/performer', payload).subscribe({
-      next: () => {
+    this.api.post<{ checkoutUrl: string | null }>('/auth/register/performer', payload).subscribe({
+      next: (res) => {
+        if (res.checkoutUrl) {
+          window.location.href = res.checkoutUrl;
+          return;
+        }
         this.step = 6;
         this.submitting = false;
         this.cdr.detectChanges();
