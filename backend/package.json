@@ -8,10 +8,11 @@
     "vercel-build": "cd ../frontend && npm ci --include=dev && npm run build -- --configuration production && rm -rf ../backend/public && mkdir -p ../backend/public && cp -r dist/muzika-na-klik/browser/. ../backend/public/ && cd ../backend && next build"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.47.0",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@supabase/supabase-js": "^2.47.0",
+    "resend": "^6.18.1",
     "stripe": "^17.0.0"
   },
   "devDependencies": {

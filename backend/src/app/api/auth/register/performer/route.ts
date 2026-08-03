@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { stripe } from '@/lib/stripe';
+import { sendEmail } from '@/lib/email';
+import { verificationEmail } from '@/lib/email-templates';
 
 export async function POST(request: Request) {
   try {
@@ -10,20 +12,33 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email, password, and stage name are required' }, { status: 400 });
     }
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:4200';
+
     // Subscription activation (status/badges/search priority) is never set
     // here from client input — it only ever happens via activateSubscription(),
     // called from the Stripe webhook after a real payment, or by an admin.
     // See supabase/migrations/019_prevent_performer_self_upgrade.sql.
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+    //
+    // generateLink() rather than createUser(): it creates the user *unconfirmed*
+    // and hands back the confirmation link in one call. createUser() never sends
+    // mail on its own — with email_confirm:false it would leave an account nobody
+    // can ever confirm. The on_auth_user_created trigger (003_triggers.sql) fires
+    // either way, so profiles/performers rows are still created here.
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'signup',
       email,
       password,
-      email_confirm: true,
-      user_metadata: { role: 'performer', full_name: stage_name, stage_name, type: type || 'singer' },
+      options: {
+        data: { role: 'performer', full_name: stage_name, stage_name, type: type || 'singer' },
+        redirectTo: `${siteUrl}/prijava?potvrda=uspesna`,
+      },
     });
 
-    if (authError) {
-      return NextResponse.json({ error: authError.message }, { status: 400 });
+    if (authError || !authData?.user) {
+      return NextResponse.json({ error: authError?.message ?? 'Registration failed' }, { status: 400 });
     }
+
+    const confirmUrl = authData.properties.action_link;
 
     const performerUpdates: Record<string, any> = {
       stage_name,
@@ -87,7 +102,6 @@ export async function POST(request: Request) {
 
       if (plan?.is_active) {
         const amountCents = billing_period === 'yearly' ? plan.price * 10 : plan.price;
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:4200';
 
         const session = await stripe.checkout.sessions.create({
           mode: 'payment',
@@ -112,15 +126,33 @@ export async function POST(request: Request) {
             plan_id: plan.id,
             billing_period,
           },
+          // Duplicated onto the PaymentIntent because payment_intent.payment_failed
+          // carries the intent, not the session — without this the webhook has no
+          // way to tell who a declined card belonged to.
+          payment_intent_data: {
+            metadata: {
+              performer_id: authData.user.id,
+              plan_id: plan.id,
+              billing_period,
+            },
+          },
         });
 
         checkoutUrl = session.url;
       }
     }
 
+    // Sent last, and deliberately not awaited into the failure path: the account
+    // already exists and Stripe checkout is already created, so a mail outage
+    // must not turn a successful registration into a 500. /api/auth/resend-confirmation
+    // is the recovery path when this fails.
+    const { subject, html } = verificationEmail({ name: stage_name, confirmUrl });
+    await sendEmail({ to: email, subject, html });
+
     return NextResponse.json({
       user: { id: authData.user.id, email: authData.user.email, role: 'performer' },
       checkoutUrl,
+      emailConfirmationRequired: true,
     }, { status: 201 });
 
   } catch (_err) {

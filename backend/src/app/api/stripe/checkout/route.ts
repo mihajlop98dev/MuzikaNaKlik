@@ -54,6 +54,16 @@ export async function POST(request: Request) {
       plan_id: plan.id,
       billing_period,
     },
+    // Duplicated onto the PaymentIntent because payment_intent.payment_failed
+    // carries the intent, not the session — without this the webhook has no way
+    // to tell who a declined card belonged to.
+    payment_intent_data: {
+      metadata: {
+        performer_id: user.id,
+        plan_id: plan.id,
+        billing_period,
+      },
+    },
   });
 
   return NextResponse.json({ url: session.url });

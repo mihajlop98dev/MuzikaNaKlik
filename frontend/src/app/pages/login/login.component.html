@@ -4,6 +4,8 @@
       <h2>Prijava</h2>
       <p class="muted">Dobrodošli nazad!</p>
 
+      <p class="notice-text" *ngIf="notice">{{ notice }}</p>
+
       <div class="form-group">
         <label>Email</label>
         <input type="email" [(ngModel)]="email" class="form-input" placeholder="vas@email.com">
@@ -15,6 +17,18 @@
       </div>
 
       <p class="error-text" *ngIf="error">{{ error }}</p>
+
+      <p class="notice-text" *ngIf="needsConfirmation">
+        <span *ngIf="!resendDone">
+          Nisi dobio/la poruku?
+          <button class="link-btn" (click)="resendConfirmation()" [disabled]="resending">
+            {{ resending ? 'Šaljem...' : 'Pošalji ponovo' }}
+          </button>
+        </span>
+        <span *ngIf="resendDone">
+          Ako nalog postoji i nije potvrđen, poslali smo novi link. Proveri i spam folder.
+        </span>
+      </p>
 
       <button class="btn btn-gold auth-btn" (click)="login()" [disabled]="loading">
         {{ loading ? 'Prijavljivanje...' : 'Prijavi se' }}
