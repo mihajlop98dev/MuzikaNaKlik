@@ -5,6 +5,9 @@ const publicPaths = [
   '/api/health',
   '/api/auth/register/performer',
   '/api/auth/register/client',
+  // Must stay public: the only people who need it are those who cannot log in
+  // yet because their email is unconfirmed, so they have no token to send.
+  '/api/auth/resend-confirmation',
   '/api/genres',
   '/api/equipment',
   '/api/languages',
