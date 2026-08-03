@@ -5,7 +5,7 @@
     <div class="dashboard-grid" *ngIf="!loading && performer; else loadingState">
       <div class="dashboard-card">
         <h3>Status profila</h3>
-        <p>{{ performer.status === 'approved' ? 'Odobren' : performer.status === 'pending' ? 'Na čekanju' : 'Odbijen' }}</p>
+        <p>{{ performer.status === 'approved' ? 'Vidljiv u pretrazi' : performer.status === 'pending' ? 'Potvrdi email da bi profil bio vidljiv' : 'Sklonjen' }}</p>
       </div>
       <div class="dashboard-card">
         <h3>Pretplata</h3>

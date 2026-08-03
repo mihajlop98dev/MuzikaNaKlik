@@ -80,12 +80,16 @@ export async function POST(request: Request) {
       .select('id')
       .eq('role', 'admin');
 
+    // Informational rather than a to-do: since 022 the profile publishes itself
+    // once the email is confirmed, so there is nothing for an admin to approve.
+    // It stays because admins still moderate — this is how they learn a new
+    // profile is live in time to take it down if it shouldn't be.
     if (adminProfiles) {
       const adminNotifications = adminProfiles.map((admin: { id: string }) => ({
         user_id: admin.id,
         type: 'new_performer',
-        title: 'Novi izvođač na čekanju',
-        message: `${stage_name} se registrovao i čeka odobrenje.`,
+        title: 'Novi izvođač',
+        message: `${stage_name} se registrovao. Profil postaje vidljiv čim potvrdi email.`,
         link: '/admin/izvodjaci',
       }));
       await supabaseAdmin.from('notifications').insert(adminNotifications);
