@@ -1,6 +1,22 @@
 <section class="section">
   <div class="wrap">
-    <div class="auth-form">
+    <div class="auth-form" *ngIf="registered">
+      <div style="text-align:center;padding:48px 0">
+        <div style="font-size:64px;margin-bottom:16px">📬</div>
+        <h2 style="margin-bottom:8px">Proveri email!</h2>
+        <p class="muted" style="margin-bottom:8px">
+          Poslali smo poruku na <strong style="color:var(--gold)">{{ email }}</strong>.
+          Klikni na link u njoj da potvrdiš adresu.
+        </p>
+        <p class="muted" style="margin-bottom:24px">
+          Tek nakon potvrde možeš da se prijaviš.
+          Ako poruka ne stigne za par minuta, proveri spam folder.
+        </p>
+        <a routerLink="/prijava" class="btn btn-gold">Idi na prijavu</a>
+      </div>
+    </div>
+
+    <div class="auth-form" *ngIf="!registered">
       <h2>Registracija — Klijent</h2>
       <p class="muted">Napravi nalog i prati svoje upite.</p>
 

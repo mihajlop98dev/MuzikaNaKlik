@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#e8c98a"/>
+      <stop offset="1" stop-color="#d9ae5c"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="15" fill="#0a0a0d"/>
+  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="13.75" fill="none" stroke="#2a2620" stroke-width="2.5"/>
+
+  <g fill="url(#gold)">
+    <!-- Beam joining the two stems, angled the way engraved notation slants. -->
+    <path d="M25 15.5 48 9.5v9.5L25 25z"/>
+    <rect x="25" y="15.5" width="4.5" height="27" rx="1"/>
+    <rect x="43.5" y="9.5" width="4.5" height="27" rx="1"/>
+    <ellipse cx="19.5" cy="44" rx="9" ry="6.75" transform="rotate(-20 19.5 44)"/>
+    <ellipse cx="38" cy="38" rx="9" ry="6.75" transform="rotate(-20 38 38)"/>
+  </g>
+</svg>

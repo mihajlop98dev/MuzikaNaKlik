@@ -1,7 +1,7 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 
 @Component({
@@ -17,9 +17,11 @@ export class RegisterComponent {
   error = '';
   loading = false;
 
+  /** Swaps the form for the "check your inbox" screen once the account exists. */
+  registered = false;
+
   constructor(
     private api: ApiService,
-    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -34,8 +36,13 @@ export class RegisterComponent {
       password: this.password,
       full_name: this.fullName,
     }).subscribe({
+      // Deliberately no redirect to /prijava: login is gated on a confirmed
+      // email, so sending them straight to a form they cannot use yet reads as
+      // a broken registration. The inbox prompt is the actual next step.
       next: () => {
-        this.router.navigate(['/prijava']);
+        this.registered = true;
+        this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.error = err.error?.error || 'Došlo je do greške. Pokušajte ponovo.';
