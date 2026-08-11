@@ -201,9 +201,8 @@
       <!-- Navigation -->
       <div class="step-nav">
         <button *ngIf="step > 1" class="btn" (click)="prevStep()" style="border:1px solid var(--card-border)">Nazad</button>
-        <button *ngIf="step < 4" class="btn btn-gold" (click)="nextStep()">Dalje</button>
-        <button *ngIf="step === 4" class="btn btn-gold" (click)="nextStep()">Dalje</button>
-        <button *ngIf="step === 5" class="btn btn-gold" (click)="submit()" [disabled]="submitting">
+        <button *ngIf="step < lastStep" class="btn btn-gold" (click)="nextStep()">Dalje</button>
+        <button *ngIf="step === lastStep" class="btn btn-gold" (click)="submit()" [disabled]="submitting">
           {{ submitting ? 'Obrada...' : 'Završi registraciju' }}
         </button>
       </div>

@@ -3,6 +3,7 @@ import { NgFor, NgIf } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { PerformerService } from '../../services/performer.service';
 import { ApiService } from '../../services/api.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-performer-subscription',
@@ -17,6 +18,8 @@ export class PerformerSubscriptionComponent implements OnInit {
   paying = false;
   error = '';
   paymentResult: 'success' | 'canceled' | null = null;
+
+  paidPlansEnabled = environment.paidPlansEnabled;
 
   constructor(
     private performerService: PerformerService,
@@ -40,10 +43,12 @@ export class PerformerSubscriptionComponent implements OnInit {
       error: () => { this.loading = false; this.cdr.detectChanges(); },
     });
 
-    this.api.get<any[]>('/subscription-plans').subscribe((data) => {
-      this.plans = data;
-      this.cdr.detectChanges();
-    });
+    if (this.paidPlansEnabled) {
+      this.api.get<any[]>('/subscription-plans').subscribe((data) => {
+        this.plans = data;
+        this.cdr.detectChanges();
+      });
+    }
   }
 
   pay(planId: string, billingPeriod: 'monthly' | 'yearly') {

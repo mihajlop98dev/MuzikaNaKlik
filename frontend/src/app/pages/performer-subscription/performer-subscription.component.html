@@ -27,10 +27,19 @@
       Nemate aktivnu pretplatu.
     </p>
 
-    <h3 style="font-size:18px;margin:32px 0 16px">Izaberite paket</h3>
-    <p class="error-text" *ngIf="error">{{ error }}</p>
+    <div class="notice-text" *ngIf="!paidPlansEnabled" style="margin-top:24px">
+      <strong>Trenutno je sve besplatno.</strong><br>
+      Tvoj profil je vidljiv u pretrazi i primaš upite bez ikakve naplate.
+      Paketi sa dodatnim pogodnostima — istaknuta pozicija, bedževi, veća
+      galerija — biće dostupni kasnije. Javićemo ti na email kad krenu.
+    </div>
 
-    <div class="inquiry-list" *ngIf="plans.length > 0">
+    <ng-container *ngIf="paidPlansEnabled">
+      <h3 style="font-size:18px;margin:32px 0 16px">Izaberite paket</h3>
+      <p class="error-text" *ngIf="error">{{ error }}</p>
+    </ng-container>
+
+    <div class="inquiry-list" *ngIf="paidPlansEnabled && plans.length > 0">
       <div *ngFor="let p of plans" class="inquiry-card">
         <div class="inquiry-card-header">
           <strong>{{ p.name }}</strong>

@@ -20,8 +20,10 @@ export class PerformerService {
       this.supabase.client
         .from('performers')
         .select('*')
+        // No subscription filter — see 024_free_phase_visibility.sql. Ordering
+        // by search_priority still puts paying performers first once plans are
+        // switched back on; right now every performer sits at priority 0.
         .eq('status', 'approved')
-        .eq('subscription_status', 'active')
         .order('search_priority', { ascending: false })
         .order('rating_count', { ascending: false })
         .limit(6)
@@ -36,8 +38,7 @@ export class PerformerService {
     let query = this.supabase.client
       .from('performers')
       .select('*', { count: 'exact' })
-      .eq('status', 'approved')
-      .eq('subscription_status', 'active');
+      .eq('status', 'approved');
 
     if (params.q) query = query.ilike('stage_name', `%${params.q}%`);
     if (params.city) query = query.ilike('city', `%${params.city}%`);

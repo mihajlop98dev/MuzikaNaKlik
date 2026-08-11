@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { resizeImage, ACCEPTED_TYPES, MAX_UPLOAD_BYTES } from '../../utils/resize-image';
 import { isValidVideoUrl } from '../../utils/video-url';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-register-performer',
@@ -56,6 +57,19 @@ export class RegisterPerformerComponent implements OnInit {
   billingPeriod: 'monthly' | 'yearly' = 'monthly';
   submitting = false;
 
+  paidPlansEnabled = environment.paidPlansEnabled;
+
+  /**
+   * Last step the applicant actually sees.
+   *
+   * The plan picker (step 5) is skipped entirely while charging is off — there
+   * is nothing to sell yet, and asking someone to choose a package that cannot
+   * be bought is worse than not asking.
+   */
+  get lastStep(): number {
+    return this.paidPlansEnabled ? 5 : 4;
+  }
+
   // Step 4 - Video
   videoUrls: string[] = [''];
   videoErrors: string[] = [''];
@@ -80,10 +94,12 @@ export class RegisterPerformerComponent implements OnInit {
       this.availableEquipment = data;
       this.cdr.detectChanges();
     });
-    this.api.get<any[]>('/subscription-plans').subscribe(data => {
-      this.subscriptionPlans = data;
-      this.cdr.detectChanges();
-    });
+    if (this.paidPlansEnabled) {
+      this.api.get<any[]>('/subscription-plans').subscribe(data => {
+        this.subscriptionPlans = data;
+        this.cdr.detectChanges();
+      });
+    }
   }
 
   toggleGenre(name: string) {
@@ -152,7 +168,7 @@ export class RegisterPerformerComponent implements OnInit {
         }
         return true;
       case 5:
-        if (!this.selectedPlanId) { this.error = 'Izaberite paket.'; return false; }
+        if (this.paidPlansEnabled && !this.selectedPlanId) { this.error = 'Izaberite paket.'; return false; }
         return true;
       default:
         return true;
