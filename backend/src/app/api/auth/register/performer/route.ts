@@ -3,10 +3,30 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { stripe } from '@/lib/stripe';
 import { sendEmail } from '@/lib/email';
 import { verificationEmail } from '@/lib/email-templates';
+import { uploadImage } from '@/lib/upload-image';
 
 export async function POST(request: Request) {
   try {
-    const { email, password, stage_name, type, city, phone, genres, description, price_from, equipment, languages, member_count, audio_url, profile_image_url, videos, plan_id, billing_period } = await request.json();
+    // Registration accepts multipart when the applicant picked a profile photo.
+    // It cannot be uploaded beforehand: /api/storage/upload needs a bearer token
+    // and during signup no account — hence no session — exists yet. The file
+    // therefore rides along and is stored below, once there is a user id to
+    // file it under.
+    const contentType = request.headers.get('content-type') || '';
+    let body: any;
+    let imageFile: File | null = null;
+
+    if (contentType.includes('multipart/form-data')) {
+      const form = await request.formData();
+      const raw = form.get('payload');
+      body = typeof raw === 'string' ? JSON.parse(raw) : {};
+      const candidate = form.get('file');
+      if (candidate instanceof File && candidate.size > 0) imageFile = candidate;
+    } else {
+      body = await request.json();
+    }
+
+    const { email, password, stage_name, type, city, phone, genres, description, price_from, equipment, languages, member_count, audio_url, profile_image_url, videos, plan_id, billing_period } = body;
 
     if (!email || !password || !stage_name) {
       return NextResponse.json({ error: 'Email, password, and stage name are required' }, { status: 400 });
@@ -40,6 +60,20 @@ export async function POST(request: Request) {
 
     const confirmUrl = authData.properties.action_link;
 
+    // Stored under the new user's id, exactly where an authenticated upload
+    // would have put it. A failure here is not fatal: the account is already
+    // created, and losing the photo is far better than losing the registration
+    // — the performer can add it from profile edit afterwards.
+    let uploadedImageUrl: string | null = null;
+    if (imageFile) {
+      const result = await uploadImage({ file: imageFile, ownerId: authData.user.id });
+      if (result.ok) {
+        uploadedImageUrl = result.url;
+      } else {
+        console.error('[register] Profile image upload failed:', result.error);
+      }
+    }
+
     const performerUpdates: Record<string, any> = {
       stage_name,
       type: type || 'singer',
@@ -51,7 +85,9 @@ export async function POST(request: Request) {
       languages: languages || [],
       member_count: member_count || null,
       audio_url: audio_url || null,
-      profile_image_url: profile_image_url || null,
+      // The uploaded file wins over the manually typed URL — picking a photo is
+      // the more deliberate of the two actions.
+      profile_image_url: uploadedImageUrl || profile_image_url || null,
     };
 
     const { error: updateError } = await supabaseAdmin

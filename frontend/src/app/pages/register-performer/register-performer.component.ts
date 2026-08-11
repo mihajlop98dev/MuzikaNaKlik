@@ -44,6 +44,9 @@ export class RegisterPerformerComponent implements OnInit {
 
   // Step 3 - Profile image
   profileImageUrl = '';
+  selectedImageFile: File | null = null;
+  /** Local blob: URL for preview only — never sent to the server. */
+  imagePreview = '';
 
   // Step 5 - Subscription
   subscriptionPlans: any[] = [];
@@ -169,25 +172,48 @@ export class RegisterPerformerComponent implements OnInit {
     if (this.step > 1) this.step--;
   }
 
-  async uploadImage(event: Event) {
+  /**
+   * Keeps the picked photo on the client until submit.
+   *
+   * It cannot be uploaded here: /api/storage/upload requires a bearer token and
+   * no account — so no session — exists during signup. Sending it now is what
+   * produced "Greška pri uploadu slike"; it goes out with the registration
+   * request instead, and the server stores it once the user id exists.
+   */
+  selectImage(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
     const file = input.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('bucket', 'profiles');
 
-    this.api.post<{ url: string }>('/storage/upload', formData).subscribe({
-      next: (res) => {
-        this.profileImageUrl = res.url;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.error = 'Greška pri uploadu slike. Pokušajte ponovo.';
-        this.cdr.detectChanges();
-      },
-    });
+    // Mirrors the server's limits so the applicant finds out now, not after
+    // filling in two more steps.
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      this.error = 'Dozvoljene su samo JPEG, PNG i WEBP slike.';
+      input.value = '';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.error = 'Slika je veća od 5 MB. Izaberi manju.';
+      input.value = '';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.error = '';
+    this.selectedImageFile = file;
+    if (this.imagePreview) URL.revokeObjectURL(this.imagePreview);
+    this.imagePreview = URL.createObjectURL(file);
+    this.cdr.detectChanges();
+  }
+
+  clearImage() {
+    if (this.imagePreview) URL.revokeObjectURL(this.imagePreview);
+    this.imagePreview = '';
+    this.selectedImageFile = null;
+    this.cdr.detectChanges();
   }
 
   async submit() {
@@ -224,7 +250,17 @@ export class RegisterPerformerComponent implements OnInit {
       billing_period: this.billingPeriod,
     };
 
-    this.api.post<{ checkoutUrl: string | null }>('/auth/register/performer', payload).subscribe({
+    // Multipart only when there is a file — a plain JSON body stays the common
+    // case and the endpoint still accepts it.
+    let requestBody: any = payload;
+    if (this.selectedImageFile) {
+      const form = new FormData();
+      form.append('payload', JSON.stringify(payload));
+      form.append('file', this.selectedImageFile);
+      requestBody = form;
+    }
+
+    this.api.post<{ checkoutUrl: string | null }>('/auth/register/performer', requestBody).subscribe({
       next: (res) => {
         if (res.checkoutUrl) {
           window.location.href = res.checkoutUrl;

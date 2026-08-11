@@ -1,14 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-
-const ALLOWED_BUCKETS = ['profiles'];
-const ALLOWED_FOLDERS = ['performers', 'gallery'];
-const ALLOWED_MIME_TO_EXT: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-};
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+import { uploadImage } from '@/lib/upload-image';
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -27,41 +19,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'No file provided' }, { status: 400 });
   }
 
-  if (!ALLOWED_BUCKETS.includes(bucket)) {
-    return NextResponse.json({ error: 'Invalid bucket' }, { status: 400 });
+  const result = await uploadImage({ file, ownerId: user.id, bucket, folder });
+
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
   }
 
-  if (!ALLOWED_FOLDERS.includes(folder)) {
-    return NextResponse.json({ error: 'Invalid folder' }, { status: 400 });
-  }
-
-  const fileExt = ALLOWED_MIME_TO_EXT[file.type];
-  if (!fileExt) {
-    return NextResponse.json({ error: 'Only JPEG, PNG, or WEBP images are allowed' }, { status: 400 });
-  }
-
-  if (file.size > MAX_FILE_SIZE) {
-    return NextResponse.json({ error: 'File exceeds the 5MB limit' }, { status: 400 });
-  }
-
-  const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-  const filePath = `${folder}/${fileName}`;
-  const fileBuffer = await file.arrayBuffer();
-
-  const { data, error } = await supabaseAdmin.storage
-    .from(bucket)
-    .upload(filePath, fileBuffer, {
-      contentType: file.type,
-      upsert: true,
-    });
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  const { data: { publicUrl } } = supabaseAdmin.storage
-    .from(bucket)
-    .getPublicUrl(filePath);
-
-  return NextResponse.json({ url: publicUrl, path: data.path });
+  return NextResponse.json({ url: result.url, path: result.path });
 }

@@ -123,10 +123,14 @@
         <div class="form-group">
           <label>Slika profila</label>
           <div class="upload-area" (click)="fileInput.click()">
-            <input #fileInput type="file" accept="image/*" (change)="uploadImage($event)">
-            <p *ngIf="!profileImageUrl" class="muted">Kliknite za upload slike</p>
-            <img *ngIf="profileImageUrl" [src]="profileImageUrl" class="upload-preview">
+            <input #fileInput type="file" accept="image/jpeg,image/png,image/webp" (change)="selectImage($event)">
+            <p *ngIf="!imagePreview && !profileImageUrl" class="muted">Kliknite za izbor slike</p>
+            <img *ngIf="imagePreview || profileImageUrl" [src]="imagePreview || profileImageUrl" class="upload-preview">
           </div>
+          <p class="field-hint" *ngIf="imagePreview">
+            Slika će biti sačuvana kad završiš registraciju.
+            <button type="button" class="link-btn" (click)="clearImage(); $event.stopPropagation()">Ukloni</button>
+          </p>
         </div>
 
         <div class="form-group">
