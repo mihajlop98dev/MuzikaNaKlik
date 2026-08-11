@@ -6,6 +6,7 @@ import { SupabaseService } from '../../services/supabase.service';
 import { PerformerService } from '../../services/performer.service';
 import { ApiService } from '../../services/api.service';
 import { Performer } from '../../models/performer.model';
+import { resizeImage, ACCEPTED_TYPES, MAX_UPLOAD_BYTES } from '../../utils/resize-image';
 
 @Component({
   selector: 'app-performer-profile-edit',
@@ -72,7 +73,24 @@ export class PerformerProfileEditComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
-    const file = input.files[0];
+    const picked = input.files[0];
+
+    if (!ACCEPTED_TYPES.includes(picked.type)) {
+      this.error = 'Dozvoljene su samo JPEG, PNG i WEBP slike.';
+      input.value = '';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (picked.size > MAX_UPLOAD_BYTES) {
+      this.error = 'Slika je veća od 5 MB. Izaberi manju.';
+      input.value = '';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.error = '';
+    const file = await resizeImage(picked);
     const formData = new FormData();
     formData.append('file', file);
     formData.append('bucket', 'profiles');

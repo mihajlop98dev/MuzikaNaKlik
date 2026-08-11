@@ -9,7 +9,7 @@
       <div class="form-group">
         <label>Slika profila</label>
         <div class="upload-area" (click)="fileInput.click()">
-          <input #fileInput type="file" accept="image/*" (change)="uploadImage($event)">
+          <input #fileInput type="file" accept="image/jpeg,image/png,image/webp" (change)="uploadImage($event)">
           <p *ngIf="!form.profile_image_url" class="muted">Kliknite za upload slike</p>
           <img *ngIf="form.profile_image_url" [src]="form.profile_image_url" class="upload-preview">
         </div>

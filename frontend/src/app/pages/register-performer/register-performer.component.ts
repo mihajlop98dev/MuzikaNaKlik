@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
+import { resizeImage, ACCEPTED_TYPES, MAX_UPLOAD_BYTES } from '../../utils/resize-image';
 
 @Component({
   selector: 'app-register-performer',
@@ -180,7 +181,7 @@ export class RegisterPerformerComponent implements OnInit {
    * produced "Greška pri uploadu slike"; it goes out with the registration
    * request instead, and the server stores it once the user id exists.
    */
-  selectImage(event: Event) {
+  async selectImage(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
@@ -188,14 +189,14 @@ export class RegisterPerformerComponent implements OnInit {
 
     // Mirrors the server's limits so the applicant finds out now, not after
     // filling in two more steps.
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    if (!ACCEPTED_TYPES.includes(file.type)) {
       this.error = 'Dozvoljene su samo JPEG, PNG i WEBP slike.';
       input.value = '';
       this.cdr.detectChanges();
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > MAX_UPLOAD_BYTES) {
       this.error = 'Slika je veća od 5 MB. Izaberi manju.';
       input.value = '';
       this.cdr.detectChanges();
@@ -203,9 +204,9 @@ export class RegisterPerformerComponent implements OnInit {
     }
 
     this.error = '';
-    this.selectedImageFile = file;
+    this.selectedImageFile = await resizeImage(file);
     if (this.imagePreview) URL.revokeObjectURL(this.imagePreview);
-    this.imagePreview = URL.createObjectURL(file);
+    this.imagePreview = URL.createObjectURL(this.selectedImageFile);
     this.cdr.detectChanges();
   }
 
