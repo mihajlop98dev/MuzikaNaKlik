@@ -148,11 +148,14 @@
       <!-- STEP 4: Video -->
       <ng-container *ngIf="step === 4">
         <div class="form-group">
-          <label>YouTube video linkovi</label>
-          <p class="muted" style="font-size:12px;margin-bottom:12px">Dodajte jedan ili više YouTube linkova.</p>
+          <label>Video linkovi</label>
+          <p class="muted" style="font-size:12px;margin-bottom:12px">
+            YouTube se prikazuje kao plejer direktno na profilu. Instagram, TikTok,
+            Facebook i ostali se prikazuju kao dugme koje vodi na snimak.
+          </p>
           <div *ngFor="let url of videoUrls; let i = index" class="video-input-row">
             <div style="flex:1">
-              <input type="text" [(ngModel)]="videoUrls[i]" class="form-input" placeholder="https://www.youtube.com/watch?v=...">
+              <input type="text" [(ngModel)]="videoUrls[i]" class="form-input" placeholder="https://www.youtube.com/watch?v=... ili instagram.com/reel/...">
               <p class="error-text" *ngIf="videoErrors[i]" style="font-size:12px;margin-top:2px">{{ videoErrors[i] }}</p>
             </div>
             <button *ngIf="videoUrls.length > 1" class="btn" (click)="removeVideoField(i)" style="color:#e74c3c">✕</button>

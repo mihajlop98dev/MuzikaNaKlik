@@ -72,14 +72,24 @@
 
       <div *ngSwitchCase="'video'">
         <div class="video-grid" *ngIf="videos.length > 0; else noContent">
-          <div *ngFor="let v of videos" class="video-embed">
-            <iframe
-              *ngIf="getSafeVideoUrl(v.url)"
-              [src]="getSafeVideoUrl(v.url)"
-              frameborder="0"
-              allowfullscreen>
-            </iframe>
-          </div>
+          <ng-container *ngFor="let v of videos">
+            <ng-container *ngIf="parseVideo(v.url) as link">
+              <div *ngIf="link.kind === 'youtube'" class="video-embed">
+                <iframe [src]="getSafeVideoUrl(v.url)" frameborder="0" allowfullscreen></iframe>
+              </div>
+
+              <!-- Instagram/TikTok/Facebook embeds need the platform's own
+                   script and its cookies, so those links open in a new tab. -->
+              <a *ngIf="link.kind === 'link'" [href]="link.url"
+                 target="_blank" rel="noopener noreferrer" class="video-link-card">
+                <span class="video-link-icon">▶</span>
+                <span class="video-link-text">
+                  <strong>{{ link.label }}</strong>
+                  <span class="video-link-host">{{ link.url }}</span>
+                </span>
+              </a>
+            </ng-container>
+          </ng-container>
         </div>
       </div>
 

@@ -6,6 +6,7 @@ import { PerformerService } from '../../services/performer.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { SupabaseService } from '../../services/supabase.service';
 import { Performer, PerformerMedia, PerformerAvailability, Review } from '../../models/performer.model';
+import { parseVideoUrl, VideoLink } from '../../utils/video-url';
 
 @Component({
   selector: 'app-performer-profile',
@@ -94,15 +95,14 @@ export class PerformerProfileComponent implements OnInit {
       .sort((a, b) => a.date.localeCompare(b.date));
   }
 
-  getYoutubeId(url: string): string | null {
-    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-    return match ? match[1] : null;
+  parseVideo(url: string): VideoLink {
+    return parseVideoUrl(url);
   }
 
   getSafeVideoUrl(url: string): SafeResourceUrl | null {
-    const id = this.getYoutubeId(url);
-    if (!id) return null;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${id}`);
+    const link = parseVideoUrl(url);
+    if (link?.kind !== 'youtube') return null;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(link.embedUrl);
   }
 
   getTypeLabel(): string {

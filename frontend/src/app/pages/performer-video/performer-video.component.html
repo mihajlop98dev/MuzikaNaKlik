@@ -6,8 +6,10 @@
       Video: {{ videos.length }} / {{ maxVideos === 999 ? '∞' : maxVideos }}
     </p>
 
+    <p class="error-text" *ngIf="error">{{ error }}</p>
+
     <div class="media-add-form" *ngIf="!atLimit; else videoLimitReached">
-      <input type="text" [(ngModel)]="newUrl" class="form-input" placeholder="YouTube URL" style="flex:1">
+      <input type="text" [(ngModel)]="newUrl" class="form-input" placeholder="Link ka videu (YouTube, Instagram, TikTok...)" style="flex:1">
       <button class="btn btn-gold" (click)="addVideo()" [disabled]="adding || !newUrl">
         {{ adding ? 'Dodavanje...' : 'Dodaj' }}
       </button>
@@ -19,13 +21,20 @@
 
     <div class="video-grid" *ngIf="!loading && videos.length > 0; else emptyState">
       <div *ngFor="let v of videos" class="video-item">
-        <div class="video-embed">
-          <iframe
-            [src]="getSafeUrl(v.url)"
-            frameborder="0"
-            allowfullscreen>
-          </iframe>
-        </div>
+        <ng-container *ngIf="parseVideo(v.url) as link">
+          <div *ngIf="link.kind === 'youtube'" class="video-embed">
+            <iframe [src]="getSafeUrl(v.url)" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+          <a *ngIf="link.kind === 'link'" [href]="link.url"
+             target="_blank" rel="noopener noreferrer" class="video-link-card">
+            <span class="video-link-icon">▶</span>
+            <span class="video-link-text">
+              <strong>{{ link.label }}</strong>
+              <span class="video-link-host">{{ link.url }}</span>
+            </span>
+          </a>
+        </ng-container>
         <button class="gallery-remove" (click)="remove(v.id)">✕</button>
       </div>
     </div>

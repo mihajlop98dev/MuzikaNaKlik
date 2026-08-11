@@ -5,6 +5,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { SupabaseService } from '../../services/supabase.service';
 import { PerformerService } from '../../services/performer.service';
 import { PerformerMedia } from '../../models/performer.model';
+import { parseVideoUrl, isValidVideoUrl, VideoLink } from '../../utils/video-url';
 
 @Component({
   selector: 'app-performer-video',
@@ -17,6 +18,7 @@ export class PerformerVideoComponent implements OnInit {
   loading = true;
   newUrl = '';
   adding = false;
+  error = '';
   maxVideos = 999;
   myProfile: any = null;
 
@@ -48,6 +50,16 @@ export class PerformerVideoComponent implements OnInit {
 
   addVideo() {
     if (!this.newUrl) return;
+
+    // Previously unvalidated: anything typed here was stored, then silently
+    // rendered as an empty player if it wasn't YouTube.
+    if (!isValidVideoUrl(this.newUrl)) {
+      this.error = 'Unesi ispravan link (YouTube, Instagram, TikTok, Facebook…).';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.error = '';
     this.adding = true;
     this.performerService.addMedia('video', this.newUrl).subscribe({
       next: (data: any) => {
@@ -69,16 +81,13 @@ export class PerformerVideoComponent implements OnInit {
     });
   }
 
-  getYoutubeId(url: string): string | null {
-    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-    return match ? match[1] : null;
+  parseVideo(url: string): VideoLink {
+    return parseVideoUrl(url);
   }
 
   getSafeUrl(url: string): SafeResourceUrl | null {
-    const id = this.getYoutubeId(url);
-    if (!id) return null;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(
-      `https://www.youtube.com/embed/${id}`
-    );
+    const link = parseVideoUrl(url);
+    if (link?.kind !== 'youtube') return null;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(link.embedUrl);
   }
 }

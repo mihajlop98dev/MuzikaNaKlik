@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { resizeImage, ACCEPTED_TYPES, MAX_UPLOAD_BYTES } from '../../utils/resize-image';
+import { isValidVideoUrl } from '../../utils/video-url';
 
 @Component({
   selector: 'app-register-performer',
@@ -125,14 +126,9 @@ export class RegisterPerformerComponent implements OnInit {
     this.videoErrors.splice(index, 1);
   }
 
-  validateYouTubeUrl(url: string): boolean {
+  validateVideoUrl(url: string): boolean {
     if (!url) return true;
-    return /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/.test(url);
-  }
-
-  extractYoutubeId(url: string): string | null {
-    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-    return match ? match[1] : null;
+    return isValidVideoUrl(url);
   }
 
   validateStep(): boolean {
@@ -148,8 +144,8 @@ export class RegisterPerformerComponent implements OnInit {
         return true;
       case 4:
         for (let i = 0; i < this.videoUrls.length; i++) {
-          if (this.videoUrls[i] && !this.validateYouTubeUrl(this.videoUrls[i])) {
-            this.videoErrors[i] = 'Unesite validan YouTube link.';
+          if (this.videoUrls[i] && !this.validateVideoUrl(this.videoUrls[i])) {
+            this.videoErrors[i] = 'Unesite ispravan link ka videu.';
             return false;
           }
           this.videoErrors[i] = '';
@@ -223,7 +219,7 @@ export class RegisterPerformerComponent implements OnInit {
     this.error = '';
 
     const validVideos = this.videoUrls
-      .filter((u) => u && this.extractYoutubeId(u) !== null);
+      .filter((u) => u && isValidVideoUrl(u));
 
     const allGenres = [...this.selectedGenres, ...this.customGenres.split(',').map(g => g.trim()).filter(Boolean)];
     const allLanguages = [...this.selectedLanguages, ...this.customLanguages.split(',').map(l => l.trim()).filter(Boolean)];
