@@ -12,7 +12,7 @@
     <p class="performer-city">{{ performer.city }}</p>
     <div class="performer-meta">
       <span class="rating">★ {{ performer.rating_avg.toFixed(1) }} <em>({{ performer.rating_count }})</em></span>
-      <span class="price">od {{ performer.price_from }} €</span>
+      <span class="price">{{ performer.price_from ? 'od ' + performer.price_from + ' €' : 'Cena po dogovoru' }}</span>
     </div>
     <a routerLink="/izvodjac/{{ performer.id }}" class="performer-link">Pogledaj profil</a>
   </div>

@@ -12,7 +12,7 @@
           <p class="performer-city">{{ fav.performers?.city }}</p>
           <div class="performer-meta">
             <span class="rating">★ {{ fav.performers?.rating_avg?.toFixed(1) || '0.0' }}</span>
-            <span class="price">od {{ fav.performers?.price_from || 0 }} €</span>
+            <span class="price">{{ fav.performers?.price_from ? 'od ' + fav.performers.price_from + ' €' : 'Cena po dogovoru' }}</span>
           </div>
           <div style="display:flex;gap:8px;margin-top:12px">
             <a [routerLink]="['/izvodjac', fav.performer_id]" class="btn btn-gold" style="flex:1;padding:8px">Pogledaj</a>

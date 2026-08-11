@@ -5,7 +5,8 @@ export interface Performer {
   city: string;
   genres: string[];
   description: string;
-  price_from: number;
+  /** null means the performer set the price to "po dogovoru". */
+  price_from: number | null;
   rating_avg: number;
   rating_count: number;
   avatar_url?: string;

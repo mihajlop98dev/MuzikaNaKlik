@@ -46,7 +46,16 @@
 
       <div class="form-group">
         <label>Cena od (€)</label>
-        <input type="number" [(ngModel)]="form.price_from" class="form-input" min="0">
+        <input type="number" [(ngModel)]="form.price_from" class="form-input" min="0"
+               [disabled]="form.price_on_request">
+        <label class="check-inline">
+          <input type="checkbox" [(ngModel)]="form.price_on_request">
+          <span>Cena po dogovoru</span>
+        </label>
+        <p class="field-hint" *ngIf="form.price_on_request">
+          Umesto iznosa, klijentima će pisati „Cena po dogovoru“. I dalje se
+          pojavljuješ u pretrazi kad neko filtrira po ceni.
+        </p>
       </div>
 
       <button class="btn btn-gold" (click)="save()" [disabled]="saving">

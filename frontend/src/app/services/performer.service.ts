@@ -42,17 +42,28 @@ export class PerformerService {
     if (params.q) query = query.ilike('stage_name', `%${params.q}%`);
     if (params.city) query = query.ilike('city', `%${params.city}%`);
     if (params.type) query = query.eq('type', params.type);
-    if (params.price_min && params.price_min > 0) query = query.gte('price_from', params.price_min);
-    if (params.price_max && params.price_max < 99999) query = query.lte('price_from', params.price_max);
+    // price_from IS NULL means "po dogovoru". Those performers stay in every
+    // price range: their price isn't known up front, so nothing entitles us to
+    // claim it falls outside the client's budget. A plain gte/lte would drop
+    // them from any search where the slider was touched at all.
+    if (params.price_min && params.price_min > 0) {
+      query = query.or(`price_from.is.null,price_from.gte.${params.price_min}`);
+    }
+    if (params.price_max && params.price_max < 99999) {
+      query = query.or(`price_from.is.null,price_from.lte.${params.price_max}`);
+    }
 
     query = query.order('search_priority', { ascending: false });
 
     switch (params.sort) {
+      // nullsFirst: false in both directions — a performer without a price has
+      // no place among either the cheapest or the priciest, so they trail the
+      // ones the client can actually compare.
       case 'price_asc':
-        query = query.order('price_from', { ascending: true });
+        query = query.order('price_from', { ascending: true, nullsFirst: false });
         break;
       case 'price_desc':
-        query = query.order('price_from', { ascending: false });
+        query = query.order('price_from', { ascending: false, nullsFirst: false });
         break;
       case 'rating':
         query = query.order('rating_avg', { ascending: false });

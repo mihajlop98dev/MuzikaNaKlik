@@ -27,6 +27,7 @@ export class PerformerProfileEditComponent implements OnInit {
     genres: '',
     description: '',
     price_from: 0,
+    price_on_request: false,
     profile_image_url: '',
   };
 
@@ -49,6 +50,10 @@ export class PerformerProfileEditComponent implements OnInit {
           this.form.city = data.city || '';
           this.form.genres = (data.genres || []).join(', ');
           this.form.description = data.description || '';
+          // A stored null is the "po dogovoru" marker, so the checkbox has to
+          // come back checked — otherwise saving an untouched form would
+          // silently turn it back into a 0 € price.
+          this.form.price_on_request = data.price_from === null;
           this.form.price_from = data.price_from || 0;
           this.form.profile_image_url = data.profile_image_url || '';
           this.loading = false;
@@ -95,7 +100,7 @@ export class PerformerProfileEditComponent implements OnInit {
       city: this.form.city,
       genres: this.form.genres.split(',').map((g: string) => g.trim()).filter(Boolean),
       description: this.form.description,
-      price_from: this.form.price_from,
+      price_from: this.form.price_on_request ? null : (this.form.price_from || null),
       profile_image_url: this.form.profile_image_url || null,
     } as any).subscribe({
       next: () => {

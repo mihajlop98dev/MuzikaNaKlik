@@ -29,6 +29,7 @@ export class RegisterPerformerComponent implements OnInit {
   customGenres = '';
   description = '';
   priceFrom = 0;
+  priceOnRequest = false;
   memberCount = 3;
 
   // Step 2 - Language
@@ -210,7 +211,9 @@ export class RegisterPerformerComponent implements OnInit {
       phone: this.phone,
       genres: allGenres,
       description: this.description,
-      price_from: this.priceFrom || null,
+      // null is what the whole app reads as "po dogovoru", so the checkbox and
+      // an empty field collapse to the same stored value.
+      price_from: this.priceOnRequest ? null : (this.priceFrom || null),
       member_count: this.memberCount,
       equipment: allEquipment,
       languages: allLanguages,

@@ -105,7 +105,16 @@
 
         <div class="form-group">
           <label>Cena od (€)</label>
-          <input type="number" [(ngModel)]="priceFrom" class="form-input" min="0" placeholder="Npr. 500">
+          <input type="number" [(ngModel)]="priceFrom" class="form-input" min="0"
+                 placeholder="Npr. 500" [disabled]="priceOnRequest">
+          <label class="check-inline">
+            <input type="checkbox" [(ngModel)]="priceOnRequest">
+            <span>Cena po dogovoru</span>
+          </label>
+          <p class="field-hint" *ngIf="priceOnRequest">
+            Umesto iznosa, klijentima će pisati „Cena po dogovoru“. I dalje se
+            pojavljuješ u pretrazi kad neko filtrira po ceni.
+          </p>
         </div>
       </ng-container>
 

@@ -79,7 +79,8 @@ export class PerformerDashboardComponent implements OnInit {
     if (!this.hasImages) items.push('Nemate slike u galeriji');
     if (!this.hasVideos) items.push('Nemate video snimke');
     if (!this.performer.audio_url) items.push('Nemate audio primer');
-    if (!this.performer.price_from) items.push('Niste uneli cenu');
+    // No price check: an empty price_from now means the performer chose
+    // "cena po dogovoru", which is a complete answer, not a gap to nag about.
     this.missingProfileItems = items;
   }
 }
