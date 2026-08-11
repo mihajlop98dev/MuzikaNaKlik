@@ -47,4 +47,15 @@ export class SupabaseService {
   signOut() {
     return this.supabase.auth.signOut();
   }
+
+  /**
+   * Sets a new password for the session the recovery link established.
+   *
+   * Following the emailed link signs the user in, so by the time the
+   * /nova-lozinka page runs there is a session to update — no token is passed
+   * around by hand.
+   */
+  updatePassword(password: string) {
+    return this.supabase.auth.updateUser({ password });
+  }
 }

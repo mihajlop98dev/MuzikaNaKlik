@@ -869,6 +869,50 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 12px;
 }
 
+.footer-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.footer-links a:hover { color: var(--gold); }
+
+.legal-page {
+  max-width: 760px;
+}
+
+.legal-page h1 { font-size: 28px; margin-bottom: 6px; }
+
+.legal-page h2 {
+  font-size: 17px;
+  color: var(--gold);
+  margin: 32px 0 10px;
+}
+
+.legal-page p,
+.legal-page li {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.legal-page p { margin-bottom: 12px; }
+
+.legal-page ul {
+  margin: 0 0 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.legal-page strong { color: var(--gold-soft); }
+
 .video-link-card {
   display: flex;
   align-items: center;

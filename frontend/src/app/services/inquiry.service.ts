@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from './supabase.service';
+import { ApiService } from './api.service';
 import { Observable, from, map, switchMap, throwError } from 'rxjs';
 import { Inquiry } from '../models/performer.model';
 
 @Injectable({ providedIn: 'root' })
 export class InquiryService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(
+    private supabase: SupabaseService,
+    private api: ApiService
+  ) {}
 
   private currentUserId(): Observable<string> {
     return from(this.supabase.getSession()).pipe(
@@ -17,10 +21,13 @@ export class InquiryService {
 
   create(inquiry: Partial<Inquiry>): Observable<Inquiry> {
     return from(
-      this.supabase.client.from('inquiries').insert(inquiry)
+      // .select().single() so the new row's id is available — the email
+      // notification below is keyed on it.
+      this.supabase.client.from('inquiries').insert(inquiry).select().single()
     ).pipe(
-      switchMap(({ error }) => {
+      switchMap(({ data, error }) => {
         if (error) return throwError(() => error);
+
         this.supabase.client
           .from('notifications')
           .insert({
@@ -33,7 +40,16 @@ export class InquiryService {
           .then(({ error: notifError }) => {
             if (notifError) console.error('Slanje notifikacije o novom upitu nije uspelo:', notifError);
           });
-        return [inquiry as Inquiry];
+
+        // Fire-and-forget: the inquiry is already saved, so a mail failure must
+        // not read to the client as a failed submission.
+        this.api
+          .post('/notify/inquiry', { inquiry_id: data.id, kind: 'inquiry' })
+          .subscribe({
+            error: (err) => console.error('Slanje mejla o upitu nije uspelo:', err),
+          });
+
+        return [data as Inquiry];
       })
     );
   }

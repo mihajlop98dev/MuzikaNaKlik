@@ -53,6 +53,9 @@ export async function activateSubscription({
         period_start: now.toISOString().split('T')[0],
         period_end: periodEnd.toISOString().split('T')[0],
         marked_by_admin: markedByAdmin,
+        // Cleared on renewal so the new period earns its own expiry warning —
+        // the cron skips any row that already carries a timestamp.
+        reminder_sent_at: null,
       })
       .eq('id', existing.id)
       .select()

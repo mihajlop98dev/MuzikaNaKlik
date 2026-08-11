@@ -8,6 +8,8 @@ const publicPaths = [
   // Must stay public: the only people who need it are those who cannot log in
   // yet because their email is unconfirmed, so they have no token to send.
   '/api/auth/resend-confirmation',
+  // Public for the same reason: whoever needs it cannot log in to get a token.
+  '/api/auth/forgot-password',
   '/api/genres',
   '/api/equipment',
   '/api/languages',

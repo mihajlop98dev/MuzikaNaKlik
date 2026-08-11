@@ -141,6 +141,89 @@ export function verificationEmail(params: { name: string; confirmUrl: string }):
   };
 }
 
+export function newInquiryEmail(params: {
+  performerName: string;
+  clientName: string;
+  eventType?: string | null;
+  eventDate?: string | null;
+  location?: string | null;
+  message?: string | null;
+}): { subject: string; html: string } {
+  const performer = escapeHtml(params.performerName);
+  const client = escapeHtml(params.clientName);
+
+  const details: Array<[string, string]> = [['Od', params.clientName]];
+  if (params.eventType) details.push(['Tip događaja', params.eventType]);
+  if (params.eventDate) details.push(['Datum', formatDate(params.eventDate)]);
+  if (params.location) details.push(['Mesto', params.location]);
+
+  const messageBlock = params.message
+    ? `<div style="margin:20px 0;padding:16px 18px;background:${BG};border:1px solid ${BORDER};border-radius:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:${TEXT};">
+         ${escapeHtml(params.message).replace(/\n/g, '<br>')}
+       </div>`
+    : '';
+
+  return {
+    subject: `Novi upit od ${params.clientName} — Muzika na Klik`,
+    html: layout({
+      preheader: `${params.clientName} te pita za termin.`,
+      heading: 'Stigao ti je novi upit',
+      body:
+        p(`${performer}, <strong style="color:${GOLD};">${client}</strong> je poslao/la upit preko tvog profila.`) +
+        rows(details, GOLD) +
+        messageBlock +
+        button(`${siteUrl()}/moj-nalog/izvodjac/upiti`, 'Odgovori na upit') +
+        muted('Brz odgovor bitno povećava šansu da dobiješ posao.'),
+    }),
+  };
+}
+
+export function newMessageEmail(params: {
+  recipientName: string;
+  senderName: string;
+  senderRole: 'client' | 'performer';
+  preview: string;
+}): { subject: string; html: string } {
+  const recipient = escapeHtml(params.recipientName);
+  const sender = escapeHtml(params.senderName);
+  const link =
+    params.senderRole === 'performer'
+      ? `${siteUrl()}/moji-upiti`
+      : `${siteUrl()}/moj-nalog/izvodjac/upiti`;
+
+  return {
+    subject: `Nova poruka od ${params.senderName} — Muzika na Klik`,
+    html: layout({
+      preheader: params.preview.slice(0, 90),
+      heading: 'Nova poruka u prepisci',
+      body:
+        p(`${recipient}, <strong style="color:${GOLD};">${sender}</strong> ti je poslao/la poruku.`) +
+        `<div style="margin:20px 0;padding:16px 18px;background:${BG};border:1px solid ${BORDER};border-radius:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:${TEXT};">
+           ${escapeHtml(params.preview).replace(/\n/g, '<br>')}
+         </div>` +
+        button(link, 'Otvori prepisku'),
+    }),
+  };
+}
+
+export function passwordResetEmail(params: { name: string; resetUrl: string }): { subject: string; html: string } {
+  const name = escapeHtml(params.name);
+
+  return {
+    subject: 'Postavljanje nove lozinke — Muzika na Klik',
+    html: layout({
+      preheader: 'Link za postavljanje nove lozinke.',
+      heading: 'Nova lozinka',
+      body:
+        p(`${name}, stigao nam je zahtev za promenu lozinke na tvom nalogu.`) +
+        button(params.resetUrl, 'Postavi novu lozinku') +
+        muted(
+          `Link važi 1 sat i može se iskoristiti jednom. Ako nisi ti tražio/la promenu, ignoriši ovu poruku — lozinka ostaje ista.<br><br>Ako dugme ne radi, prekopiraj ovu adresu:<br><span style="color:${GOLD_SOFT};word-break:break-all;">${escapeHtml(params.resetUrl)}</span>`
+        ),
+    }),
+  };
+}
+
 export function paymentSuccessEmail(params: {
   name: string;
   planName: string;
@@ -198,6 +281,50 @@ export function paymentFailedEmail(params: {
         p('Novac nije skinut sa računa. Najčešće pomaže druga kartica ili provera limita za onlajn plaćanja kod banke.') +
         button(`${siteUrl()}/moj-nalog/izvodjac/pretplata`, 'Pokušaj ponovo') +
         muted('Ako si u međuvremenu već uspešno platio/la, ovu poruku slobodno zanemari.'),
+    }),
+  };
+}
+
+export function subscriptionExpiringEmail(params: {
+  name: string;
+  planName: string;
+  periodEnd: Date | string;
+  daysLeft: number;
+}): { subject: string; html: string } {
+  const name = escapeHtml(params.name);
+  const plan = escapeHtml(params.planName);
+  const days = params.daysLeft === 1 ? 'sutra' : `za ${params.daysLeft} dana`;
+
+  return {
+    subject: `Pretplata ističe ${days} — Muzika na Klik`,
+    html: layout({
+      preheader: `Paket ${params.planName} ističe ${formatDate(params.periodEnd)}.`,
+      heading: `Pretplata ističe ${days}`,
+      body:
+        p(`${name}, paket <strong style="color:${GOLD};">${plan}</strong> ističe <strong>${formatDate(params.periodEnd)}</strong>.`) +
+        p('Kad istekne, profil prestaje da se prikazuje u pretrazi i gubiš bedževe i prioritet. Obnavljanje traje minut.') +
+        button(`${siteUrl()}/moj-nalog/izvodjac/pretplata`, 'Obnovi pretplatu') +
+        muted('Pretplata se ne obnavlja automatski — naplata ide samo kad je ti pokreneš.'),
+    }),
+  };
+}
+
+export function subscriptionExpiredEmail(params: {
+  name: string;
+  planName: string;
+}): { subject: string; html: string } {
+  const name = escapeHtml(params.name);
+  const plan = escapeHtml(params.planName);
+
+  return {
+    subject: 'Pretplata je istekla — Muzika na Klik',
+    html: layout({
+      preheader: 'Profil više nije vidljiv u pretrazi.',
+      heading: 'Pretplata je istekla',
+      body:
+        p(`${name}, paket <strong style="color:${GOLD};">${plan}</strong> je istekao i profil se više ne prikazuje klijentima u pretrazi.`) +
+        p('Podaci, slike i recenzije su netaknuti — sve se vraća čim obnoviš pretplatu.') +
+        button(`${siteUrl()}/moj-nalog/izvodjac/pretplata`, 'Obnovi pretplatu'),
     }),
   };
 }

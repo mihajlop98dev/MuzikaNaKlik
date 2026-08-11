@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from './supabase.service';
+import { ApiService } from './api.service';
 import { Observable, from, map, switchMap, throwError } from 'rxjs';
 import { Inquiry, Message } from '../models/performer.model';
 import { RealtimeChannel } from '@supabase/supabase-js';
 
 @Injectable({ providedIn: 'root' })
 export class MessageService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(
+    private supabase: SupabaseService,
+    private api: ApiService
+  ) {}
 
   private currentUserId(): Observable<string> {
     return from(this.supabase.getSession()).pipe(
@@ -61,6 +65,14 @@ export class MessageService {
                 })
                 .then(({ error: notifError }) => {
                   if (notifError) console.error('Slanje notifikacije nije uspelo:', notifError);
+                });
+
+              // Fire-and-forget — the message is already stored, so a mail
+              // failure must not surface as a failed send.
+              this.api
+                .post('/notify/inquiry', { inquiry_id: inquiry.id, kind: 'message', preview: body })
+                .subscribe({
+                  error: (err) => console.error('Slanje mejla o poruci nije uspelo:', err),
                 });
             }
 

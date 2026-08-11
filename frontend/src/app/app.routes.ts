@@ -33,6 +33,30 @@ export const routes: Routes = [
       import('./pages/login/login.component').then((m) => m.LoginComponent),
   },
   {
+    path: 'zaboravljena-lozinka',
+    loadComponent: () =>
+      import('./pages/forgot-password/forgot-password.component').then(
+        (m) => m.ForgotPasswordComponent
+      ),
+  },
+  {
+    path: 'nova-lozinka',
+    loadComponent: () =>
+      import('./pages/new-password/new-password.component').then(
+        (m) => m.NewPasswordComponent
+      ),
+  },
+  {
+    path: 'uslovi-koriscenja',
+    loadComponent: () =>
+      import('./pages/terms/terms.component').then((m) => m.TermsComponent),
+  },
+  {
+    path: 'politika-privatnosti',
+    loadComponent: () =>
+      import('./pages/privacy/privacy.component').then((m) => m.PrivacyComponent),
+  },
+  {
     path: 'registracija',
     loadComponent: () =>
       import('./pages/register/register.component').then((m) => m.RegisterComponent),
