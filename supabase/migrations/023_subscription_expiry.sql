@@ -18,18 +18,11 @@ CREATE INDEX IF NOT EXISTS idx_subscriptions_active_period_end
   ON subscriptions(period_end)
   WHERE status = 'active';
 
--- Defence in depth for the window between the moment a subscription lapses and
--- the moment the daily sweep runs: even with a stale 'active' flag the perks
--- stop, because every public read of performers goes through this policy.
--- 019_prevent_performer_self_upgrade.sql keeps performers from editing these
--- columns themselves, so the two together mean an expired subscription cannot
--- be resurrected from the client.
-DROP POLICY IF EXISTS "Public can view approved performers" ON performers;
-
-CREATE POLICY "Public can view approved performers"
-  ON performers FOR SELECT
-  USING (
-    status = 'approved'
-    AND subscription_status = 'active'
-    AND (subscription_expires_at IS NULL OR subscription_expires_at > now())
-  );
+-- This migration originally also rewrote the public read policy on performers to
+-- check subscription_expires_at, as a guard for the window between a lapse and
+-- the next sweep. That part was removed: 024_free_phase_visibility.sql drops the
+-- subscription condition from the same policy altogether, so re-running 023 as
+-- written would silently undo 024 and hide every performer without a paid plan.
+--
+-- When charging resumes, put the expiry guard back in the policy that 024
+-- defines rather than here.
