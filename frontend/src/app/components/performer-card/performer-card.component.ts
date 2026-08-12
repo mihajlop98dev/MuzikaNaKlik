@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { Performer } from '../../models/performer.model';
 import { FavoritesService } from '../../services/favorites.service';
 import { SupabaseService } from '../../services/supabase.service';
+import { AvatarComponent } from '../avatar/avatar.component';
 
 @Component({
   selector: 'app-performer-card',
   standalone: true,
-  imports: [NgIf, RouterLink],
+  imports: [NgIf, RouterLink, AvatarComponent],
   templateUrl: './performer-card.component.html',
 })
 export class PerformerCardComponent implements OnInit {

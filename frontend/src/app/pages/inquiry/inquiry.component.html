@@ -58,7 +58,10 @@
 
       <aside class="inquiry-sidebar" *ngIf="performer">
         <div class="inquiry-performer-card">
-          <img [src]="'https://picsum.photos/seed/' + performer.id + '/200/200'" [alt]="performer.stage_name" class="inquiry-performer-img">
+          <!-- profile_image_url was ignored here entirely, so a performer who
+               had uploaded a photo still showed a stranger's on this page. -->
+          <app-avatar imgClass="inquiry-performer-img"
+                      [src]="performer.profile_image_url" [name]="performer.stage_name"></app-avatar>
           <h3>{{ performer.stage_name }}</h3>
           <p class="performer-city">{{ performer.city }}</p>
           <div class="performer-meta">

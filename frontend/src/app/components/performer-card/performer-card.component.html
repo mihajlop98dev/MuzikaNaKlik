@@ -5,7 +5,7 @@
     <span class="badge" *ngIf="performer.has_verified_badge" style="background:#2e7d32;right:12px;left:auto">Verifikovano</span>
     <span class="badge" *ngIf="performer.busy" style="background:#b23b3b;top:auto;bottom:12px;left:12px">Zauzeto na ovaj datum</span>
     <button class="fav" [class.favorited]="favorited" (click)="toggleFavorite($event)" aria-label="Sačuvaj">{{ favorited ? '♥' : '♡' }}</button>
-    <img [src]="performer.profile_image_url || 'https://picsum.photos/seed/' + performer.id + '/380/460'" [alt]="performer.stage_name">
+    <app-avatar [src]="performer.profile_image_url" [name]="performer.stage_name"></app-avatar>
   </div>
   <div class="performer-body">
     <h3>{{ performer.stage_name }}</h3>

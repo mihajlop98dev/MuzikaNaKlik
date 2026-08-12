@@ -1,7 +1,8 @@
 <section class="section" *ngIf="!loading && performer; else loadingState">
   <div class="wrap">
     <div class="profile-header">
-      <img class="profile-avatar" [src]="performer.profile_image_url || 'https://picsum.photos/seed/' + performer.id + '/380/460'" [alt]="performer.stage_name">
+      <app-avatar imgClass="profile-avatar"
+                  [src]="performer.profile_image_url" [name]="performer.stage_name"></app-avatar>
       <div class="profile-info">
         <h1>{{ performer.stage_name }}</h1>
         <p class="performer-city">{{ performer.city }}<ng-container *ngIf="getTypeLabel()"> · {{ getTypeLabel() }}</ng-container></p>

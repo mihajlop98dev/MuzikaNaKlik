@@ -6,11 +6,12 @@ import { InquiryService } from '../../services/inquiry.service';
 import { PerformerService } from '../../services/performer.service';
 import { SupabaseService } from '../../services/supabase.service';
 import { Performer } from '../../models/performer.model';
+import { AvatarComponent } from '../../components/avatar/avatar.component';
 
 @Component({
   selector: 'app-inquiry',
   standalone: true,
-  imports: [NgIf, FormsModule, RouterLink],
+  imports: [NgIf, FormsModule, RouterLink, AvatarComponent],
   templateUrl: './inquiry.component.html',
 })
 export class InquiryComponent implements OnInit {

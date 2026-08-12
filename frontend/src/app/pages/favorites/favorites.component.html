@@ -5,7 +5,7 @@
     <div class="performer-grid" *ngIf="!loading && favorites.length > 0; else emptyState">
       <div *ngFor="let fav of favorites" class="performer-card">
         <div class="performer-media">
-          <img [src]="fav.performers?.profile_image_url || 'https://picsum.photos/seed/' + fav.performer_id + '/380/460'" [alt]="fav.performers?.stage_name">
+          <app-avatar [src]="fav.performers?.profile_image_url" [name]="fav.performers?.stage_name || ''"></app-avatar>
         </div>
         <div class="performer-body">
           <h3>{{ fav.performers?.stage_name || 'Nepoznat' }}</h3>

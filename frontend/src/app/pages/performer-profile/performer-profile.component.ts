@@ -7,11 +7,12 @@ import { FavoritesService } from '../../services/favorites.service';
 import { SupabaseService } from '../../services/supabase.service';
 import { Performer, PerformerMedia, PerformerAvailability, Review } from '../../models/performer.model';
 import { parseVideoUrl, VideoLink } from '../../utils/video-url';
+import { AvatarComponent } from '../../components/avatar/avatar.component';
 
 @Component({
   selector: 'app-performer-profile',
   standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, RouterLink, DatePipe],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, RouterLink, DatePipe, AvatarComponent],
   templateUrl: './performer-profile.component.html',
 })
 export class PerformerProfileComponent implements OnInit {
