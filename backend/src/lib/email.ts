@@ -3,6 +3,15 @@ import { Resend } from 'resend';
 const apiKey = process.env.RESEND_API_KEY;
 const from = process.env.EMAIL_FROM || 'Muzika na Klik <noreply@muzikanaklik.com>';
 
+/**
+ * Where replies go.
+ *
+ * Mail is sent from noreply@, which nobody reads. Without this a performer who
+ * answers a "new inquiry" or "payment received" notice is writing into a void —
+ * and answering mail is exactly what they will try to do.
+ */
+const replyTo = process.env.EMAIL_REPLY_TO || 'vvkdigital@muzikanaklik.com';
+
 const resend = apiKey ? new Resend(apiKey) : null;
 
 interface SendEmailParams {
@@ -26,7 +35,7 @@ export async function sendEmail({ to, subject, html }: SendEmailParams): Promise
   }
 
   try {
-    const { error } = await resend.emails.send({ from, to, subject, html });
+    const { error } = await resend.emails.send({ from, to, subject, html, replyTo });
 
     if (error) {
       console.error('[email] Resend rejected message to', to, '-', error.message);
