@@ -51,30 +51,18 @@ export class MessageService {
                 if (statusError) console.error('Ažuriranje statusa upita nije uspelo:', statusError);
               });
 
-            const recipientId = senderRole === 'performer' ? inquiry.client_id : inquiry.performer_id;
-            if (recipientId) {
-              const preview = body.length > 80 ? body.slice(0, 80) + '…' : body;
-              this.supabase.client
-                .from('notifications')
-                .insert({
-                  user_id: recipientId,
-                  type: senderRole === 'performer' ? 'inquiry_reply' : 'new_inquiry',
-                  title: senderRole === 'performer' ? 'Nova poruka od izvođača' : 'Nova poruka od klijenta',
-                  message: preview,
-                  link: senderRole === 'performer' ? '/moji-upiti' : '/moj-nalog/izvodjac/upiti',
-                })
-                .then(({ error: notifError }) => {
-                  if (notifError) console.error('Slanje notifikacije nije uspelo:', notifError);
-                });
-
-              // Fire-and-forget — the message is already stored, so a mail
-              // failure must not surface as a failed send.
-              this.api
-                .post('/notify/inquiry', { inquiry_id: inquiry.id, kind: 'message', preview: body })
-                .subscribe({
-                  error: (err) => console.error('Slanje mejla o poruci nije uspelo:', err),
-                });
-            }
+            // Notification and email are both written server-side by this call.
+            // The notification used to be inserted straight from here, but the
+            // insert policy accepts anyone, so anything the browser could do an
+            // anonymous stranger could do too.
+            //
+            // Fire-and-forget — the message is already stored, so a failure
+            // here must not surface as a failed send.
+            this.api
+              .post('/notify/inquiry', { inquiry_id: inquiry.id, kind: 'message', preview: body })
+              .subscribe({
+                error: (err) => console.error('Obaveštavanje o poruci nije uspelo:', err),
+              });
 
             return [data];
           })

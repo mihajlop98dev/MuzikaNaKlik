@@ -222,4 +222,10 @@ export const routes: Routes = [
       },
     ],
   },
+  // Must stay last — matches anything the routes above did not.
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
+  },
 ];

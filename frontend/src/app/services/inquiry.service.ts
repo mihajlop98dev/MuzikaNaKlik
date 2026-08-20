@@ -28,25 +28,17 @@ export class InquiryService {
       switchMap(({ data, error }) => {
         if (error) return throwError(() => error);
 
-        this.supabase.client
-          .from('notifications')
-          .insert({
-            user_id: inquiry.performer_id,
-            type: 'new_inquiry',
-            title: 'Novi upit',
-            message: `Imate novi upit od ${inquiry.full_name} za ${inquiry.event_type || 'događaj'}.`,
-            link: '/moj-nalog/izvodjac/upiti',
-          })
-          .then(({ error: notifError }) => {
-            if (notifError) console.error('Slanje notifikacije o novom upitu nije uspelo:', notifError);
-          });
-
-        // Fire-and-forget: the inquiry is already saved, so a mail failure must
+        // Both the in-app notification and the email are written server-side by
+        // this call. The notification used to be inserted from here, but the
+        // insert policy accepts anyone, so anything the browser can do an
+        // anonymous stranger can do too.
+        //
+        // Fire-and-forget: the inquiry is already saved, so a failure here must
         // not read to the client as a failed submission.
         this.api
           .post('/notify/inquiry', { inquiry_id: data.id, kind: 'inquiry' })
           .subscribe({
-            error: (err) => console.error('Slanje mejla o upitu nije uspelo:', err),
+            error: (err) => console.error('Obaveštavanje o upitu nije uspelo:', err),
           });
 
         return [data as Inquiry];

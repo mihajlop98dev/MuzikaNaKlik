@@ -1,0 +1,17 @@
+-- 026_lock_notification_inserts.sql
+-- "System can create notifications" (006_notifications.sql) was written as
+-- WITH CHECK (true), which does not mean "only the system" — it means anyone,
+-- including an unauthenticated caller holding the public anon key that ships in
+-- the frontend bundle.
+--
+-- Confirmed against production: an anonymous INSERT reached the foreign-key
+-- check, i.e. the policy let it through and only a made-up user id stopped it.
+-- Real ids are not hard to come by — performers.id is the profile id and is
+-- publicly readable — so anyone could have written arbitrary title and message
+-- text into any user's notification list.
+--
+-- Every legitimate insert now happens server-side with the service role, which
+-- bypasses RLS: /api/notify/inquiry for inquiries and thread messages, and the
+-- performer registration route for the admin notice. Dropping the policy leaves
+-- no INSERT policy at all, which is exactly right — no client should write here.
+DROP POLICY IF EXISTS "System can create notifications" ON notifications;

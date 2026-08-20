@@ -29,17 +29,22 @@ const YT_PATTERNS = [
   /youtube\.com\/v\/([^&?#/\s]+)/i,
 ];
 
-const PLATFORMS: Array<{ test: RegExp; label: string }> = [
-  { test: /(?:^|\.)instagram\.com\//i, label: 'Instagram' },
-  { test: /(?:^|\.)tiktok\.com\//i, label: 'TikTok' },
-  { test: /(?:^|\.)facebook\.com\//i, label: 'Facebook' },
-  { test: /(?:^|\.)fb\.watch\//i, label: 'Facebook' },
-  { test: /(?:^|\.)vimeo\.com\//i, label: 'Vimeo' },
-  { test: /(?:^|\.)dailymotion\.com\//i, label: 'Dailymotion' },
-  { test: /(?:^|\.)twitch\.tv\//i, label: 'Twitch' },
-  { test: /(?:^|\.)soundcloud\.com\//i, label: 'SoundCloud' },
-  { test: /(?:^|\.)x\.com\//i, label: 'X' },
-  { test: /(?:^|\.)twitter\.com\//i, label: 'X' },
+/**
+ * `locative` is the form the name takes after "na" in Serbian — "na Instagramu",
+ * not "na Instagram". Built into the table rather than derived, because the
+ * ending depends on how each name ends and X needs a hyphen.
+ */
+const PLATFORMS: Array<{ test: RegExp; label: string; locative: string }> = [
+  { test: /(?:^|\.)instagram\.com\//i, label: 'Instagram', locative: 'Instagramu' },
+  { test: /(?:^|\.)tiktok\.com\//i, label: 'TikTok', locative: 'TikToku' },
+  { test: /(?:^|\.)facebook\.com\//i, label: 'Facebook', locative: 'Facebooku' },
+  { test: /(?:^|\.)fb\.watch\//i, label: 'Facebook', locative: 'Facebooku' },
+  { test: /(?:^|\.)vimeo\.com\//i, label: 'Vimeo', locative: 'Vimeu' },
+  { test: /(?:^|\.)dailymotion\.com\//i, label: 'Dailymotion', locative: 'Dailymotionu' },
+  { test: /(?:^|\.)twitch\.tv\//i, label: 'Twitch', locative: 'Twitchu' },
+  { test: /(?:^|\.)soundcloud\.com\//i, label: 'SoundCloud', locative: 'SoundCloudu' },
+  { test: /(?:^|\.)x\.com\//i, label: 'X', locative: 'X-u' },
+  { test: /(?:^|\.)twitter\.com\//i, label: 'X', locative: 'X-u' },
 ];
 
 export function parseVideoUrl(raw: string): VideoLink {
@@ -69,12 +74,12 @@ export function parseVideoUrl(raw: string): VideoLink {
   }
 
   const host = parsed.hostname;
-  for (const { test, label } of PLATFORMS) {
+  for (const { test, label, locative } of PLATFORMS) {
     if (test.test(host + '/')) {
       return {
         kind: 'link',
         platform: label,
-        label: `Pogledaj na ${label}`,
+        label: `Pogledaj na ${locative}`,
         url: parsed.href,
       };
     }

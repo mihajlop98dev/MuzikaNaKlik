@@ -57,6 +57,17 @@ export async function POST(request: Request) {
     // Only the client who created it can trigger the initial notification.
     if (!isClient) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
+    // Written here rather than from the browser: the notifications insert policy
+    // accepts anyone, so a client-side insert meant every performer id — which
+    // is public — could be spammed with arbitrary text by an anonymous caller.
+    await supabaseAdmin.from('notifications').insert({
+      user_id: inquiry.performer_id,
+      type: 'new_inquiry',
+      title: 'Novi upit',
+      message: `Imate novi upit od ${inquiry.full_name} za ${inquiry.event_type || 'događaj'}.`,
+      link: '/moj-nalog/izvodjac/upiti',
+    });
+
     const to = await addressFor(inquiry.performer_id);
     if (!to) return NextResponse.json({ sent: false });
 
@@ -75,6 +86,15 @@ export async function POST(request: Request) {
   // kind === 'message' — goes to whichever side did not write it.
   const recipientId = isPerformer ? inquiry.client_id : inquiry.performer_id;
   if (!recipientId) return NextResponse.json({ sent: false });
+
+  const body = (preview || '').toString();
+  await supabaseAdmin.from('notifications').insert({
+    user_id: recipientId,
+    type: isPerformer ? 'inquiry_reply' : 'new_inquiry',
+    title: isPerformer ? 'Nova poruka od izvođača' : 'Nova poruka od klijenta',
+    message: body.length > 80 ? body.slice(0, 80) + '…' : body,
+    link: isPerformer ? '/moji-upiti' : '/moj-nalog/izvodjac/upiti',
+  });
 
   const to = await addressFor(recipientId);
   if (!to) return NextResponse.json({ sent: false });
