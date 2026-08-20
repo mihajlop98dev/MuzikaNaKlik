@@ -10,6 +10,8 @@ const publicPaths = [
   '/api/auth/resend-confirmation',
   // Public for the same reason: whoever needs it cannot log in to get a token.
   '/api/auth/forgot-password',
+  // The point of a contact form is that someone without an account can write in.
+  '/api/contact',
   '/api/genres',
   '/api/equipment',
   '/api/languages',

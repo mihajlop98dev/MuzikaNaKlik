@@ -17,14 +17,17 @@
           <label>Poruka</label>
           <textarea [(ngModel)]="form.message" class="form-input form-textarea" rows="5" placeholder="Vaša poruka..."></textarea>
         </div>
-        <button class="btn btn-gold" (click)="submit()" [disabled]="!form.name || !form.email || !form.message">Pošalji</button>
+        <p class="error-text" *ngIf="error">{{ error }}</p>
+        <button class="btn btn-gold" (click)="submit()"
+                [disabled]="sending || !form.name || !form.email || !form.message">
+          {{ sending ? 'Šaljem...' : 'Pošalji' }}
+        </button>
       </div>
 
       <aside class="inquiry-sidebar">
         <div class="inquiry-performer-card">
           <h3>Muzika na Klik</h3>
-          <p class="muted">Email: info&#64;muzikanaklik.rs</p>
-          <p class="muted">Tel: +381 6X XXX XXXX</p>
+          <p class="muted">Email: vvkdigital&#64;muzikanaklik.com</p>
         </div>
       </aside>
     </div>

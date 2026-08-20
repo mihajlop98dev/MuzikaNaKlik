@@ -206,6 +206,26 @@ export function newMessageEmail(params: {
   };
 }
 
+export function contactMessageEmail(params: {
+  name: string;
+  email: string;
+  message: string;
+}): { subject: string; html: string } {
+  return {
+    subject: `Poruka sa sajta — ${params.name}`,
+    html: layout({
+      preheader: params.message.slice(0, 90),
+      heading: 'Nova poruka sa kontakt forme',
+      body:
+        rows([['Ime', params.name], ['Email', params.email]], GOLD) +
+        `<div style="margin:20px 0;padding:16px 18px;background:${BG};border:1px solid ${BORDER};border-radius:10px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:${TEXT};">
+           ${escapeHtml(params.message).replace(/\n/g, '<br>')}
+         </div>` +
+        muted('Odgovori direktno na ovu poruku — reply ide pošiljaocu.'),
+    }),
+  };
+}
+
 export function passwordResetEmail(params: { name: string; resetUrl: string }): { subject: string; html: string } {
   const name = escapeHtml(params.name);
 

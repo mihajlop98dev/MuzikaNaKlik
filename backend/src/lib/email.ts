@@ -18,6 +18,9 @@ interface SendEmailParams {
   to: string;
   subject: string;
   html: string;
+  /** Overrides the default reply address — used by the contact form so a reply
+   *  goes back to the visitor who wrote in. */
+  replyTo?: string;
 }
 
 /**
@@ -28,14 +31,14 @@ interface SendEmailParams {
  * mail provider must not roll back a paid subscription, so failures are logged
  * and swallowed. The boolean is for callers that want to branch on it.
  */
-export async function sendEmail({ to, subject, html }: SendEmailParams): Promise<boolean> {
+export async function sendEmail({ to, subject, html, replyTo: override }: SendEmailParams): Promise<boolean> {
   if (!resend) {
     console.error('[email] RESEND_API_KEY is not set — skipping send to', to);
     return false;
   }
 
   try {
-    const { error } = await resend.emails.send({ from, to, subject, html, replyTo });
+    const { error } = await resend.emails.send({ from, to, subject, html, replyTo: override || replyTo });
 
     if (error) {
       console.error('[email] Resend rejected message to', to, '-', error.message);
